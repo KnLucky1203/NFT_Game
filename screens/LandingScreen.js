@@ -21,8 +21,7 @@
  *    Developer   : Rothschild (Nickname)                                                                                                                  *
  *   Source Mode  : 100% Private                                                                                                                          *
  *   Description  : CrossyGame project with NFT as a service.                                                                                            *
- *  Writing Style : P0413-K0408-K1206
- *                                                                        *
+ *  Writing Style : P0413-K0408-K1206                                                                                                                   *                                                                                                                                                      *
  *                                                                                                                                                     *
  ********************************************************************** The Road to Valhalla! *********************************************************
  */
