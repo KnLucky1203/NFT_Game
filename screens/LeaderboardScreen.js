@@ -32,10 +32,10 @@ import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking, Switch, ScrollView } from 'react-native';
 
-// Personal informations 
+// Personal informations
 import HeaderScreen from "./HeaderScreen";
 
-import { myFont } from '../global/myFont';
+import { fonts } from '../global/commonStyle';
 
 // Guide Page component
 const LeaderboardScreen = () => {
@@ -118,7 +118,7 @@ const LeaderboardScreen = () => {
         <View style={{
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: myFont,
+            fontFamily: fonts.fantasy,
         }}>
             <HeaderScreen path={path}></HeaderScreen>
 
@@ -164,7 +164,7 @@ const LeaderboardScreen = () => {
                         alignItems: 'center',
                         borderBottom: '1px solid white',
                     }}>
-                        <Text style={{ color: 'white', fontSize: '24px', fontFamily: myFont }}>Top Mobbers</Text>
+                        <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Top Mobbers</Text>
                         <Text style={{
                             fontSize: isPC ? '60px' : '36px',
                             color: 'rgba(253, 198, 211, 1)',
@@ -180,7 +180,7 @@ const LeaderboardScreen = () => {
                         }}>
                             <Text style={{
                                 color: top10 ? 'gray' : 'white',
-                                fontFamily: myFont,
+                                fontFamily: fonts.fantasy,
                                 fontSize: '20px'
                             }}>
                                 Top 10 only
@@ -195,7 +195,7 @@ const LeaderboardScreen = () => {
                             > </Switch>
                             <Text style={{
                                 color: !top10 ? 'gray' : 'white',
-                                fontFamily: myFont,
+                                fontFamily: fonts.fantasy,
                                 fontSize: '20px'
                             }}>
                                 Global Players
@@ -237,14 +237,14 @@ const LeaderboardScreen = () => {
 export default LeaderboardScreen;
 
 
-{/* 
-// on click of play button 
+{/*
+// on click of play button
 <button className="decoration-button" onClick={() => {
     if (userName !== "") {
         setGameMode(0);
         navigation.navigate("GameScreen");
     }
-}} >Play !</button> 
+}} >Play !</button>
 
 // Join Server button
 {serverId &&

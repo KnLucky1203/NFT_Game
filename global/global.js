@@ -4,25 +4,29 @@ import io from 'socket.io-client';
 // Global variables : MBC-on mobile responsive
 export const FRONTEND_URL = "http://192.168.140.49:19006";
 // export const FRONTEND_URL = "https://valhalla.proskillowner.com";
-export const SERVER_URL = "https://bundleontron.tech";
+export const SERVER_URL = "https://bundleontron.tech";  // TODO: replace with your own server URL
 export const socket = io(SERVER_URL);
 
 
+
+
+
+
+
+// =========================================== WEB3 ======================================================
+// --- Web3 Import ---
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 import { solana, solanaTestnet, solanaDevnet } from '@web3modal/solana/chains'
+
+// --- Web3Modal Connect Settings ---
 export const chains = [solana, solanaTestnet, solanaDevnet]
-
-// 1. Get projectId at https://cloud.walletconnect.com
-export const projectId = 'dcf293e3b464df32cd09530f8f8bf63d';
-
-// 2. Create solanaConfig
+export const projectId = 'dcf293e3b464df32cd09530f8f8bf63d';  // TODO: replace with your own projectId
 export const metadata = {
   name: 'Appkit Solana Example',
   description: 'Appkit Solana Example',
   url: 'https://appkit-solana.vercel.app', // origin must match your domain & subdomain
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
 };
-
 export const solanaConfig = defaultSolanaConfig({
   metadata,
   chains,
@@ -35,7 +39,7 @@ export const solanaConfig = defaultSolanaConfig({
   }
 });
 
-
+// --- Web3 API ---
 export const getNFTswithImage = async (wallet) => {
   return await axios(SERVER_URL + '/api/nft_images/' + wallet)
 }
@@ -74,3 +78,4 @@ export const getWalletSOLBalance = async (conn, wallet) => {
   }
   return 0;
 };
+// =========================================== /WEB3 ======================================================

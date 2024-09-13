@@ -42,9 +42,10 @@ import JoiningDialog from './JoiningDialog';
 import HighScoreDialog from './HighScore';
 import HeaderScreen from "./HeaderScreen";
 
-import { myFont } from '../global/myFont';
+import { fonts } from '../global/commonStyle';
 import { socket, FRONTEND_URL, SERVER_URL } from '../global/global';
 
+import { commonStyle } from '../global/commonStyle';
 // Landing Page component
 const LandingScreen = () => {
 
@@ -213,7 +214,7 @@ const LandingScreen = () => {
     <View style={{
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: myFont
+      fontFamily: fonts.fantasy
     }}>
       <JoiningDialog
         userName={userName}
@@ -265,7 +266,7 @@ const LandingScreen = () => {
           // rowGap: '25px',
           padding: '25px'
         }}>
-          <Text style={{ color: 'white', fontSize: '24px', fontFamily: myFont }}>Get Started</Text>
+          <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Get Started</Text>
           <Text style={{
             fontSize: '72px',
             color: 'rgba(253, 198, 211, 1)',
@@ -277,10 +278,10 @@ const LandingScreen = () => {
 
           {cUserName != "" ?
             <>
-              <Text style={{ marginTop: '20px', color: 'white', fontSize: '24px', fontFamily: myFont }}>
+              <Text style={{ marginTop: '20px', color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>
                 Hey, {cUserName} !
               </Text>
-              <Text style={{ marginTop: '10px', color: 'white', fontSize: '18px', fontFamily: myFont }}>
+              <Text style={{ marginTop: '10px', color: 'white', fontSize: '18px', fontFamily: fonts.fantasy }}>
                 Choose your Game
               </Text>
 
@@ -292,14 +293,9 @@ const LandingScreen = () => {
                 marginTop: '25px'
               }}>
                 <Text style={{
-                  padding: '10px',
-                  background: 'rgba(239, 88, 123, 1)',
-                  boxShadow: '0px 3px 10px red',
-                  borderRadius: '20px',
-                  color: 'white',
-                  cursor: 'pointer',
-                  marginTop: '20px',
+                  ...commonStyle.button,
                   fontWeight: '800',
+                  fontSize: '14px',
                 }}
                   onClick={() => {
                     setGameMode(0);
@@ -311,23 +307,17 @@ const LandingScreen = () => {
 
                 <Text style={{
                   marginTop: '20px', color: 'gray',
-                  fontSize: '18px', fontFamily: myFont
+                  fontSize: '18px', fontFamily: fonts.fantasy
                 }}>
                   OR
                 </Text>
 
                 <Text style={{
-                  padding: '10px',
-                  background: 'rgba(239, 88, 123, 1)',
-                  boxShadow: '0px 3px 10px red',
-                  borderRadius: '20px',
-                  color: 'white',
-                  cursor: 'pointer',
-                  marginTop: '20px',
+                  ...commonStyle.button,
                   fontWeight: '800',
+                  fontSize: '14px',
                 }}
                   onClick={() => {
-
                     setLoadingState(true);
                     if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
                       socket.emit('message', JSON.stringify({
@@ -367,16 +357,7 @@ const LandingScreen = () => {
                   setUserName(e.target.value);
                 }}
                 autoFocus />
-              <Text style={{
-                padding: '10px',
-                background: 'rgba(239, 88, 123, 1)',
-                boxShadow: '0px 3px 10px red',
-                borderRadius: '20px',
-                color: 'white',
-                cursor: 'pointer',
-                marginTop: '20px',
-                fontSize: '20px'
-              }}
+              <Text style={commonStyle.button}
                 onClick={() => {
                   setCUserName(userName);
                 }}

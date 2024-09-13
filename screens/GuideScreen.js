@@ -32,10 +32,10 @@ import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'react-native';
 
-// Personal informations 
+// Personal informations
 import HeaderScreen from "./HeaderScreen";
 
-import { myFont } from '../global/myFont';
+import { fonts } from '../global/commonStyle';
 
 // Guide Page component
 const GuideScreen = () => {
@@ -70,7 +70,7 @@ const GuideScreen = () => {
         <View style={{
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: myFont
+            fontFamily: fonts.fantasy
         }}>
             <HeaderScreen path={path}></HeaderScreen>
 
@@ -115,7 +115,7 @@ const GuideScreen = () => {
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                        <Text style={{ color: 'white', fontSize: '24px', fontFamily: myFont }}>Welcome To</Text>
+                        <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Welcome To</Text>
                         <Text style={{
                             fontSize: isPC ? '60px' : '36px',
                             color: 'rgba(253, 198, 211, 1)',
@@ -127,20 +127,20 @@ const GuideScreen = () => {
                     </View>
                     <View style={{
                         width: '100%',
-                        
+
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
 
-                        <Text style={{ marginTop: '32px', color: 'white', fontSize: '40px', fontFamily: myFont }}>
+                        <Text style={{ marginTop: '32px', color: 'white', fontSize: '40px', fontFamily: fonts.fantasy }}>
                             Title Here
                         </Text>
 
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '16px', fontFamily: myFont, width: '70%', textAlign: 'center' }}>
+                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '16px', fontFamily: fonts.fantasy, width: '70%', textAlign: 'center' }}>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tortor tortor, convallis id maximus non, semper eu sapien. Aliquam efficitur urna ac sapien ornare, vitae ornare nunc placerat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi massa ante, accumsan quis sollicitudin ut, sodales eget sapien. Praesent rhoncus elit et urna cursus facilisis.
                         </Text>
 
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '16px', fontFamily: myFont, width: '70%', textAlign: 'center' }}>
+                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '16px', fontFamily: fonts.fantasy, width: '70%', textAlign: 'center' }}>
                             Suspendisse potenti. Quisque tristique eros id dui ultrices fringilla. Vivamus luctus magna urna, at gravida turpis cursus eu. Donec nec eros lobortis, venenatis lectus vitae, sagittis velit. Nulla sed sollicitudin metus. Mauris eget finibus nisi, et convallis ex. Mauris enim nunc, molestie vel porta ac, aliquet sit amet mauris. Pellentesque id feugiat purus.
                         </Text>
                     </View>
@@ -157,14 +157,14 @@ const GuideScreen = () => {
 export default GuideScreen;
 
 
-{/* 
-// on click of play button 
+{/*
+// on click of play button
 <button className="decoration-button" onClick={() => {
     if (userName !== "") {
         setGameMode(0);
         navigation.navigate("GameScreen");
     }
-}} >Play !</button> 
+}} >Play !</button>
 
 // Join Server button
 {serverId &&

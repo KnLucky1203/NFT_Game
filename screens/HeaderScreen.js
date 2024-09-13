@@ -31,7 +31,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Text, TextInput, Image, Platform, Dimensions, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { myFont } from '../global/myFont';
+import { fonts } from '../global/commonStyle';
 //  import logo from './logo.svg';
 import '../App.css';
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
@@ -41,6 +41,7 @@ import { getWalletSOLBalance, getWalletInfo, getNFTsWithImage, getNFTOne, getAdm
 import { metadata, chains, solanaConfig, projectId } from '../global/global';
 import { deepCopy, jsonUpdate } from '../global/common';
 import GameContext from '../context/GameContext';
+import { colors } from "../global/commonStyle";
 
 const modelList = [
   { label: 'Model 1', value: '1' },
@@ -524,11 +525,11 @@ const LoadingScreen = ({ path }) => {
         {isPC &&
           <>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'admin' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'admin' ? colors.accent : 'white',
             }}
               onClick={() => {
                 setDash(true);
@@ -537,11 +538,11 @@ const LoadingScreen = ({ path }) => {
               Admin
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'home' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'home' ? colors.accent : 'white',
             }}
               onClick={() => {
                 navigation.navigate("LandingScreen");
@@ -550,11 +551,11 @@ const LoadingScreen = ({ path }) => {
               Home
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'guide' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'guide' ? colors.accent : 'white',
             }}
               onClick={() => {
                 navigation.navigate("GuideScreen");
@@ -563,11 +564,11 @@ const LoadingScreen = ({ path }) => {
               How to Play
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'leaderboard' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'leaderboard' ? colors.accent : 'white',
             }}
               onClick={() => {
                 navigation.navigate("LeaderboardScreen");
@@ -576,7 +577,7 @@ const LoadingScreen = ({ path }) => {
               Leaderboard
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '20px',
               padding: '10px',
               background: 'rgba(039, 88, 123, 1)',
@@ -621,8 +622,8 @@ const LoadingScreen = ({ path }) => {
             }}
               onClick={handleCloseMenu} >
               <Text style={{
-                fontFamily: myFont,
-                color: 'rgba(239, 88, 123, 1)',
+                fontFamily: fonts.fantasy,
+                color: colors.accent,
               }}>Close</Text>
             </View> :
             <View style={{
@@ -631,7 +632,7 @@ const LoadingScreen = ({ path }) => {
               zIndex: '5000'
             }}
               onClick={handleOpenMenu} >
-              <Text style={{ color: 'white', fontFamily: myFont }}>Menu</Text>
+              <Text style={{ color: 'white', fontFamily: fonts.fantasy }}>Menu</Text>
             </View>)
         }
       </View>
@@ -673,11 +674,11 @@ const LoadingScreen = ({ path }) => {
             }}>
 
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'home' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'home' ? colors.accent : 'white',
               fontWeight: '900',
             }}
               onClick={() => {
@@ -688,11 +689,11 @@ const LoadingScreen = ({ path }) => {
               Home
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'guide' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'guide' ? colors.accent : 'white',
             }}
               onClick={() => {
                 navigation.navigate("GuideScreen");
@@ -701,11 +702,11 @@ const LoadingScreen = ({ path }) => {
               How to Play
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
-              color: path == 'leaderboard' ? 'rgba(239, 88, 123, 1)' : 'white',
+              color: path == 'leaderboard' ? colors.accent : 'white',
             }}
               onClick={() => {
                 navigation.navigate("LeaderboardScreen");
@@ -714,7 +715,7 @@ const LoadingScreen = ({ path }) => {
               Leaderboard
             </Text>
             <Text style={{
-              fontFamily: myFont,
+              fontFamily: fonts.fantasy,
               fontSize: '32px',
               padding: '10px',
               background: 'rgba(039, 88, 123, 1)',

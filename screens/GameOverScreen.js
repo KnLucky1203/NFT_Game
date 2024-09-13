@@ -2,9 +2,10 @@ import React, { Component, useContext, useState, useEffect } from "react";
 import { Image, Dimensions, Text, Alert, Animated, Easing, StyleSheet, View } from "react-native";
 
 import GameContext from "../context/GameContext";
-import { myFont } from '../global/myFont';
+import { fonts } from '../global/commonStyle';
 import { useNavigation } from "@react-navigation/native";
-
+import { commonStyle } from "../global/commonStyle";
+import { colors } from "../global/commonStyle";
 
 function GameOver({ ...props }) {
   const { gameMode, setGameMode, character } = React.useContext(GameContext);
@@ -60,7 +61,7 @@ function GameOver({ ...props }) {
         WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
         filter: 'drop-shadow(3px 5px 8px #ff0000)',
         textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de'
-        // ...(isMobile ? { left: '0px' } : {}), 
+        // ...(isMobile ? { left: '0px' } : {}),
       }}>
         GAME OVER !
       </Text>
@@ -71,17 +72,11 @@ function GameOver({ ...props }) {
         color: 'white',
       }}>
         You scored&nbsp;
-        <Text style={{ color: 'rgba(239, 88, 123, 1)' }}>350</Text> Crash Tokens
+        <Text style={{ color: colors.accent }}>350</Text> Crash Tokens
       </Text>
       <Text style={{
-        fontFamily: myFont,
-        fontSize: '20px',
-        padding: '10px',
-        background: 'rgba(239, 88, 123, 1)',
-        boxShadow: '0px 3px 10px red',
-        borderRadius: '20px',
-        cursor: 'pointer',
-        color: 'white',
+        ...commonStyle.button,
+        fontFamily: fonts.fantasy,
         marginTop: '30px',
         marginBottom: '10px'
       }}

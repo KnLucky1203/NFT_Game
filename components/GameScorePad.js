@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Platform, View, Dimensions, Image } from 'react-native';
 import { useSafeArea } from 'react-native-safe-area-context';
 import GameContext from '../context/GameContext';
-import { myFont } from '../global/myFont';
+import { fonts } from '../global/commonStyle';
 
 function generateTextShadow(width) {
   return Platform.select({
@@ -66,7 +66,7 @@ export default function ScorePad({ gameOver, score, ...props }) {
           fontSize: isPC ? '50px' : '30px',
           fontWeight: '900',
           letterSpacing: '2px',
-          fontFamily: myFont,
+          fontFamily: fonts.fantasy,
           color: 'rgba(253, 198, 211, 1)',
           WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
           filter: 'drop-shadow(3px 5px 8px #ff0000)',
@@ -75,7 +75,7 @@ export default function ScorePad({ gameOver, score, ...props }) {
         }}>{score}</Text>
         <Text style={{
           fontSize: isPC ? '20px' : '14px',
-          fontFamily: myFont,
+          fontFamily: fonts.fantasy,
           color: 'white',
 
         }}>Top {score}</Text>
@@ -88,7 +88,7 @@ export default function ScorePad({ gameOver, score, ...props }) {
         <Image source={require("../assets/images/ScoreCoin.png")}
           style={{ width: '30%', height: '50%' }}
         />
-        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '16px', fontFamily: myFont }}>x 21</Text>
+        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '16px', fontFamily: fonts.fantasy }}>x 21</Text>
       </View>
     </View >
     // <View pointerEvents="none" style={[styles.container, { top: Math.max(top, 16), left: Math.max(left, 8) }]}>
