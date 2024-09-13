@@ -31,7 +31,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Text, TextInput, Image, Platform, Dimensions, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { fonts } from '../global/commonStyle';
+import { fonts, colors, commonStyle } from '../global/commonStyle';
 //  import logo from './logo.svg';
 import '../App.css';
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
@@ -41,7 +41,6 @@ import { getWalletSOLBalance, getWalletInfo, getNFTsWithImage, getNFTOne, getAdm
 import { metadata, chains, solanaConfig, projectId } from '../global/global';
 import { deepCopy, jsonUpdate } from '../global/common';
 import GameContext from '../context/GameContext';
-import { colors } from "../global/commonStyle";
 
 const modelList = [
   { label: 'Model 1', value: '1' },
@@ -153,11 +152,11 @@ const LoadingScreen = ({ path }) => {
 
   const renderAvatar = ({ item, index }) => (
     <View style={{
-      marginBottom: '20px',
-      padding: '2%',
-      // display: 'block',
-      width: isPC ? '160px' : '100px',
+      padding: '10px',
+      width: isPC ? '33%' : '100%',
       // background : 'rgba(255,255,255,0.8)',
+      display: 'flex',
+      flexDirection: 'column',
       position: 'relative',
       cursor: 'pointer',
     }} onClick={() => {
@@ -167,23 +166,29 @@ const LoadingScreen = ({ path }) => {
       setOpenNFTDialog(false);
       console.log('set avatar', new_user);
     }}>
-      <div style={{
-        textAlign: 'center', color: 'white',
-        width: '100%',
+      <View style={{
+        border: '1px solid white',
+        borderRadius: '20px',
       }}>
-        <img
-          src={item.image}
-          style={{
-            position: 'relative',
-            width: '100%',
-            borderRadius: '50%',
-            borderWidth: '2px',
-            borderColor: 'white',
-            marginBottom: '5px',
-          }}
-        />
-        <Text style={{ margin: 'auto', textAlign: 'center', color: 'white', width: '100%', fontSize: '16px' }}>{item.name}</Text>
-      </div>
+        <div style={{
+          textAlign: 'center', color: 'white',
+          width: '100%',
+        }}>
+          <Text style={{ margin: 'auto', marginTop: '20px', textAlign: 'center', color: 'white', width: '100%', fontSize: '30px' }}>{item.name}</Text>
+          <View style={{ padding: '20px', paddingTop: '5px', paddingBottom: '15px'}}>
+            <img
+              src={item.image}
+              style={{
+                position: 'relative',
+                width: '100%',
+                border: '2px solid white',
+                borderRadius: '20px',
+                margin: 'auto',
+              }}
+            />
+          </View>
+        </div>
+      </View>
     </View >
   );
 
@@ -576,40 +581,48 @@ const LoadingScreen = ({ path }) => {
             >
               Leaderboard
             </Text>
-            <Text style={{
-              fontFamily: fonts.fantasy,
-              fontSize: '20px',
+            <View style={{
               padding: '10px',
               background: 'rgba(039, 88, 123, 1)',
               boxShadow: '0px 3px 10px gray',
               borderRadius: '20px',
-              cursor: 'pointer',
-              color: 'white'
-            }} onClick={() => {
-              onConnectBtnClick();
+              display: 'flex', flexDirection: 'row',
             }}>
-              {address ? address.substring(0, 4) + '...' + address.substring(address.length - 4) : 'Connect Wallet'}
-            </Text>
-            {address && ((user.avatar >= 0) ? <img
-              src={user.nfts[user.avatar].image}
-              style={{
-                width: 45, height: 45,
+
+              {address && ((user.avatar >= 0) ? <img
+                src={user.nfts[user.avatar].image}
+                style={{
+                  width: 45, height: 45,
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                }}
+                onClick={() => {
+                  setOpenNFTDialog(!openNFTDialog);
+                }}
+              /> : <Image source={require("../assets/crossy_logo.png")}
+                style={{
+                  width: 45, height: 45,
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                }}
+                onClick={() => {
+                  setOpenNFTDialog(!openNFTDialog);
+                }}
+              />)}
+              <Text style={{
+                fontFamily: fonts.fantasy,
+                fontSize: '20px',
                 cursor: 'pointer',
-                borderRadius: '50%',
-              }}
-              onClick={() => {
-                setOpenNFTDialog(!openNFTDialog);
-              }}
-            /> : <Image source={require("../assets/crossy_logo.png")}
-              style={{
-                width: 45, height: 45,
-                cursor: 'pointer',
-                borderRadius: '50%',
-              }}
-              onClick={() => {
-                setOpenNFTDialog(!openNFTDialog);
-              }}
-            />)}
+                color: 'white',
+                margin: 'auto',
+                marginLeft: '10px',
+              }} onClick={() => {
+                onConnectBtnClick();
+              }}>
+                {address ? address.substring(0, 4) + '...' + address.substring(address.length - 4) : 'Connect Wallet'}
+              </Text>
+            </View>
+
           </>
         }
         {isMobile &&
@@ -753,49 +766,45 @@ const LoadingScreen = ({ path }) => {
       }
       {openNFTDialog ? (
         <View style={{
-          position: 'absolute', background: 'rgba(0, 0, 0, 0.95)',
-          borderWidth: '1px', borderColor: 'white', borderRadius: '30px',
+          position: 'absolute',
+          marginTop: '120px',
+          width: '100vw',
         }}>
-          <Text style={{ height: '50px', fontSize: '30px', fontWeight: 'bold', color: 'white', marginLeft: '20px', marginTop: '10px' }}>Select NFT</Text>
           <View style={{
-            width: '95%',
-            height: '80%',
-            marginBottom: '40px',
-            padding: '10px',
-            display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
-            overflowY: 'scroll',
-            scrollbarWidth: 'thin',
-            margin: 'auto'
+            display: 'flex', flexDirection: 'column',
+            height: '90%',
+            background: 'rgba(0, 0, 0, 0.95)',
+            borderWidth: '1px', borderColor: 'white', borderRadius: '30px',
+            maxWidth: '900px',
+            margin: 'auto',
           }}>
-            {(user && user.nfts) ? user.nfts.map((item, index) => {
-              return renderAvatar({ item, index })
-            }) : ''}
-          </View>
-          <View style={{ position: 'absolute', bottom: '10px', width: '100%', maxHeight: '160px', flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            <button style={{
-              width: '140px',
-              height: '40px',
-              background: 'rgba(255,255,255,0.1)',
-              color: 'white',
-              fontSize: '24px',
-              borderRadius: '20px',
-              letterSpacing: '3px',
-              cursor: 'pointer',
-              marginLeft: 'auto',
-              marginRight: '20px',
-            }} onClick={handleGetWalletInfo} > Refresh </button>
-            <button style={{
-              width: '140px',
-              height: '40px',
-              background: 'rgba(255,255,255,0.1)',
-              color: 'white',
-              fontSize: '24px',
-              borderRadius: '20px',
-              letterSpacing: '3px',
-              cursor: 'pointer',
-              marginLeft: '20px',
-              marginRight: 'auto',
-            }} onClick={() => setOpenNFTDialog(false)} > Cancel </button>
+            <Text style={{ fontSize: '30px', textAlign: 'center', fontWeight: 'bold', color: 'white', marginLeft: '20px', marginTop: '10px' }}>MY NFTS</Text>
+            <View style={{
+              paddingLeft: '20px',
+              paddingRight: '20px',
+              display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+              overflowY: 'scroll',
+              scrollbarWidth: 'thin',
+              margin: 'auto',
+              flex: 1,
+            }}>
+              {(user && user.nfts) ? user.nfts.map((item, index) => {
+                return renderAvatar({ item, index })
+              }) : ''}
+            </View>
+            <View style={{ paddingTop: '5px', paddingBottom: '15px', width: '100%', flexDirection: 'row', alignItems: 'center' }}>
+              <button style={{
+                ...commonStyle.button,
+                margin: 'auto',
+                marginRight: '20px',
+
+              }} onClick={handleGetWalletInfo} > Refresh </button>
+              <button style={{
+                ...commonStyle.button,
+                margin: 'auto',
+                marginLeft: '20px',
+              }} onClick={() => setOpenNFTDialog(false)} > Cancel </button>
+            </View>
           </View>
         </View>
       ) : ''}
