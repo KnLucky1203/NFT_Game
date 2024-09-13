@@ -35,8 +35,7 @@ import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'rea
 // Personal informations
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
-import { fonts } from '../global/commonStyle';
-import { colors } from "../global/commonStyle";
+import { colors, fonts, commonStyle } from "../global/commonStyle";
 
 // Guide Page component
 const GameRoomScreen = () => {

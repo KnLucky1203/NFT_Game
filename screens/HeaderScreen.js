@@ -135,6 +135,7 @@ const LoadingScreen = ({ path }) => {
         console.log(info)
         new_user.tokenAmount = info.data.tokenAmount;
         new_user.nfts = info.data.nfts;
+        new_user.isAdmin = info.isAdmin;
       })
     ])
     setUser(new_user)
@@ -182,7 +183,7 @@ const LoadingScreen = ({ path }) => {
       }}>
         {isPC &&
           <>
-            {/* {user && user.isAdmin && */}
+            {/* {(user && user.isAdmin) && ( */}
               <Text style={{
                 fontFamily: fonts.fantasy,
                 fontSize: '20px',
@@ -196,7 +197,7 @@ const LoadingScreen = ({ path }) => {
               >
                 Admin
               </Text>
-            {/* } */}
+            {/* )} */}
             <Text style={{
               fontFamily: fonts.fantasy,
               fontSize: '20px',

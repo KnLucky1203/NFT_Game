@@ -11,6 +11,7 @@ import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
+import { getAdminData } from '../global/global';
 
 // Initial Variables
 
@@ -152,35 +153,35 @@ export default function AdminScreen() {
     { label: 'Model 7', value: '7' },
     // ... more items
   ];
-  useEffect(() => {
-    setAdmin({
-      taxWallet: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6',
-      token: '',
-      tokenPerUnit: 0.5,
-      nfts: [
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 1' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 2' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 3' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 4' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 5' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 6' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 7' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 8' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 9' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 10' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 11' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 12' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 13' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 14' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 15' },
-        { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 16' },
-      ]
-    }); // TODO: local test
-  }, [])
+  // useEffect(() => {
+  //   setAdmin({
+  //     taxWallet: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6',
+  //     token: '',
+  //     tokenPerUnit: 0.5,
+  //     nfts: [
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 1' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 2' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 3' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 4' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 5' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 6' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 7' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 8' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 9' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 10' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 11' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 12' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 13' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 14' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 15' },
+  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 16' },
+  //     ]
+  //   }); // TODO: local test
+  // }, [])
   useEffect(() => {
     if (walletProvider) {
       getAdminData(walletProvider.publicKey.toBase58()).then((data) => {
-        // setAdmin(data.data);
+        setAdmin(data.data);
       })
     } else {
 

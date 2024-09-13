@@ -14,7 +14,7 @@ export const socket = io(SERVER_URL);
 
 
 // =========================================== WEB3 ======================================================
-// --- Web3 Import ---
+// --- Web3 Modal Import ---
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 import { solana, solanaTestnet, solanaDevnet } from '@web3modal/solana/chains'
 
