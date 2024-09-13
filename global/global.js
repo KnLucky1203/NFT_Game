@@ -1,0 +1,76 @@
+import axios from "axios"
+
+// Global variables : MBC-on mobile responsive
+export const FRONTEND_URL = "http://192.168.140.49:19006";
+// export const FRONTEND_URL = "https://valhalla.proskillowner.com";
+export const SERVER_URL = "https://bundleontron.tech";
+import io from 'socket.io-client';
+export const socket = io(SERVER_URL);
+
+
+import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
+import { solana, solanaTestnet, solanaDevnet } from '@web3modal/solana/chains'
+export const chains = [solana, solanaTestnet, solanaDevnet]
+
+// 1. Get projectId at https://cloud.walletconnect.com
+export const projectId = 'dcf293e3b464df32cd09530f8f8bf63d';
+
+// 2. Create solanaConfig
+export const metadata = {
+  name: 'Appkit Solana Example',
+  description: 'Appkit Solana Example',
+  url: 'https://appkit-solana.vercel.app', // origin must match your domain & subdomain
+  icons: ['https://avatars.githubusercontent.com/u/37784886'],
+};
+
+export const solanaConfig = defaultSolanaConfig({
+  metadata,
+  chains,
+  projectId,
+  auth: {
+    email: true,
+    socials: ['google', 'x', 'discord', 'farcaster', 'github', 'apple', 'facebook'],
+    walletFeatures: true, //set to true by default
+    showWallets: true //set to true by default
+  }
+});
+
+
+export const getNFTswithImage = async (wallet) => {
+  return await axios(SERVER_URL + '/api/nft_images/' + wallet)
+}
+
+export const getWalletInfo = async (wallet) => {
+  console.log('getWalletInfo', wallet)
+  return await axios(SERVER_URL + '/api/wallet_info/' + wallet)
+}
+
+export const getNFTOne = async (mint) => {
+  console.log('getNFTOne', mint)
+  return await axios(SERVER_URL + '/api/nft_one/' + mint)
+}
+
+export const getAdminData = async (wallet) => {
+  console.log('getAdminData', wallet)
+  return await axios(SERVER_URL + '/api/admin_data/' + wallet)
+}
+
+export const getWalletSOLBalance_bn = async (conn, wallet) => {
+  try {
+    let balance = await conn.getBalance(new PublicKey(wallet));
+    return balance;
+  } catch (error) {
+    // G.log(error);
+  }
+  return BigInt(0);
+};
+
+export const getWalletSOLBalance = async (conn, wallet) => {
+  try {
+    let balance = (await conn.getBalance(new PublicKey(wallet))) / LAMPORTS_PER_SOL;
+    return balance;
+  } catch (error) {
+    // G.log(error);
+  }
+  return 0;
+};

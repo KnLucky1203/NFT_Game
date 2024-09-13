@@ -31,7 +31,7 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 
-// Personal informations 
+// Personal informations
 import GameContext from '../context/GameContext';
 import ServerListDialog from './ServerListDialog';
 import { globalMap } from "../global/globalMap";
@@ -40,12 +40,7 @@ import { Linking } from 'react-native';
 import JoiningDialog from './JoiningDialog';
 import HighScoreDialog from './HighScore';
 import { View, Text, Image, Platform, Dimensions } from 'react-native';
-
-// Global variables : MBC-on mobile responsive
-export const FRONTEND_URL = "http://192.168.140.49:19006";
-// export const FRONTEND_URL = "https://valhalla.proskillowner.com";
-export const SERVER_URL = "https://valhalla.proskillowner.com";
-export const socket = io(SERVER_URL);
+import { socket, FRONTEND_URL, SERVER_URL } from '../global/global';
 
 // Landing Page component
 const LandingScreen = () => {
@@ -80,10 +75,10 @@ const LandingScreen = () => {
         keyMap_Server, setKeyMap_Server,
         // set the role to the context : MBC-on on update
         role, setRole,
-        // set the global map to the context 
+        // set the global map to the context
         contextGameMap, setContextGameMap } = React.useContext(GameContext);
 
-    // Initial hook functions 
+    // Initial hook functions
     useEffect(() => {
         setSocket(socket);
         Linking.getInitialURL().then(url => {
@@ -297,7 +292,7 @@ const styles = `
             opacity: 1;
         }
     }
-        
+
     @keyframes spin {
         from {
             transform: rotate(0deg);
@@ -315,7 +310,7 @@ const styles = `
         transform : scale(1);
         cursor : pointer;
     }
-    
+
     .title:hover{
         transition : all 2s;
         transform : scale(1.2);

@@ -27,6 +27,7 @@ async function rehydrateAsync() {
 }
 
 export default function GameProvider({ children }) {
+  const [user, setUser] = useState({});
   const [character, setCharacter] = useState(defaultState.character);
   const [highscore, setHighscore] = useState(defaultState.highscore);
   const [gameMode, setGameMode] = useState(0); // 0 : PVE , 1 : PVP  
@@ -108,7 +109,8 @@ export default function GameProvider({ children }) {
   React.useEffect(() => {
     const parseModulesAsync = async () => {
       try {
-        const { character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client } = await rehydrateAsync();
+        const { user, character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client } = await rehydrateAsync();
+        setUser(user);
         setCharacter(character);
         setHighscore(highscore);
         setGameMode(gameMode);
@@ -125,6 +127,8 @@ export default function GameProvider({ children }) {
   return (
     <GameContext.Provider
       value={{
+        user,
+        setUser,
         loadingState,
         setLoadingState,
         character,
