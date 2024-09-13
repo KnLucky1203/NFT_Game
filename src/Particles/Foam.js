@@ -1,5 +1,5 @@
 import { Bounce, Power2, TweenMax } from 'gsap';
-import { MeshPhongMaterial, DoubleSide, Mesh, PlaneBufferGeometry, Object3D } from 'three';
+import { MeshPhongMaterial, DoubleSide, Mesh, PlaneGeometry, Object3D } from 'three';
 
 const size = 0.6;
 
@@ -8,7 +8,7 @@ const material = new MeshPhongMaterial({
   flatShading: true,
   side: DoubleSide,
 });
-const geometry = new PlaneBufferGeometry(size, size, 1);
+const geometry = new PlaneGeometry(size, size, 1);
 
 export default class Foam extends Object3D {
   parts = [];

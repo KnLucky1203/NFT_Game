@@ -39,6 +39,7 @@ import { myFont } from '../global/myFont';
 
 // Guide Page component
 const GameRoomScreen = () => {
+  const { user, setUser } = React.useContext(GameContext);
 
     /* ================================ For Mobile Responsive ===============================*/
 
@@ -179,9 +180,13 @@ const GameRoomScreen = () => {
                         columnGap: '10px'
                     }}>
                         <View style={{ display: "flex", flexDirection: 'column', justifyContent: 'center', alignItems: 'center', rowGap: '10px' }}>
+              {(user.nfts && user.nfts.length && user.avatar >= 0) ? <img
+                src={user.nfts[user.avatar].image}
+                style={{ width: isPC ? '100px' : '60px', height: isPC ? '100px' : '60px', border: myRoomInfo.room_my_role == 0 ? '2px solid rgba(239, 88, 123, 1)' : '2px solid gray', borderRadius: '50%' }}
+              /> :
                             <Image source={
                                 myRoomInfo.players[0].player_state ? require("../assets/avatar/avatar_player4.png") : require("../assets/avatar/avatar_empty.png")}
-                                style={{ width: isPC ? '100px' : '60px', height: isPC ? '100px' : '60px', border: myRoomInfo.room_my_role == 0 ? '2px solid rgba(239, 88, 123, 1)' : '2px solid gray', borderRadius: '50%' }}></Image>
+                  style={{ width: isPC ? '100px' : '60px', height: isPC ? '100px' : '60px', border: myRoomInfo.room_my_role == 0 ? '2px solid rgba(239, 88, 123, 1)' : '2px solid gray', borderRadius: '50%' }}></Image>}
                             <Text style={{ fontSize: '24px', fontFamily: myFont, color: 'white' }}>
                                 {myRoomInfo.players[0].player_state ? myRoomInfo.players[0].player_name : 'Server'}
                             </Text>
