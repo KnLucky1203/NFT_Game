@@ -79,19 +79,18 @@ const LoadingScreen = ({ path }) => {
     setOpenMenu(false);
   };
 
-
-
   // Initial Variables
   const navigation = useNavigation();
 
   // Personal variables
-  const { user, setUser } = React.useContext(GameContext);
+  const { user, setUser,
+    setLoadingState
+  } = React.useContext(GameContext);
   // -- Web3 --
   const [isConnected, setIsConnected] = useState(false);
   const [web3modal, setWeb3Modal] = useState(null);
   const { address, chainId } = useWeb3ModalAccount()
   const { walletProvider, connection } = useWeb3ModalProvider()
-
 
   useEffect(() => {
     if (walletProvider) {
@@ -184,19 +183,19 @@ const LoadingScreen = ({ path }) => {
         {isPC &&
           <>
             {/* {(user && user.isAdmin) && ( */}
-              <Text style={{
-                fontFamily: fonts.fantasy,
-                fontSize: '20px',
-                padding: '10px',
-                cursor: 'pointer',
-                color: path == 'admin' ? colors.accent : 'white',
+            <Text style={{
+              fontFamily: fonts.fantasy,
+              fontSize: '20px',
+              padding: '10px',
+              cursor: 'pointer',
+              color: path == 'admin' ? colors.accent : 'white',
+            }}
+              onClick={() => {
+                navigation.navigate("AdminScreen")
               }}
-                onClick={() => {
-                  navigation.navigate("AdminScreen")
-                }}
-              >
-                Admin
-              </Text>
+            >
+              Admin
+            </Text>
             {/* )} */}
             <Text style={{
               fontFamily: fonts.fantasy,
@@ -253,7 +252,11 @@ const LoadingScreen = ({ path }) => {
                   borderRadius: '50%',
                 }}
                 onClick={() => {
-                  navigation.navigate("NFTScreen")
+                  setLoadingState(true);
+                  navigation.navigate("NFTScreen");
+                  setTimeout(() => {
+                    setLoadingState(false);
+                  }, 1000);
                 }}
               /> : <Image source={require("../assets/crossy_logo.png")}
                 style={{
@@ -262,7 +265,11 @@ const LoadingScreen = ({ path }) => {
                   borderRadius: '50%',
                 }}
                 onClick={() => {
-                  navigation.navigate("NFTScreen")
+                  setLoadingState(true);
+                  navigation.navigate("NFTScreen");
+                  setTimeout(() => {
+                    setLoadingState(false);
+                  }, 1000);
                 }}
               />)}
               <Text style={{
@@ -396,6 +403,7 @@ const LoadingScreen = ({ path }) => {
             >
               Leaderboard
             </Text>
+
             <Text style={{
               fontFamily: fonts.fantasy,
               fontSize: '32px',
@@ -404,32 +412,39 @@ const LoadingScreen = ({ path }) => {
               boxShadow: '0px 3px 10px gray',
               borderRadius: '20px',
               cursor: 'pointer',
-              color: 'white'
+              color: 'white',
+              alignItems: 'center',
+              display: 'flex',
+              columnGap: '10px'
             }} onClick={() => {
               onConnectBtnClick();
             }}>
+              {address && ((user.avatar >= 0) ? <img
+                src={user.nfts[user.avatar].image}
+                style={{
+                  width: 35, height: 35,
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                }}
+                onClick={() => {
+                  navigation.navigate("NFTScreen")
+                }}
+              /> : <Image source={require("../assets/crossy_logo.png")}
+                style={{
+                  width: 35, height: 35,
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                }}
+                onClick={() => {
+                  setLoadingState(true);
+                  navigation.navigate("NFTScreen");
+                  setTimeout(() => {
+                    setLoadingState(false);
+                  }, 1000);
+                }}
+              />)}
               {address ? address.substring(0, 4) + '...' + address.substring(address.length - 4) : 'Connect Wallet'}
             </Text>
-            {address && ((user.avatar >= 0) ? <img
-              src={user.nfts[user.avatar].image}
-              style={{
-                width: 35, height: 35,
-                margin: 'auto',
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                navigation.navigate("NFTScreen")
-              }}
-            /> : <Image source={require("../assets/crossy_logo.png")}
-              style={{
-                width: 35, height: 35,
-                margin: 'auto',
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                navigation.navigate("NFTScreen")
-              }}
-            />)}
           </View>
         </>
       }
