@@ -30,7 +30,7 @@ export default function GameProvider({ children }) {
   const [user, setUser] = useState({});
   const [character, setCharacter] = useState(defaultState.character);
   const [highscore, setHighscore] = useState(defaultState.highscore);
-  const [gameMode, setGameMode] = useState(0); // 0 : PVE , 1 : PVP  
+  const [gameMode, setGameMode] = useState(0); // 0 : PVE , 1 : PVP
   const [contextGameMap, setContextGameMap] = useState([]);
   const [role, setRole] = useState("");
   const [keyMap_Server, setKeyMap_Server] = useState(keyMap_None);
@@ -71,15 +71,15 @@ export default function GameProvider({ children }) {
 
 
   /* ================================ For Mobile Responsive ===============================*/
-  
-  /* ================================ For Loading Components  ===============================*/
-  
+
+  /* ================================ For Loading Components  ===========  ====================*/
+
   const [rotateValue, setRotateValue] = useState(0);
-  const [innerLoading, setInnerLoading] = useState(false);
+  const [innerLoading,   setInnerLoading] = useState(false);
   const [loadingState, setLoadingState] = useState(false);
   const [intervalId, setIntervalId] = useState(-1);
-  
-  /* ================================ For Loading Components  ===============================*/
+
+  /* ================================ For Loading Components  ==================  =============*/
 
   const startAnimation = () => {
     const _intervalId = setInterval(() => {

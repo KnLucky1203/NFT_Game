@@ -222,6 +222,7 @@ const GameRoomScreen = () => {
 
           <Text style={{
             ...commonStyle.button,
+            marginTop: '20px',
             fontFamily: fonts.fantasy,
           }}
             onClick={() => {

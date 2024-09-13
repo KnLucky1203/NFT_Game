@@ -290,7 +290,7 @@ const LandingScreen = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 columnGap: '10px',
-                marginTop: '25px'
+                marginTop: '45px'
               }}>
                 <Text style={{
                   ...commonStyle.button,
@@ -306,8 +306,7 @@ const LandingScreen = () => {
                 </Text>
 
                 <Text style={{
-                  marginTop: '20px', color: 'gray',
-                  fontSize: '18px', fontFamily: fonts.fantasy
+                  color: 'gray', fontSize: '18px', fontFamily: fonts.fantasy
                 }}>
                   OR
                 </Text>
@@ -347,6 +346,7 @@ const LandingScreen = () => {
                 borderRadius: '30px',
                 background: 'transparent',
                 marginTop: '20px',
+                marginBottom: '20px',
                 textAlign: 'center',
                 lineHeight: '2',
                 color: 'white'

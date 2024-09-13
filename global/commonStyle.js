@@ -22,7 +22,6 @@ export const commonStyle = {
   // ----- Common Controls -----
   button: {
     padding: '10px',
-    marginTop: '20px',
     fontSize: '20px',
     color: 'white',
     backgroundColor: colors.accent,

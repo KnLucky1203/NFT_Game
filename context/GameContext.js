@@ -3,7 +3,7 @@ import { createContext } from 'react';
 
 export default createContext({
     user: {}, setUser() { },
-    character: 'brent', setCharacter() { }, 
+    character: 'brent', setCharacter() { },
     highscore: 0, setHighscore() { },
     gameMode: 1,
     contextGameMap : [],

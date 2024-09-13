@@ -46,6 +46,8 @@ import GuideScreen from "./screens/GuideScreen";
 import LoadingScreen from "./screens/LoadingScreen";
 import LeaderboardScreen from "./screens/LeaderboardScreen";
 import GameRoomScreen from "./screens/GameRoomScreen";
+import AdminScreen from "./screens/AdminScreen";
+import NFTScreen from "./screens/NFTScreen";
 
 // Global variables
 const Stack = createStackNavigator();
@@ -64,14 +66,20 @@ export default function App() {
 
               <Stack.Screen name="LandingScreen" component={LandingScreen}
                 options={{ headerShown: false }} />
-                
+
               <Stack.Screen name="GameRoomScreen" component={GameRoomScreen}
                 options={{ headerShown: false }} />
 
               <Stack.Screen name="GuideScreen" component={GuideScreen}
                 options={{ headerShown: false }} />
-                
+
               <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen}
+                options={{ headerShown: false }} />
+
+              <Stack.Screen name="NFTScreen" component={NFTScreen}
+                options={{ headerShown: false }} />
+
+              <Stack.Screen name="AdminScreen" component={AdminScreen}
                 options={{ headerShown: false }} />
 
               {/* // Single play on the local machine */}

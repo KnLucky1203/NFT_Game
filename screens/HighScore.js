@@ -7,10 +7,7 @@ const server_headers = ["No", "Server", "Information"];
 import { keyMap_1, keyMap_2, keyMap_Both, keyMap_None } from "../global/keyMap";
 
 const HighScoreDialog = ({ onClose, opened }) => {
-
-  if (!opened) {
-    return null;
-  }
+  if (!opened) return null;
 
 
   return (
