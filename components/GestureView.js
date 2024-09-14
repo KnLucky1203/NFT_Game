@@ -55,6 +55,7 @@ class GestureView extends Component {
     this.socket = props.socket;
     this.role = props.role;
 
+    
     if (this.role == 'server') {
       this.align = 'left';
       if (this._keyMap == keyMap_None)
@@ -229,15 +230,43 @@ class GestureView extends Component {
     }
   };
 
+  // _getSwipeDirection = (gestureState) => {
+  //   const { SWIPE_LEFT, SWIPE_RIGHT, SWIPE_UP, SWIPE_DOWN } = swipeDirections;
+  //   const { dx, dy } = gestureState;
+  //   console.log("dx dx", dx, dy);
+  //   if (this._isValidHorizontalSwipe(gestureState)) {
+  //     console.log("----horizeontal");
+  //     return dx > 0 ? SWIPE_RIGHT : SWIPE_LEFT;
+  //   } else if (this._isValidVerticalSwipe(gestureState)) {
+  //     console.log("------vertial");
+  //     return dy > 0 ? SWIPE_DOWN : SWIPE_UP;
+  //   }
+  //   console.log("------none");
+  //   return null;
+  // };
+
   _getSwipeDirection = (gestureState) => {
-    const { SWIPE_LEFT, SWIPE_RIGHT, SWIPE_UP, SWIPE_DOWN } = swipeDirections;
     const { dx, dy } = gestureState;
-    if (this._isValidHorizontalSwipe(gestureState)) {
-      return dx > 0 ? SWIPE_RIGHT : SWIPE_LEFT;
-    } else if (this._isValidVerticalSwipe(gestureState)) {
-      return dy > 0 ? SWIPE_DOWN : SWIPE_UP;
+    const { SWIPE_LEFT, SWIPE_RIGHT, SWIPE_UP, SWIPE_DOWN } = swipeDirections;
+  
+    // Threshold to define a valid swipe
+    const SWIPE_THRESHOLD = 20;
+  
+    if (Math.abs(dx) > Math.abs(dy)) {
+      // Horizontal Swipe
+      if (dx > SWIPE_THRESHOLD) {
+        return SWIPE_RIGHT;
+      } else if (dx < -SWIPE_THRESHOLD) {
+        return SWIPE_LEFT;
+      }
+    } else {
+      // Vertical Swipe
+      if (dy > SWIPE_THRESHOLD) {
+        return SWIPE_DOWN;
+      } else if (dy < -SWIPE_THRESHOLD) {
+        return SWIPE_UP;
+      }
     }
-    return null;
   };
 
   _isValidHorizontalSwipe = (gestureState) => {

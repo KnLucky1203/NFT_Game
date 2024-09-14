@@ -142,7 +142,7 @@ const GameRoomScreen = () => {
           <View style={{
             width: '50%', height: '100%',
             display: 'flex',
-            borderRight: '1px solid white'
+            borderRight: commonStyle.border
           }}>
             <Image source={require("../assets/avatar/avatar_player4.png")}
               style={{
