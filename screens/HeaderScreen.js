@@ -150,13 +150,13 @@ const LoadingScreen = ({ path }) => {
       display: 'flex',
       flexDirection: 'row',
       background: 'black',
-      borderBottom: '1px solid white',
+      borderBottom: commonStyle.border,
       zIndex: 5000,
     }}>
 
       <View style={{
         width: '100px', height: '100px',
-        borderRight: '1px solid white',
+        borderRight: commonStyle.border,
       }}>
         <Image source={require("../assets/crossy_logo.png")}
           style={{
@@ -184,7 +184,7 @@ const LoadingScreen = ({ path }) => {
           <>
             {/* {(user && user.isAdmin) && ( */}
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
@@ -198,7 +198,7 @@ const LoadingScreen = ({ path }) => {
             </Text>
             {/* )} */}
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
@@ -211,7 +211,7 @@ const LoadingScreen = ({ path }) => {
               Home
             </Text>
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
@@ -224,7 +224,7 @@ const LoadingScreen = ({ path }) => {
               How to Play
             </Text>
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '20px',
               padding: '10px',
               cursor: 'pointer',
@@ -273,7 +273,7 @@ const LoadingScreen = ({ path }) => {
                 }}
               />)}
               <Text style={{
-                fontFamily: fonts.fantasy,
+                fontFamily: 'Horizon',
                 fontSize: '20px',
                 cursor: 'pointer',
                 color: 'white',
@@ -298,7 +298,7 @@ const LoadingScreen = ({ path }) => {
             }}
               onClick={handleCloseMenu} >
               <Text style={{
-                fontFamily: fonts.fantasy,
+                fontFamily: 'Horizon',
                 color: colors.accent,
               }}>Close</Text>
             </View> :
@@ -308,7 +308,7 @@ const LoadingScreen = ({ path }) => {
               zIndex: '5000'
             }}
               onClick={handleOpenMenu} >
-              <Text style={{ color: 'white', fontFamily: fonts.fantasy }}>Menu</Text>
+              <Text style={{ color: 'white', fontFamily: 'Horizon', fontSize:'20px'}}>Menu</Text>
             </View>)
         }
       </View>
@@ -348,7 +348,7 @@ const LoadingScreen = ({ path }) => {
             }}>
 
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
@@ -363,7 +363,7 @@ const LoadingScreen = ({ path }) => {
               Admin
             </Text>
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
@@ -378,7 +378,7 @@ const LoadingScreen = ({ path }) => {
               Home
             </Text>
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
@@ -391,7 +391,7 @@ const LoadingScreen = ({ path }) => {
               How to Play
             </Text>
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '32px',
               padding: '10px',
               cursor: 'pointer',
@@ -405,7 +405,7 @@ const LoadingScreen = ({ path }) => {
             </Text>
 
             <Text style={{
-              fontFamily: fonts.fantasy,
+              fontFamily: 'Horizon',
               fontSize: '32px',
               padding: '10px',
               background: 'rgba(039, 88, 123, 1)',

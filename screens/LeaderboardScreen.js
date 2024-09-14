@@ -31,11 +31,12 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking, Switch, ScrollView } from 'react-native';
+import SwitchToggle from 'react-native-switch-toggle';
 
 // Personal informations
 import HeaderScreen from "./HeaderScreen";
 
-import { fonts } from '../global/commonStyle';
+import { colors, commonStyle, fonts } from '../global/commonStyle';
 
 // Guide Page component
 const LeaderboardScreen = () => {
@@ -132,7 +133,7 @@ const LeaderboardScreen = () => {
           <View style={{
             width: '50%', height: '100%',
             display: 'flex',
-            borderRight: '1px solid white'
+            borderRight: commonStyle.border,
           }}>
             <Image source={require("../assets/avatar/avatar_player3.png")}
               style={{
@@ -159,16 +160,17 @@ const LeaderboardScreen = () => {
             height: isPC ? '300px' : '185px',
             justifyContent: 'center',
             alignItems: 'center',
-            borderBottom: '1px solid white',
+            borderBottom: commonStyle.border,
           }}>
-            <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Top Mobbers</Text>
+            <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon' }}>Top Mobbers</Text>
             <Text style={{
-              fontSize: isPC ? '60px' : '36px',
-              color: 'rgba(253, 198, 211, 1)',
-              WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-              filter: 'drop-shadow(3px 5px 8px #ff0000)',
-              fontWeight: '900',
-              textShadow: '0 0 5px #fff',
+              fontSize: isPC ? '96px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
             }}>Leaderboard</Text>
             <View style={{
               display: 'flex', flexDirection: 'row',
@@ -177,23 +179,34 @@ const LeaderboardScreen = () => {
             }}>
               <Text style={{
                 color: top10 ? 'gray' : 'white',
-                fontFamily: fonts.fantasy,
-                fontSize: '20px'
+                fontFamily: 'Horizon',
+                fontSize: '16px'
               }}>
                 Top 10 only
               </Text>
-              <Switch
-                value={top10}
-                trackColor='gray'
-                thumbColor='green'
-                onValueChange={() => {
-                  setTop10(!top10);
+              <SwitchToggle
+                switchOn={top10}
+                onPress={() => setTop10(!top10)}
+                circleColorOff="#FFFFFF"
+                circleColorOn="#FFFFFF"
+                backgroundColorOn="#EF587B"
+                backgroundColorOff="#5CE1E6"
+                containerStyle={{
+                  width: 51,
+                  height: 31,
+                  borderRadius: 25,
+                  padding: 2,
                 }}
-              > </Switch>
+                circleStyle={{
+                  width: 27,
+                  height: 27,
+                  borderRadius: 15,
+                }}
+              />
               <Text style={{
                 color: !top10 ? 'gray' : 'white',
-                fontFamily: fonts.fantasy,
-                fontSize: '20px'
+                fontFamily: 'Horizon',
+                fontSize: '16px'
               }}>
                 Global Players
               </Text>
@@ -208,16 +221,18 @@ const LeaderboardScreen = () => {
                 display: 'flex', flexDirection: 'row',
                 width: '100%', justifyContent: 'space-between',
                 padding: '10px',
+                border: commonStyle.border
               }}>
                 <Text style={{
                   color: 'white', fontSize: '20px',
                   width: '30px',
+                  fontFamily: 'Horizon',
 
                   borderRadius: '50%',
                   ...getRankStyle(index + 1)
                 }}>{index + 1}</Text>
-                <Text style={{ color: 'white', fontSize: '20px', }}>{player.name}</Text>
-                <Text style={{ color: 'white', fontSize: '20px', }}>{player.score}</Text>
+                <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
+                <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.score}</Text>
               </View>);
             })}
           </ScrollView>

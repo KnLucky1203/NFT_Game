@@ -58,24 +58,22 @@ export default function ScorePad({ gameOver, score, ...props }) {
         width: '50%', display: 'flex', flexDirection: 'column', borderRight: '2px solid gray',
         alignItems: 'center',
         textAlign: 'center',
-        rowGap: '10px',
+        // rowGap: '10px',
         justifyContent: 'center'
       }}>
         <Text style={{
-          color: 'white',
-          fontSize: isPC ? '50px' : '30px',
-          fontWeight: '900',
-          letterSpacing: '2px',
-          fontFamily: fonts.fantasy,
-          color: 'rgba(253, 198, 211, 1)',
-          WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-          filter: 'drop-shadow(3px 5px 8px #ff0000)',
-          textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de'
+              fontSize: isPC ? '96px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
 
         }}>{score}</Text>
         <Text style={{
-          fontSize: isPC ? '20px' : '14px',
-          fontFamily: fonts.fantasy,
+          fontSize: '20px',
+          fontFamily: 'Horizon',
           color: 'white',
 
         }}>Top {score}</Text>
@@ -88,7 +86,7 @@ export default function ScorePad({ gameOver, score, ...props }) {
         <Image source={require("../assets/images/ScoreCoin.png")}
           style={{ width: '30%', height: '50%' }}
         />
-        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '16px', fontFamily: fonts.fantasy }}>x 21</Text>
+        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '20px', fontFamily: fonts.fantasy }}>x 21</Text>
       </View>
     </View >
     // <View pointerEvents="none" style={[styles.container, { top: Math.max(top, 16), left: Math.max(left, 8) }]}>

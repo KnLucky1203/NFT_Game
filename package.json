@@ -36,6 +36,7 @@
     "react-native": "0.64.3",
     "react-native-element-dropdown": "^2.12.1",
     "react-native-safe-area-context": "3.3.2",
+    "react-native-switch-toggle": "^2.2.1",
     "react-native-web": "0.17.1",
     "react-native-webview": "^13.10.5",
     "socket.io-client": "^4.7.5",

@@ -43,42 +43,43 @@ function GameOver({ ...props }) {
   return (
     <Animated.View style={{
       background: 'black',
-      width: isPC ? '450px' : '80%',
-      height: isPC ? '40%' : '40%',
+      width: isPC ? '600px' : '350px',
+      height: isPC ? '394px' : '372px',
       display: 'flex', flexDirection: 'column',
       justifyContent: 'center', alignItems: 'center',
       rowGap: '20px',
       paddingTop: '10px',
-      paddingBottom: '10px',
-      border: '3px solid gray',
+      // paddingBottom: '10px',
+      border: '2px solid gray',
       borderRadius: '20px',
     }}>
       <Text style={{
-        textAlign: 'center',
-        fontSize: isPC ? '50px' : '32px',
-        fontWeight: '900',
-        color: 'rgba(253, 198, 211, 1)',
-        WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-        filter: 'drop-shadow(3px 5px 8px #ff0000)',
-        textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de'
-        // ...(isMobile ? { left: '0px' } : {}),
+              fontSize: isPC ? '96px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
       }}>
-        GAME OVER !
+        GAME OVER!
       </Text>
       <Text style={{
         textAlign: 'center',
-        fontSize: isPC ? '20px' : '14px',
+        fontSize: '20px',
         fontWeight: '900',
         color: 'white',
+         fontFamily: 'Horizon'
       }}>
         You scored&nbsp;
-        <Text style={{ color: colors.accent }}>350</Text> Crash Tokens
+        <Text style={{ color: colors.accent, fontFamily: 'Horizon', }}>350</Text> Crash Tokens
       </Text>
       <Text style={{
         ...commonStyle.button,
         fontFamily: fonts.fantasy,
-        marginTop: '30px',
-        marginBottom: '10px'
+        marginTop: '25px',
+        marginBottom: '10px',
+        fontFamily: 'Horizon',
       }}
         onClick={restartGame}
       >

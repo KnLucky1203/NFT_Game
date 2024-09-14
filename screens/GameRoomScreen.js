@@ -165,14 +165,15 @@ const GameRoomScreen = () => {
           rowGap: isPC ? '20px' : '10px',
         }}>
 
-          <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Multiplayer Robby</Text>
+          <Text style={{ color: 'white', fontSize: '24px', fontFamily: 'Horizon', }}>Multiplayer Robby</Text>
           <Text style={{
-            fontSize: isPC ? '60px' : '36px',
-            color: 'rgba(253, 198, 211, 1)',
-            WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-            filter: 'drop-shadow(3px 5px 8px #ff0000)',
-            fontWeight: '900',
-            textShadow: '0 0 5px #fff',
+              fontSize: isPC ? '96px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
           }}>HANG TIGHT...</Text>
           <View style={{
             display: 'flex', flexDirection: 'row',
@@ -187,17 +188,17 @@ const GameRoomScreen = () => {
                 <Image source={
                   myRoomInfo.players[0].player_state ? require("../assets/avatar/avatar_player4.png") : require("../assets/avatar/avatar_empty.png")}
                   style={{ width: isPC ? '100px' : '60px', height: isPC ? '100px' : '60px', border: myRoomInfo.room_my_role == 0 ? '2px solid rgba(239, 88, 123, 1)' : '2px solid gray', borderRadius: '50%' }}></Image>}
-              <Text style={{ fontSize: '24px', fontFamily: fonts.fantasy, color: 'white' }}>
+              <Text style={{ fontSize: '24px', fontFamily: 'Horizon', color: 'white' }}>
                 {myRoomInfo.players[0].player_state ? myRoomInfo.players[0].player_name : 'Server'}
               </Text>
             </View>
-            <Text style={{ fontSize: '18px', color: 'gray', fontFamily: fonts.fantasy }}>  VS </Text>
+            <Text style={{ fontSize: '18px', color: 'gray', fontFamily: 'Horizon', }}>  VS </Text>
             <View style={{ display: "flex", flexDirection: 'column', justifyContent: 'center', alignItems: 'center', rowGap: '10px' }}>
               <Image source={
                 myRoomInfo.players[1].player_state ? require("../assets/avatar/avatar_player1.png") : require("../assets/avatar/avatar_empty.png")
               }
                 style={{ width: isPC ? '100px' : '60px', height: isPC ? '100px' : '60px', border: myRoomInfo.room_my_role == 0 ? '2px solid gray' : '2px solid rgba(239, 88, 123, 1)', borderRadius: '50%' }}></Image>
-              <Text style={{ fontSize: '24px', fontFamily: fonts.fantasy, color: 'white' }}>
+              <Text style={{ fontSize: '24px', fontFamily: 'Horizon', color: 'white' }}>
                 {myRoomInfo.players[1].player_state ? myRoomInfo.players[1].player_name : 'Client'}
               </Text>
             </View>
@@ -205,7 +206,7 @@ const GameRoomScreen = () => {
 
           {myRoomInfo && myRoomInfo.room_my_role == 0 &&
             < View style={{ display: 'flex', flexDirection: 'row', columnGap: '10px', alignItems: 'center' }}>
-              <Text style={{ fontSize: isPC ? '18px' : '12px', color: copied ? 'rgba(239, 88, 123, 0.8)' : colors.accent, fontWeight: '800', textDecoration: 'underline', textUnderlineOffset: '10px', cursor: 'pointer' }}
+              <Text style={{ fontFamily: 'Horizon',fontSize: isPC ? '18px' : '12px', color: copied ? 'rgba(239, 88, 123, 0.8)' : colors.accent, fontWeight: '800', textDecoration: 'underline', textUnderlineOffset: '10px', cursor: 'pointer' }}
                 onClick={() => {
                   copyToClipboard(myRoomInfo.room_path);
                 }}>
@@ -222,7 +223,7 @@ const GameRoomScreen = () => {
           <Text style={{
             ...commonStyle.button,
             marginTop: '20px',
-            fontFamily: fonts.fantasy,
+            fontFamily: 'Horizon',
           }}
             onClick={() => {
               if (myRoomInfo.room_my_role == 0) {

@@ -87,7 +87,7 @@ const GuideScreen = () => {
                     <View style={{
                         width: '50%', height: '100%',
                         display: 'flex',
-                        borderRight: '1px solid white'
+                        borderRight: '1px solid gray'
                     }}>
                         <Image source={require("../assets/avatar/avatar_player3.png")}
                             style={{
@@ -111,18 +111,19 @@ const GuideScreen = () => {
                     <View style={{
                         width: '100%',
                         height: isPC ? '300px' : '185px',
-                        borderBottom: '1px solid white',
+                        // borderBottom: '1px solid white',
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                        <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Welcome To</Text>
+                        <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon', }}>Get Started</Text>
                         <Text style={{
-                            fontSize: isPC ? '60px' : '36px',
-                            color: 'rgba(253, 198, 211, 1)',
-                            WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-                            filter: 'drop-shadow(3px 5px 8px #ff0000)',
-                            fontWeight: '900',
-                            textShadow: '0 0 5px #fff',
+                            fontSize: isPC ? '96px' : '64px',
+                            color: '#FDC6D3',
+                            WebkitTextStroke: '1px #EF587B',
+                            filter: 'drop-shadow(0px 0px 20px #EF587B)',
+                            fontWeight: '700',
+                            // textShadow: '0 0 5px #fff',
+                            fontFamily: 'Horizon'
                         }}>How to Play</Text>
                     </View>
                     <View style={{
@@ -132,15 +133,15 @@ const GuideScreen = () => {
                         alignItems: 'center'
                     }}>
 
-                        <Text style={{ marginTop: '32px', color: 'white', fontSize: '40px', fontFamily: fonts.fantasy }}>
+                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '36px', fontFamily: 'Horizon', }}>
                             Title Here
                         </Text>
 
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '16px', fontFamily: fonts.fantasy, width: '70%', textAlign: 'center' }}>
+                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC?'70%':'90%', textAlign: 'center' }}>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tortor tortor, convallis id maximus non, semper eu sapien. Aliquam efficitur urna ac sapien ornare, vitae ornare nunc placerat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi massa ante, accumsan quis sollicitudin ut, sodales eget sapien. Praesent rhoncus elit et urna cursus facilisis.
                         </Text>
 
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '16px', fontFamily: fonts.fantasy, width: '70%', textAlign: 'center' }}>
+                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC?'70%':'90%', textAlign: 'center' }}>
                             Suspendisse potenti. Quisque tristique eros id dui ultrices fringilla. Vivamus luctus magna urna, at gravida turpis cursus eu. Donec nec eros lobortis, venenatis lectus vitae, sagittis velit. Nulla sed sollicitudin metus. Mauris eget finibus nisi, et convallis ex. Mauris enim nunc, molestie vel porta ac, aliquet sit amet mauris. Pellentesque id feugiat purus.
                         </Text>
                     </View>

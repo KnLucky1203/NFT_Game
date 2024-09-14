@@ -57,7 +57,7 @@ export default function AdminScreen() {
           width: '50px',
           height: '50px',
           borderRadius: '9px',
-          border: '1px solid white',
+          border: commonStyle.border,
           marginLeft: '10px',
         }}
       />
@@ -68,7 +68,7 @@ export default function AdminScreen() {
           cursor: 'pointer',
           // backgroundColor: 'black',
           textAlign: 'center',
-          border: '1px solid white',
+          border: commonStyle.border,
           borderRadius: '50px',
           height: '45px',
           margin: 'auto',
@@ -87,7 +87,7 @@ export default function AdminScreen() {
           color: 'white',
           // backgroundColor: 'black',
           textAlign: 'center',
-          borderWidth: '1px solid white',
+          borderWidth: commonStyle.border,
         }}
         itemContainerStyle={{ // list item container style
           backgroundColor: 'black',
@@ -236,7 +236,7 @@ export default function AdminScreen() {
           <View style={{
             width: '50%', height: '100%',
             display: 'flex',
-            borderRight: '1px solid white'
+            borderRight: commonStyle.border
           }}>
             <Image source={require("../assets/avatar/avatar_player3.png")}
               style={{
@@ -260,13 +260,13 @@ export default function AdminScreen() {
         }}>
 
           <Text style={{
-            fontSize: isPC ? '72px' : '40px',
-            color: 'rgba(253, 198, 211, 1)',
-            WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-            filter: 'drop-shadow(3px 5px 8px #ff0000)',
-            fontWeight: '900',
-            textShadow: '0 0 5px #fff',
-            margin: '20px',
+              fontSize: isPC ? '96px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
           }}>Admin Dashboard</Text>
           <View style={{
             display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
@@ -276,6 +276,7 @@ export default function AdminScreen() {
               color: 'white',
               fontSize: '20px',
               display: 'block',
+              fontFamily: 'Horizon',
             }}
             >
               Owner Wallet
@@ -292,6 +293,7 @@ export default function AdminScreen() {
               textAlign: 'left',
               lineHeight: '2',
               color: 'white',
+              fontFamily: 'Horizon'
             }}
               type="text" placeholder="Tax Wallet"
               value={admin.taxWallet}
@@ -316,6 +318,7 @@ export default function AdminScreen() {
               color: 'white',
               fontSize: '20px',
               display: 'block',
+              fontFamily: 'Horizon',
             }}
             >
               Add New NFT
@@ -332,6 +335,7 @@ export default function AdminScreen() {
               textAlign: 'left',
               lineHeight: '2',
               color: 'white',
+              fontFamily: 'Horizon',
             }}
               type="text" placeholder="Input new nft mint address."
               onChange={(e) => {
@@ -357,6 +361,7 @@ export default function AdminScreen() {
               display: 'block',
               marginRight: 'auto',
               marginLeft: '30px',
+              fontFamily: 'Horizon',
             }}
             >
               NFT List

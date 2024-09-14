@@ -2,16 +2,10 @@ import axios from "axios"
 import io from 'socket.io-client';
 
 // Global variables : MBC-on mobile responsive
-export const FRONTEND_URL = "http://192.168.140.49:19006";
+export const FRONTEND_URL = "http://192.168.140.55:19006";
 // export const FRONTEND_URL = "https://valhalla.proskillowner.com";
 export const SERVER_URL = "https://bundleontron.tech";  // TODO: replace with your own server URL
 export const socket = io(SERVER_URL);
-
-
-
-
-
-
 
 // =========================================== WEB3 ======================================================
 // --- Web3 Modal Import ---

@@ -5,3 +5,14 @@
 .hehe {
     background : blue;
 }
+
+@font-face {
+    font-family: 'Horizon';
+    src: url('./assets/fonts/Horizon-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  body {
+    font-family: 'Horizon', sans-serif;
+  }

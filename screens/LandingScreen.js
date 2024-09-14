@@ -213,7 +213,7 @@ const LandingScreen = () => {
     <View style={{
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: fonts.fantasy
+      fontFamily: 'Horizon'
     }}>
       <JoiningDialog
         userName={userName}
@@ -243,7 +243,7 @@ const LandingScreen = () => {
           <View style={{
             width: '50%', height: '100%',
             display: 'flex',
-            borderRight: '1px solid white'
+            borderRight: commonStyle.border
           }}>
             <Image source={cUserName == "" ? require("../assets/avatar/avatar_player1.png") : require("../assets/avatar/avatar_player2.png")}
               style={{
@@ -265,22 +265,23 @@ const LandingScreen = () => {
           // rowGap: '25px',
           padding: '25px'
         }}>
-          <Text style={{ color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>Get Started</Text>
+          <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon' }}>Welcome To</Text>
           <Text style={{
-            fontSize: '72px',
-            color: 'rgba(253, 198, 211, 1)',
-            WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-            filter: 'drop-shadow(3px 5px 8px #ff0000)',
-            fontWeight: '900',
-            textShadow: '0 0 5px #fff'
+            fontSize: '96px',
+            color: '#FDC6D3',
+            WebkitTextStroke: '1px #EF587B',
+            filter: 'drop-shadow(0px 0px 20px #EF587B)',
+            fontWeight: '700',
+            // textShadow: '0 0 5px #fff',
+            fontFamily: 'Horizon'
           }}>MOBBER</Text>
 
           {cUserName != "" ?
             <>
-              <Text style={{ marginTop: '20px', color: 'white', fontSize: '24px', fontFamily: fonts.fantasy }}>
+              <Text style={{ marginTop: '20px', color: 'white', fontSize: '36px', fontFamily: 'Horizon' }}>
                 Hey, {cUserName} !
               </Text>
-              <Text style={{ marginTop: '10px', color: 'white', fontSize: '18px', fontFamily: fonts.fantasy }}>
+              <Text style={{ marginTop: '0px', color: 'white', fontSize: '36px', fontFamily: 'Horizon' }}>
                 Choose your Game
               </Text>
 
@@ -294,7 +295,8 @@ const LandingScreen = () => {
                 <Text style={{
                   ...commonStyle.button,
                   fontWeight: '800',
-                  fontSize: '14px',
+                  fontSize: '20px',
+                  fontFamily: 'Horizon'
                 }}
                   onClick={() => {
                     setGameMode(0);
@@ -305,7 +307,7 @@ const LandingScreen = () => {
                 </Text>
 
                 <Text style={{
-                  color: 'gray', fontSize: '18px', fontFamily: fonts.fantasy
+                  color: 'gray', fontSize: '20px', fontFamily: 'Horizon'
                 }}>
                   OR
                 </Text>
@@ -313,7 +315,8 @@ const LandingScreen = () => {
                 <Text style={{
                   ...commonStyle.button,
                   fontWeight: '800',
-                  fontSize: '14px',
+                  fontSize: '20px',
+                  fontFamily: 'Horizon'
                 }}
                   onClick={() => {
                     setLoadingState(true);
@@ -339,16 +342,22 @@ const LandingScreen = () => {
             :
             <>
               <TextInput style={{
-                padding: '0.5rem',
+                // padding: '0.5rem',
+                paddingTop: '15px',
+                paddingBottom: "15px",
+                paddingLeft: '36px',
+                paddingRight: '36px',
                 flex: 1,
                 border: '1px solid gray',
                 borderRadius: '30px',
                 background: 'transparent',
-                marginTop: '20px',
+                marginTop: '25px',
                 marginBottom: '20px',
                 textAlign: 'center',
-                lineHeight: '2',
-                color: 'white'
+                // lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+                fontSize: '20px'
               }}
                 type="text" placeholder="Your Name"
                 value={userName}

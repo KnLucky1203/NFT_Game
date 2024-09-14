@@ -90,7 +90,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
           <View style={{
             width: '50%', height: '100%',
             display: 'flex',
-            borderRight: '1px solid white'
+            borderRight: commonStyle.border
           }}>
             <Image source={require("../assets/avatar/nft_mobber_1.jpg")}
               style={{
@@ -115,7 +115,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
           <View style={{
             width: '100%',
             height: isPC ? '200px' : '100px',
-            borderBottom: '1px solid white',
+            borderBottom: commonStyle.border,
             justifyContent: 'center',
             alignItems: 'center'
           }}>
