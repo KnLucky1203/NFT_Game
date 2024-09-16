@@ -111,13 +111,20 @@ export class CrossyCamera extends OrthographicCamera {
   }
 
   updateScale = ({ width, height, scale }) => {
-    this.left = -(width * scale);
-    this.right = width * scale;
-    this.top = height * scale;
-    this.bottom = -(height * scale);
+    let standardScale = 2000;
+    let scaleX = 2000 / width;
+    let scaleY = 2000 / height;
+    let newScale = scaleX < scaleY? scaleX: scaleY;
+    this.left = -(width * newScale);
+    this.right = width * newScale;
+    this.top = height * newScale;
+    this.bottom = -(height * newScale);
     this.zoom = 300;
 
-    console.log("Update Scale !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! :");
+    
+    // console.log("Update Scale !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! :");
+
+    console.log("width scale", width, scale);
     console.log("left:", this.left);
     console.log("right:", this.right);
     console.log("top:", this.top);
@@ -205,7 +212,7 @@ export class CrossyGameMap extends GameMap {
     this.heroWidth = heroWidth;
     this.globalMap = newGlobalMap;
 
-    console.log("CrossyGameMap :: constructor () ==> GLOBAL MAP : ", this.globalMap)
+    // console.log("CrossyGameMap :: constructor () ==> GLOBAL MAP : ", this.globalMap)
 
     // let tree_i = 0;
     // let road_i = 0;
@@ -333,7 +340,7 @@ export class CrossyGameMap extends GameMap {
   // Setup initial scene
   init = () => {
 
-    console.log("CrossyGameMap :: init () ==> GLOBAL MAP : ", this.globalMap)
+    // console.log("CrossyGameMap :: init () ==> GLOBAL MAP : ", this.globalMap)
 
     for (let i = 0; i < maxRows; i++) {
       this.grasses.items[i].position.z = MAP_OFFSET;

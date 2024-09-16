@@ -42,9 +42,10 @@ import HighScoreDialog from './HighScore';
 import HeaderScreen from "./HeaderScreen";
 
 import { fonts } from '../global/commonStyle';
-import { socket, FRONTEND_URL, SERVER_URL } from '../global/global';
+import { socket, FRONTEND_URL, SERVER_URL, registerUser, loginUser, getRate } from '../global/global';
 
 import { commonStyle } from '../global/commonStyle';
+import { cacheRate } from '../src/GameSettings';
 // Landing Page component
 const LandingScreen = () => {
 
@@ -105,7 +106,9 @@ const LandingScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingPercent, setLoadingPercent] = useState(1);
   const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [cUserName, setCUserName] = useState(""); // MBC - Name
+  const [onRegister, setOnRegister] = useState(false);
   const [otherName, setOtherName] = useState("waiting...");
 
   const [roomPath, setRoomPath] = useState(FRONTEND_URL);
@@ -113,10 +116,59 @@ const LandingScreen = () => {
   const [openHighScore, setOpenHighScore] = useState(false);
   const [serverId, setServerId] = useState('');
 
+  const [regName, setRegName] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirm, setRegConfirm] = useState('');
+  const [stateMsg, setStateMsg] = useState("");
+
   const [path, setPath] = useState("home");
 
+  const registering = async () => {
+    if (regName == '') {
+      setStateMsg("Input Your Name");
+      return;
+    }
+    if (regPassword == '' || regConfirm!=regPassword) {
+      setStateMsg("Password is not correct");
+      return;
+    }
+    let response = await registerUser(regName, regPassword);
+    if (response.data.code == "00") {
+      setStateMsg("");
+      setOnRegister(false);
+    }
+    else {
+      setStateMsg(response.data.message);
+    }
+    
+  }
+
+  const entering = async () => {
+    console.log("iiiiiiiiiiiiiiii ",localStorage.wallet);
+    if (localStorage.wallet == undefined) {
+      setStateMsg("Connect Wallet");
+      return;
+    }
+    let response = await loginUser(userName, password);
+
+    if (response.data.code == "00") {
+      let rateResponse = await getRate();
+      setCUserName(userName);
+      setStateMsg("");
+      localStorage.token = response.data.token;
+      localStorage.rate = rateResponse.data.data.rate;
+      // console.log("$$$$$$$$$$$$ ", localStorage.token, localStorage.rate);
+    }
+    else {
+      setStateMsg(response.data.message)
+    }
+  }
   // Receiving events from the server
   useEffect(() => {
+    const getCashRate = () => {
+      cacheRate = 0.1;
+    }
+
     const handleSocketRoom = (data) => {
       if (data.cmd === "SIGNAL_ROOM_CREATED") {
         setLoadingState(false);
@@ -202,6 +254,8 @@ const LandingScreen = () => {
       }
     }
 
+    getCashRate();
+
     socket.on('ROOM', handleSocketRoom);
 
     return () => {
@@ -276,7 +330,104 @@ const LandingScreen = () => {
             fontFamily: 'Horizon'
           }}>MOBBER</Text>
 
-          {cUserName != "" ?
+
+          {
+            onRegister?<>
+            <TextInput style={{
+              // padding: '0.5rem',
+              paddingTop: '15px',
+              paddingBottom: "15px",
+              paddingLeft: '36px',
+              paddingRight: '36px',
+              flex: 1,
+              border: '1px solid gray',
+              borderRadius: '30px',
+              background: 'transparent',
+              marginTop: '25px',
+              marginBottom: '10px',
+              textAlign: 'center',
+              // lineHeight: '2',
+              color: 'white',
+              fontFamily: 'Horizon',
+              fontSize: '20px'
+            }}
+              type="text" placeholder="Your Name"
+              value={regName}
+              onChange={(e) => {
+                setRegName(e.target.value);
+              }}
+              autoFocus />
+              <TextInput style={{
+              // padding: '0.5rem',
+              paddingTop: '15px',
+              paddingBottom: "15px",
+              paddingLeft: '36px',
+              paddingRight: '36px',
+              flex: 1,
+              border: '1px solid gray',
+              borderRadius: '30px',
+              background: 'transparent',
+              marginBottom: '10px',
+              textAlign: 'center',
+              // lineHeight: '2',
+              color: 'white',
+              fontFamily: 'Horizon',
+              fontSize: '20px'
+            }}
+              secureTextEntry={true} placeholder="Password"
+              value={regPassword}
+              onChange={(e) => {
+                setRegPassword(e.target.value);
+              }}
+              />
+              <TextInput style={{
+              // padding: '0.5rem',
+              paddingTop: '15px',
+              paddingBottom: "15px",
+              paddingLeft: '36px',
+              paddingRight: '36px',
+              flex: 1,
+              border: '1px solid gray',
+              borderRadius: '30px',
+              background: 'transparent',
+              marginBottom: '10px',
+              textAlign: 'center',
+              // lineHeight: '2',
+              color: 'white',
+              fontFamily: 'Horizon',
+              fontSize: '20px'
+            }}
+              secureTextEntry={true} placeholder="Confirm Password"
+              value={regConfirm}
+              onChange={(e) => {
+                setRegConfirm(e.target.value);
+              }}
+              />
+              <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom:'10px' }}>{stateMsg}</Text>
+              <View style={{
+              display: 'flex', flexDirection: 'row',
+              marginTop: '10px', alignItems: 'center',
+              columnGap: '10px'
+            }}>
+              <Text style={[commonStyle.button,{width: '150px'}]}
+              onClick={() => {
+                setOnRegister(false); setStateMsg("");
+              }}
+            >
+              Back
+            </Text> 
+            <Text style={[commonStyle.button,{width: '150px'}]}
+              onClick={() => {
+                registering();
+              }}
+            >
+              Register
+            </Text> 
+            </View>
+            </>:
+          
+
+          cUserName != "" ?
             <>
               <Text style={{ marginTop: '20px', color: 'white', fontSize: '36px', fontFamily: 'Horizon' }}>
                 Hey, {cUserName} !
@@ -352,7 +503,7 @@ const LandingScreen = () => {
                 borderRadius: '30px',
                 background: 'transparent',
                 marginTop: '25px',
-                marginBottom: '20px',
+                marginBottom: '10px',
                 textAlign: 'center',
                 // lineHeight: '2',
                 color: 'white',
@@ -365,13 +516,49 @@ const LandingScreen = () => {
                   setUserName(e.target.value);
                 }}
                 autoFocus />
-              <Text style={commonStyle.button}
-                onClick={() => {
-                  setCUserName(userName);
+                <TextInput style={{
+                // padding: '0.5rem',
+                paddingTop: '15px',
+                paddingBottom: "15px",
+                paddingLeft: '36px',
+                paddingRight: '36px',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                marginBottom: '20px',
+                textAlign: 'center',
+                // lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+                fontSize: '20px'
+              }}
+                secureTextEntry={true} placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
                 }}
+                />
+                
+                <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom:'10px' }}>{stateMsg}</Text>
+                <View style={{
+              display: 'flex', flexDirection: 'row',
+              alignItems: 'center',
+              columnGap: '10px'
+            }}>
+              <Text style={[commonStyle.button,{width: '150px'}]}
+                onClick={entering}
               >
                 Enter Mobber
               </Text>
+              <Text style={[commonStyle.button,{width: '150px'}]}
+                onClick={() => {
+                  setOnRegister(true);
+                }}
+              >
+                Sign Up
+              </Text>
+              </View>
             </>
           }
 

@@ -126,6 +126,8 @@ const LoadingScreen = ({ path }) => {
     }
     const new_user = deepCopy(user);
     new_user.wallet = walletProvider.publicKey.toBase58()
+    localStorage.wallet = new_user.wallet;
+    // console.log("wwwwwwwwwwwwwwwwww ", localStorage.wallet);
     await Promise.all([
       getWalletSOLBalance(connection, new_user.wallet).then((balance) => new_user.solAmount = balance / 1e9),
       // getWalletTokenBalance(connection, new_user.wallet, token).then((balance) => new_user.tokenAmount = balance),
@@ -300,6 +302,7 @@ const LoadingScreen = ({ path }) => {
               <Text style={{
                 fontFamily: 'Horizon',
                 color: colors.accent,
+                fontSize: '20px'
               }}>Close</Text>
             </View> :
             <View style={{

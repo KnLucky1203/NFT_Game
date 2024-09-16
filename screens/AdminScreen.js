@@ -11,7 +11,7 @@ import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
-import { getAdminData } from '../global/global';
+import { getAdminData, updateScore } from '../global/global';
 
 // Initial Variables
 
@@ -178,7 +178,26 @@ export default function AdminScreen() {
   //     ]
   //   }); // TODO: local test
   // }, [])
+  const getRateFromServer = async () => {
+    let rateResponse = await getRate();
+    localStorage.rate = rateResponse.data.data.rate;
+    setRate(localStorage.rate);
+  } 
+
+  const setRateValue = async () => {
+    await setRate(rate);
+    localStorage.rate= rate;
+  }
+
+
   useEffect(() => {
+    if (localStorage.rate == undefined) {
+      getRateFromServer();
+    }
+    else {
+      setRate(localStorage.rate);
+    }
+  
     if (walletProvider) {
       getAdminData(walletProvider.publicKey.toBase58()).then((data) => {
         setAdmin(data.data);
@@ -205,6 +224,7 @@ export default function AdminScreen() {
   }
   const [newTaxWallet, setNewTaxWallet] = useState('');
   const [newNFT, setNewNFT] = useState('');
+  const [rate, setRate] = useState(0);
   const addNewNFT = () => {
     getNFTOne(newNFT).then((nft) => {
       let new_admin = deepCopy(admin)
@@ -238,7 +258,7 @@ export default function AdminScreen() {
             display: 'flex',
             borderRight: commonStyle.border
           }}>
-            <Image source={require("../assets/avatar/avatar_player3.png")}
+            <Image source={require("../assets/avatar/nft_mobber_2.jpg")}
               style={{
                 width: '100%', height: '100%',
                 margin: 'auto'
@@ -273,6 +293,7 @@ export default function AdminScreen() {
             width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
           }}>
             <Text style={{
+              width:'100px',
               color: 'white',
               fontSize: '20px',
               display: 'block',
@@ -315,6 +336,7 @@ export default function AdminScreen() {
             width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
           }}>
             <Text style={{
+              width:'100px',
               color: 'white',
               fontSize: '20px',
               display: 'block',
@@ -351,10 +373,61 @@ export default function AdminScreen() {
               }}>Add
             </View>
           </View>
+          
+
+
+          <View style={{
+            display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
+            width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+          }}>
+            <Text style={{
+              width:'100px',
+              color: 'white',
+              fontSize: '20px',
+              display: 'block',
+              fontFamily: 'Horizon',
+            }}
+            >
+              Token Rate
+            </Text>
+            <TextInput style={{
+              width: '100%',
+              maxWidth: '510px',
+              padding: '0.5rem',
+              flex: 1,
+              border: '1px solid gray',
+              borderRadius: '30px',
+              background: 'transparent',
+              fontSize: '16px',
+              textAlign: 'left',
+              lineHeight: '2',
+              color: 'white',
+              fontFamily: 'Horizon',
+            }}
+              type="text" placeholder="Input token rate." value={rate}
+              onChange={(e) => {
+                setRate(e.target.value);
+              }}
+            />
+            <View style={{
+              ...commonStyle.button,
+              width: '65px',
+            }}
+              onClick={() => {
+                setRateValue()
+              }}>Set
+            </View>
+          </View>
+          <View style={{
+            width: '100%',
+            maxWidth: '800px',
+          }}></View>
+
           <View style={{
             width: '100%',
             maxWidth: '800px',
           }}>
+
             <Text style={{
               color: 'white',
               fontSize: '20px',

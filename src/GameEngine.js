@@ -34,11 +34,18 @@ export default class Engine {
   updateScale = () => {
     const { width, height, scale } = Dimensions.get("window");
     let _width = width;
+    // let scaleConstant = 1920;
 
     console.log("CCCCCCCCCCCCCCCCCCCamera info");
     console.log("width:", _width);
     console.log("height:", height);
     console.log("scale:", scale);
+
+    // let calScaleX = scaleConstant/_width;
+    // let calScaleY = scaleConstant/height;
+    // let realScale = calScaleX<calScaleY?calScaleX:calScaleY;
+    // console.log("scale info", calScaleX, calScaleY, realScale)
+    // const newscale=2;
 
 
     if (this.camera) {
@@ -61,7 +68,7 @@ export default class Engine {
     this.scene.worldWithCamera.position.z = -startingRow;
 
     this.updateScale();
-    console.log("Engine :: setupGame () ==> GLOBAL MAP : ", globalMap)
+    // console.log("Engine :: setupGame () ==> GLOBAL MAP : ", globalMap)
 
     this.gameMap = new CrossyGameMap({
       heroWidth: 0.7,
@@ -123,6 +130,7 @@ export default class Engine {
 
   // Move scene forward
   forwardScene = () => {
+    
     this.scene.world.position.z -=
       (this._hero.position.z - startingRow + this.scene.world.position.z) *
       CAMERA_EASING;
@@ -137,6 +145,7 @@ export default class Engine {
 
     // normal camera speed
     if (-this.scene.world.position.z - this.camCount > 1.0) {
+      console.log("forward ...");
       this.camCount = -this.scene.world.position.z;
       this.gameMap.newRow();
     }
@@ -380,6 +389,7 @@ export default class Engine {
   };
 
   beginMoveWithDirection = () => {
+    console.log("tTTTTTTTTTTTTTTTTTTTTTTT");
     if (this.isGameEnded()) {
       return;
     }

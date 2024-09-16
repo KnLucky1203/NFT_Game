@@ -73,3 +73,47 @@ export const getWalletSOLBalance = async (conn, wallet) => {
   return 0;
 };
 // =========================================== /WEB3 ======================================================
+
+export const registerUser = async (username, password) => {
+  return await axios.post(SERVER_URL + '/api/v1/auth/register', {
+    username, password
+  })
+}
+
+export const loginUser = async (username, password) => {
+  return await axios.post(SERVER_URL + '/api/v1/auth/login', {
+    username, password
+  })
+}
+
+export const getScoreList = async (sortBy, limit, page) => {
+  return await axios.get(SERVER_URL + '/api/v1/user/score/list?sortBy='+sortBy+'&limit='+limit+"&page="+page);
+}
+
+export const getRate = async (sortBy, limit, page) => {
+  return await axios.get(SERVER_URL + '/api/v1/base/reward/rate?mode=PVE');
+}
+
+export const setrate = async (rate) => {
+  return await axios.patch(SERVER_URL + '/api/v1/admin/reward/rate',{rate},  {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  });
+}
+
+export const getUserInfo = async (token) => {
+  return await axios.get(SERVER_URL + '/api/v1/user/info',  {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  });
+}
+
+export const updateScore = async (score, wallet, token) => {
+  return await axios.post(SERVER_URL + '/api/v1/user/score/update',{score, wallet},  {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  });
+}

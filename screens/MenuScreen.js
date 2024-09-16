@@ -184,7 +184,7 @@ const LandingScreen = () => {
             }}>
 
                 <div>
-                    <h1 className='title'>The Road to Valhalla!</h1>
+                    <h1 className='title'>The Road to Valhalla!!!!!</h1>
                 </div>
                 <div style={{
                     background: 'rgba(0,0,255,0.4)',

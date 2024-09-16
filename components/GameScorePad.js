@@ -3,6 +3,9 @@ import { StyleSheet, Text, Platform, View, Dimensions, Image } from 'react-nativ
 import { useSafeArea } from 'react-native-safe-area-context';
 import GameContext from '../context/GameContext';
 import { fonts } from '../global/commonStyle';
+import { cashRate } from '../src/GameSettings';
+import axios from 'axios';
+import { getUserInfo } from '../global/global';
 
 function generateTextShadow(width) {
   return Platform.select({
@@ -14,8 +17,8 @@ function generateTextShadow(width) {
 const textShadow = generateTextShadow(4);
 const textShadowHighscore = generateTextShadow(2);
 
-export default function ScorePad({ gameOver, score, ...props }) {
-  const { highscore = 0, setHighscore } = React.useContext(GameContext);
+export default function ScorePad({ gameOver, score,rate, ...props }) {
+  const [highscore, setHighscore] = useState(0);
 
   /* ================================ For Mobile Responsive ===============================*/
 
@@ -23,15 +26,24 @@ export default function ScorePad({ gameOver, score, ...props }) {
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
 
+  const getUserTopSorce = async () => {
+    let response = await getUserInfo(localStorage.token);
+    console.log("ssscore------", response.data.data.score);
+    setHighscore(response.data.data.score);
+  }
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
+    getUserTopSorce();
     window.addEventListener('resize', handleResize);
+    console.log("cash Rate = ", rate);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    
   }, []);
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -76,7 +88,7 @@ export default function ScorePad({ gameOver, score, ...props }) {
           fontFamily: 'Horizon',
           color: 'white',
 
-        }}>Top {score}</Text>
+        }}>Top {highscore}</Text>
       </View>
       <View style={{
         width: '50%', alignItems: 'center',
@@ -86,7 +98,7 @@ export default function ScorePad({ gameOver, score, ...props }) {
         <Image source={require("../assets/images/ScoreCoin.png")}
           style={{ width: '30%', height: '50%' }}
         />
-        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '20px', fontFamily: fonts.fantasy }}>x 21</Text>
+        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '20px', fontFamily: fonts.fantasy }}>x {(score * rate).toFixed(3)}</Text>
       </View>
     </View >
     // <View pointerEvents="none" style={[styles.container, { top: Math.max(top, 16), left: Math.max(left, 8) }]}>

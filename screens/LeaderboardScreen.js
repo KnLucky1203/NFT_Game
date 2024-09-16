@@ -37,6 +37,7 @@ import SwitchToggle from 'react-native-switch-toggle';
 import HeaderScreen from "./HeaderScreen";
 
 import { colors, commonStyle, fonts } from '../global/commonStyle';
+import { getScoreList } from '../global/global';
 
 // Guide Page component
 const LeaderboardScreen = () => {
@@ -45,7 +46,19 @@ const LeaderboardScreen = () => {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
+  const getScoreInfo = async () => {
+    let response = await getScoreList("top10", 10, 0);
+    // console.log("response ============> ", response)
+    console.log("recoe = ", response.data.code);
+    if (response.data.code == "00") {
+      console.log(response.data.data);
+      
+      setData(response.data.data);
+    }
+  }
+
   useEffect(() => {
+    getScoreInfo();
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
@@ -54,6 +67,7 @@ const LeaderboardScreen = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    
   }, []);
   /* ================================ For Mobile Responsive ===============================*/
   // Initial Variables
@@ -64,40 +78,7 @@ const LeaderboardScreen = () => {
 
   const [top10, setTop10] = useState(true);
 
-  const [data, setData] = useState([
-    { color: 'black', fontFamily: open, no: 1, name: 'Deagle', score: 1000 },
-    { color: 'black', fontFamily: open, no: 2, name: 'Crypto Lead', score: 900 },
-    { color: 'black', fontFamily: open, no: 3, name: 'GloryDream', score: 800 },
-    { color: 'white', fontFamily: open, no: 4, name: 'BillyBob', score: 700 },
-    { color: 'white', fontFamily: open, no: 6, name: 'AncientUnicorn38', score: 600 },
-    { color: 'white', fontFamily: open, no: 7, name: 'Ghost_90', score: 500 },
-    { color: 'white', fontFamily: open, no: 8, name: 'Firebase21', score: 400 },
-    { color: 'white', fontFamily: open, no: 9, name: 'Sky_Dawn', score: 300 },
-    { color: 'white', fontFamily: open, no: 10, name: 'Monica', score: 270 },
-    { color: 'white', fontFamily: open, no: 11, name: 'Williams', score: 210 },
-    { color: 'white', fontFamily: open, no: 12, name: 'Smith', score: 130 },
-    { color: 'white', fontFamily: open, no: 13, name: 'Jacky', score: 100 },
-    { color: 'white', fontFamily: open, no: 9, name: 'Sky_Dawn', score: 300 },
-    { color: 'white', fontFamily: open, no: 10, name: 'Monica', score: 270 },
-    { color: 'white', fontFamily: open, no: 11, name: 'Williams', score: 210 },
-    { color: 'white', fontFamily: open, no: 12, name: 'Smith', score: 130 },
-    { color: 'white', fontFamily: open, no: 13, name: 'Jacky', score: 100 },
-    { color: 'white', fontFamily: open, no: 9, name: 'Sky_Dawn', score: 300 },
-    { color: 'white', fontFamily: open, no: 10, name: 'Monica', score: 270 },
-    { color: 'white', fontFamily: open, no: 11, name: 'Williams', score: 210 },
-    { color: 'white', fontFamily: open, no: 12, name: 'Smith', score: 130 },
-    { color: 'white', fontFamily: open, no: 13, name: 'Jacky', score: 100 },
-    { color: 'white', fontFamily: open, no: 9, name: 'Sky_Dawn', score: 300 },
-    { color: 'white', fontFamily: open, no: 10, name: 'Monica', score: 270 },
-    { color: 'white', fontFamily: open, no: 11, name: 'Williams', score: 210 },
-    { color: 'white', fontFamily: open, no: 12, name: 'Smith', score: 130 },
-    { color: 'white', fontFamily: open, no: 13, name: 'Jacky', score: 100 },
-    { color: 'white', fontFamily: open, no: 9, name: 'Sky_Dawn', score: 300 },
-    { color: 'white', fontFamily: open, no: 10, name: 'Monica', score: 270 },
-    { color: 'white', fontFamily: open, no: 11, name: 'Williams', score: 210 },
-    { color: 'white', fontFamily: open, no: 12, name: 'Smith', score: 130 },
-    { color: 'white', fontFamily: open, no: 13, name: 'Jacky', score: 100 },
-  ]);
+  const [data, setData] = useState([]);
 
   const getRankStyle = (rank) => {
     if (rank == 1) {
@@ -215,7 +196,7 @@ const LeaderboardScreen = () => {
           <ScrollView style={{
             width: isPC ? '50vw' : '100%',
             height: '600px',
-          }}>
+          }} showsVerticalScrollIndicator={false}>
             {data.map((player, index) => {
               return (<View style={{
                 display: 'flex', flexDirection: 'row',
@@ -225,14 +206,14 @@ const LeaderboardScreen = () => {
               }}>
                 <Text style={{
                   color: 'white', fontSize: '20px',
-                  width: '30px',
+                  width: '40px',
                   fontFamily: 'Horizon',
 
                   borderRadius: '50%',
                   ...getRankStyle(index + 1)
                 }}>{index + 1}</Text>
                 <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
-                <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.score}</Text>
+                <Text style={{ width:"40px",color: 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
               </View>);
             })}
           </ScrollView>

@@ -46,6 +46,7 @@ import { useNavigation } from "@react-navigation/native";
 import { keyMap_None, keyMap_1, keyMap_2, keyMap_Both } from "../global/keyMap";
 import { globalMap } from "../global/globalMap";
 import HeaderScreen from "./HeaderScreen";
+import { updateScore } from "../global/global";
 
 const DEBUG_CAMERA_CONTROLS = false;
 class Game extends Component {
@@ -59,6 +60,7 @@ class Game extends Component {
     this.keyMap = props.keyMap;
     this.character = props.character;
     this.isDarkMode = props.isDarkMode;
+    this.rate = localStorage.rate;
   }
 
   /// Reserve State for UI related updates...
@@ -96,7 +98,9 @@ class Game extends Component {
     //   })();
     // }
   }
-
+  updateTopScore = async () => {
+    await updateScore(this.state.score, localStorage.wallet, localStorage.token);
+  }
   transitionToGamePlayingState = () => {
     Animated.timing(this.transitionScreensValue, {
       toValue: 0,
@@ -236,10 +240,14 @@ class Game extends Component {
     );
   };
 
+  
   renderGameOver = () => {
     if (this.state.gameState !== State.Game.gameOver) {
       return null;
     }
+    console.log("22222222222222222222 ", localStorage.token);
+    this.updateTopScore();
+
 
     return (
       <View style={[
@@ -323,6 +331,7 @@ class Game extends Component {
           <ScorePad
             score={this.state.score}
             gameOver={this.state.gameState === State.Game.gameOver}
+            rate = {this.rate}
           /> : <></>
         }
 
