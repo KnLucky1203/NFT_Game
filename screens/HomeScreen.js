@@ -49,7 +49,7 @@ function Screen(props) {
 
   React.useEffect(() => {
     function onKeyUp({ keyCode }) {
-      if ([32].includes(keyCode)) {
+      if ([32].includes(keyCode)||[38].includes(keyCode)) {
         if (gameMode == 2) {
           // window.alert("play game :", role);
           socket.emit('message', JSON.stringify({
@@ -62,9 +62,24 @@ function Screen(props) {
       }
     }
 
+    function onMouseClick(event) {
+      if (gameMode == 2) {
+        // window.alert("play game :", role);
+        socket.emit('message', JSON.stringify({
+          cmd: 'PLAY_GAME',
+          role: role
+        }));
+      } else {
+        props.onPlay();
+      }
+    }
+
+
     window.addEventListener("keyup", onKeyUp, false);
+    // window.addEventListener("click", onMouseClick, false);
     return () => {
       window.removeEventListener("keyup", onKeyUp);
+      // window.addEventListener("click", onMouseClick, false);
     };
 
   }, []);

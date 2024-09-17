@@ -170,6 +170,7 @@ const LandingScreen = () => {
     }
 
     const handleSocketRoom = (data) => {
+      // console.log("handleSocketRoom = ", data);
       if (data.cmd === "SIGNAL_ROOM_CREATED") {
         setLoadingState(false);
 
@@ -186,7 +187,7 @@ const LandingScreen = () => {
             players: data.players
           }));
 
-          console.log("After creating room : ", myRoomInfo);
+          // console.log("After creating room : ", myRoomInfo);
           navigation.navigate("GameRoomScreen");
         } else {
           window.alert(data.msg);
@@ -252,9 +253,15 @@ const LandingScreen = () => {
           window.alert(data.msg);
         }
       }
+      if (data.cmd == "START_GAME_APPROVED") {
+        // console.log("approve !!!!!!!!!!!!!!!!!!");
+        navigation.navigate("GameScreen_2");
+      }
     }
 
     getCashRate();
+
+    console.log("--------------con1------");
 
     socket.on('ROOM', handleSocketRoom);
 

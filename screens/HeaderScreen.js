@@ -133,10 +133,10 @@ const LoadingScreen = ({ path }) => {
       // getWalletTokenBalance(connection, new_user.wallet, token).then((balance) => new_user.tokenAmount = balance),
       // getNFTswithImage(conn, new_user.wallet).then((nfts) => new_user.nfts = nfts),
       getWalletInfo(new_user.wallet).then((info) => {
-        console.log(info)
-        new_user.tokenAmount = info.data.tokenAmount;
-        new_user.nfts = info.data.nfts;
-        new_user.isAdmin = info.isAdmin;
+        console.log("AAAAAAAAAAA==========", info)
+        new_user.tokenAmount = info.data.data.tokenAmount;
+        new_user.nfts = info.data.data.nfts;
+        new_user.isAdmin = info.data.isAdmin;
       })
     ])
     setUser(new_user)

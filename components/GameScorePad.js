@@ -28,7 +28,6 @@ export default function ScorePad({ gameOver, score,rate, ...props }) {
 
   const getUserTopSorce = async () => {
     let response = await getUserInfo(localStorage.token);
-    console.log("ssscore------", response.data.data.score);
     setHighscore(response.data.data.score);
   }
 

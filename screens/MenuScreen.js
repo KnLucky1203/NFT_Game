@@ -108,6 +108,9 @@ const LandingScreen = () => {
     useEffect(() => {
         const handleSocketMessage = (data) => {
             if (data.cmd === "ROOM_CREATED") {
+                console.log("Received--Message------------- : ", data);
+
+                // console.log("room created");
                 setRole('server');
                 setGameMode(2);
                 setRoomPath(FRONTEND_URL + "/?" + data.name);
@@ -116,7 +119,7 @@ const LandingScreen = () => {
         };
         const handleSocketRoom = (data) => {
 
-            console.log("Received : ", data);
+            console.log("Received--Room------------- : ", data);
 
             if (data.cmd == "GOT_JOINED_TO_CLIENT") {
                 if (data.state) {
@@ -138,7 +141,8 @@ const LandingScreen = () => {
                 setOtherName(data.player2);
             }
             if (data.cmd == "START_GAME_APPROVED") {
-                window.alert("ROLE:", role);
+                // window.alert("ROLE:", role);
+                // console.log("Reached Approve");
                 navigation.navigate("GameScreen_2");
             }
         }
@@ -146,6 +150,7 @@ const LandingScreen = () => {
         socket.on('message', handleSocketMessage);
         socket.on('ROOM', handleSocketRoom);
 
+        console.log("--------------con2------");
         return () => {
             socket.off('message', handleSocketMessage);
             socket.off('ROOM', handleSocketRoom);

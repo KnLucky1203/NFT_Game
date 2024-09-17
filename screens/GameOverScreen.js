@@ -6,9 +6,10 @@ import { fonts } from '../global/commonStyle';
 import { useNavigation } from "@react-navigation/native";
 import { commonStyle } from "../global/commonStyle";
 import { colors } from "../global/commonStyle";
+import { socket} from '../global/global';
 
 function GameOver({ ...props }) {
-  const { gameMode, setGameMode, character } = React.useContext(GameContext);
+  const { gameMode, setGameMode, character, role } = React.useContext(GameContext);
   const navigation = useNavigation();
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -16,16 +17,61 @@ function GameOver({ ...props }) {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
-
+  const [pvpEndFlag, setPvpEndflag] = useState(false);
+  const [resultString, setResultString] = useState("");
+  const [otherScore, setOtherScore] = useState(0);
+  const {
+    // set the socket to the context
+    setSocket,
+  } = React.useContext(GameContext);
   useEffect(() => {
+    setSocket(socket);
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
+
+    const handleSocketRoom = (data) => {
+      // console.log("handleSocketRoom = ", data);
+      console.log("--data:", data);
+      if (data.cmd === "MATCH_RESULT") {
+        if (role == "server") {
+          setOtherScore(data.score2);
+          if (data.score1> data.score2) {
+            setResultString("You Won");
+          }
+          else if (data.score1 < data.score2) {
+            setResultString("You Lost");            
+          }
+          else {
+            setResultString("Drawed");
+          }
+        }
+        if (role == "client") {
+          setOtherScore(data.score1);
+          if (data.score1 < data.score2) {
+            setResultString("You Won");
+          }
+          else if (data.score1 > data.score2) {
+            setResultString("You Lost");
+          }
+          else {
+            setResultString("Drawed");
+          }
+        }
+        setPvpEndflag(true);
+      }
+    }
+
     window.addEventListener('resize', handleResize);
+    socket.on('ROOM', handleSocketRoom);
     return () => {
       window.removeEventListener('resize', handleResize);
+      socket.off('ROOM', handleSocketRoom);
     };
+
+    
+
   }, []);
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -62,7 +108,7 @@ function GameOver({ ...props }) {
               // textShadow: '0 0 5px #fff',
               fontFamily: 'Horizon'
       }}>
-        GAME OVER!
+        {!pvpEndFlag||gameMode==0?"GAME OVER":resultString}
       </Text>
       <Text style={{
         textAlign: 'center',
@@ -71,20 +117,38 @@ function GameOver({ ...props }) {
         color: 'white',
          fontFamily: 'Horizon'
       }}>
-        You scored&nbsp;
-        <Text style={{ color: colors.accent, fontFamily: 'Horizon', }}>350</Text> Crash Tokens
+        You score is&nbsp;&nbsp;
+        <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{props.score}</Text>
       </Text>
-      <Text style={{
+      {pvpEndFlag&&<Text style={{
+        textAlign: 'center',
+        fontSize: '20px',
+        fontWeight: '900',
+        color: 'white',
+         fontFamily: 'Horizon'
+      }}>
+        Other score is&nbsp;&nbsp;
+        <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{otherScore}</Text>
+      </Text>}
+      {pvpEndFlag||gameMode==0?<Text style={{
         ...commonStyle.button,
         fontFamily: fonts.fantasy,
         marginTop: '25px',
         marginBottom: '10px',
         fontFamily: 'Horizon',
       }}
-        onClick={restartGame}
+        onClick={restartGame}  
       >
         Play Again
-      </Text>
+      </Text>:<Text style={{
+        textAlign: 'center',
+        fontSize: '30px',
+        fontWeight: '900',
+        color: 'red',
+         fontFamily: 'Horizon'
+      }}>
+        Wait Other!!!
+      </Text>}
     </Animated.View>
 
   );

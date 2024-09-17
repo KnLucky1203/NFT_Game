@@ -233,7 +233,7 @@ const GameRoomScreen = () => {
                   socket.emit('message', JSON.stringify({
                     cmd: 'ACTION_START_GAME', role: role
                   }));
-                  window.alert("ACTION START GAME!!!");
+                  // window.alert("ACTION START GAME!!!");
                 } else {
                   window.alert('Client not joined');
                 }

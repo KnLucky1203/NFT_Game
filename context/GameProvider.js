@@ -4,29 +4,37 @@ import GameContext from "./GameContext";
 import { keyMap_None } from "../global/keyMap";
 import { Animated, View, Image, Dimensions } from "react-native";
 
-const STORAGE_KEY = "@BouncyBrent:Character";
-const SHOULD_REHYDRATE = true;
+// const STORAGE_KEY = "@BouncyBrent:Character";
+// const defaultState = { character: "brent", highscore: 0 };
+// const STORAGE_KEY = "@BouncyAvocoder:Character";
+// const defaultState = { character: "avocoder", highscore: 0 };
+const STORAGE_KEY = "@BouncyWheeler:Character";
+const defaultState = { character: "wheeler", highscore: 0 };
+// const STORAGE_KEY = "@BouncyPalmer:Character";
+// const defaultState = { character: "palmer", highscore: 0 };
+// const STORAGE_KEY = "@BouncyJuwan:Character";
+// const defaultState = { character: "juwan", highscore: 0 };
 
-const defaultState = { character: "brent", highscore: 0 };
+const SHOULD_REHYDRATE = true;
 
 async function cacheAsync(value) {
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(value));
 }
 
-async function rehydrateAsync() {
-  if (!SHOULD_REHYDRATE || !AsyncStorage) {
-    return defaultState;
-  }
-  try {
-    const item = await AsyncStorage.getItem(STORAGE_KEY);
-    const data = JSON.parse(item);
-    return data;
-  } catch (ignored) {
-    return defaultState;
-  }
-}
 
 export default function GameProvider({ children }) {
+  async function rehydrateAsync() {
+    if (!SHOULD_REHYDRATE || !AsyncStorage) {
+      return defaultState;
+    }
+    try {
+      const item = await AsyncStorage.getItem(STORAGE_KEY);
+      const data = JSON.parse(item);
+      return data;
+    } catch (ignored) {
+      return defaultState;
+    }
+  }
   const [user, setUser] = useState({});
   const [character, setCharacter] = useState(defaultState.character);
   const [highscore, setHighscore] = useState(defaultState.highscore);

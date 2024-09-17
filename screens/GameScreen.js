@@ -46,10 +46,13 @@ import { useNavigation } from "@react-navigation/native";
 import { keyMap_None, keyMap_1, keyMap_2, keyMap_Both } from "../global/keyMap";
 import { globalMap } from "../global/globalMap";
 import HeaderScreen from "./HeaderScreen";
-import { updateScore } from "../global/global";
+import { updateScore, socket } from "../global/global";
+
 
 const DEBUG_CAMERA_CONTROLS = false;
 class Game extends Component {
+  static contextType = GameContext;
+  
 
   constructor(props) {
     super(props);
@@ -61,8 +64,8 @@ class Game extends Component {
     this.character = props.character;
     this.isDarkMode = props.isDarkMode;
     this.rate = localStorage.rate;
+    
   }
-
   /// Reserve State for UI related updates...
   state = {
     ready: false,
@@ -176,7 +179,6 @@ class Game extends Component {
     // await AudioManager.playAsync(
     //   AudioManager.sounds.bg_music, true
     // );
-
     Dimensions.addEventListener("change", this.onScreenResize);
   }
 
@@ -189,6 +191,7 @@ class Game extends Component {
   }
 
   UNSAFE_componentWillMount() {
+    const { role } = this.context;
     this.engine = new Engine();
     // this.engine.hideShadows = this.hideShadows;
     this.engine.onUpdateScore = (position) => {
@@ -204,6 +207,17 @@ class Game extends Component {
     };
     this.engine.onGameReady = () => this.setState({ ready: true });
     this.engine.onGameEnded = () => {
+      console.log("----onGameEnded");
+      
+      if (this.gameMode == 2) {
+        if (this.side == "left") {
+      socket.emit('message', JSON.stringify({
+            cmd: 'REGISTER_SCORE',
+            role: role,
+            score: this.state.score
+          }));
+        }
+      }
       this.setState({ gameState: State.Game.gameOver });
       // this.props.navigation.navigate('GameOver')
     };
@@ -245,7 +259,7 @@ class Game extends Component {
     if (this.state.gameState !== State.Game.gameOver) {
       return null;
     }
-    console.log("22222222222222222222 ", localStorage.token);
+    // console.log("22222222222222222222 ", localStorage.token);
     this.updateTopScore();
 
 
@@ -266,16 +280,17 @@ class Game extends Component {
           setGameState={(state) => {
             this.updateWithGameState(state);
           }}
+          score = {this.state.score}
         />
       </View>
     );
   };
 
   renderHomeScreen = () => {
+    
     if (this.state.gameState !== State.Game.none) {
       return null;
     }
-
     return (
       <View >
         <HomeScreen

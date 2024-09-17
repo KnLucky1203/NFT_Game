@@ -106,6 +106,7 @@ export default class Engine {
     }
     this.scene.useParticle(this._hero, type, obstacle.speed);
     this.scene.rumble();
+    console.log("---collide gameover---------");
     this.gameOver();
   };
 
@@ -153,6 +154,7 @@ export default class Engine {
 
   // Reset variables, restart game
   gameOver = () => {
+    console.log("----------engine gameover-----");
     this._hero.moving = false;
     // Stop player from finishing a movement
     this._hero.stopAnimations();
@@ -180,6 +182,7 @@ export default class Engine {
       return;
     }
     if (this._hero.position.z < this.camera.position.z - 1) {
+      console.log("--checkIfUserHasFallenOutOfFrame1");
       this.scene.rumble();
       this.gameOver();
       AudioManager.playDeathSound();
@@ -187,6 +190,7 @@ export default class Engine {
 
     // Check if offscreen
     if (this._hero.position.x < -5 || this._hero.position.x > 5) {
+      console.log("--checkIfUserHasFallenOutOfFrame2");
       this.scene.rumble();
       this.gameOver();
       AudioManager.playDeathSound();
@@ -389,7 +393,6 @@ export default class Engine {
   };
 
   beginMoveWithDirection = () => {
-    console.log("tTTTTTTTTTTTTTTTTTTTTTTT");
     if (this.isGameEnded()) {
       return;
     }
