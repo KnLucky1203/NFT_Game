@@ -120,12 +120,13 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
             alignItems: 'center'
           }}>
             <Text style={{
-              fontSize: isPC ? '60px' : '36px',
-              color: 'rgba(253, 198, 211, 1)',
-              WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-              filter: 'drop-shadow(3px 5px 8px #ff0000)',
-              fontWeight: '900',
-              textShadow: '0 0 5px #fff',
+              fontSize: isPC ? '96px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
             }}>My NFTs</Text>
           </View>
 

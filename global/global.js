@@ -2,7 +2,8 @@ import axios from "axios"
 import io from 'socket.io-client';
 
 // Global variables : MBC-on mobile responsive
-export const FRONTEND_URL = "http://192.168.140.55:19006";
+// export const FRONTEND_URL = "http://192.168.140.55:19006";
+export const FRONTEND_URL = "http://bundleontron.tech";
 // export const FRONTEND_URL = "https://valhalla.proskillowner.com";
 export const SERVER_URL = "https://bundleontron.tech";  // TODO: replace with your own server URL
 export const socket = io(SERVER_URL);
@@ -40,7 +41,7 @@ export const getNFTswithImage = async (wallet) => {
 
 export const getWalletInfo = async (wallet) => {
   console.log('getWalletInfo', wallet)
-  return await axios(SERVER_URL + '/api/wallet_info/' + wallet)
+  return await axios(SERVER_URL + '/api/v1/user/wallet_info/' + wallet)
 }
 
 export const getNFTOne = async (mint) => {

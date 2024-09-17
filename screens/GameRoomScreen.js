@@ -231,8 +231,9 @@ const GameRoomScreen = () => {
                   myRoomInfo.players[1].player_state == 1
                 ) {
                   socket.emit('message', JSON.stringify({
-                    cmd: 'ACTION_START_GAME'
+                    cmd: 'ACTION_START_GAME', role: role
                   }));
+                  window.alert("ACTION START GAME!!!");
                 } else {
                   window.alert('Client not joined');
                 }

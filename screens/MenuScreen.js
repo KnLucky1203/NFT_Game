@@ -138,7 +138,7 @@ const LandingScreen = () => {
                 setOtherName(data.player2);
             }
             if (data.cmd == "START_GAME_APPROVED") {
-                // window.alert("ROLE:", role);
+                window.alert("ROLE:", role);
                 navigation.navigate("GameScreen_2");
             }
         }
