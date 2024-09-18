@@ -33,7 +33,7 @@ export const solanaConfig = defaultSolanaConfig({
     showWallets: true //set to true by default
   }
 });
-
+const wallet = localStorage.getItem("wallet");
 // --- Web3 API ---
 export const getNFTswithImage = async (wallet) => {
   return await axios(SERVER_URL + '/api/nft_images/' + wallet)
@@ -41,6 +41,36 @@ export const getNFTswithImage = async (wallet) => {
 
 export const getCharacters = async () => {
   return await axios(SERVER_URL + '/api/v1/base/character')
+}
+
+export const addNFT = async(address, character) => {
+  console.log("add nft called..............")
+  return await axios.post(SERVER_URL + '/api/v1/admin/nft/create', {
+    headers: {
+      Authorization: wallet
+    },
+    nftMintAddress: address,
+    character: character,
+  })
+}
+
+export const updateNFTCharacter = async(id, character) => {
+  console.log("update nft called..............")
+  return await axios.post(SERVER_URL + '/api/v1/admin/nft/update', {
+    headers: {
+      Authorization: wallet
+    }, 
+    nftId: id,
+    character: character,
+  })
+}
+
+export const deleteNFT = async(id) => {
+  return await axios.delete(SERVER_URL + '/api/v1/admin/nft/delete/' + id, {
+    headers: {
+      Authorization: wallet
+    },
+  })
 }
 
 export const getWalletInfo = async (wallet) => {
@@ -115,8 +145,22 @@ export const getUserInfo = async (token) => {
   });
 }
 
+export const getDepositAddress = async () => {
+  return await axios.get(SERVER_URL + '/api/v1/base/deposit/address',  {
+  });
+}
+
 export const updateScore = async (score, wallet, token) => {
   return await axios.post(SERVER_URL + '/api/v1/user/score/update',{score, wallet},  {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  });
+}
+
+export const setMyNFT = async (nft_colletcion) => {
+  const token = localStorage.token;
+  return await axios.patch(SERVER_URL + '/api/v1/user/nft/update/' + nft_colletcion, {}, {
     headers: {
       Authorization: `bearer ${token}`,
     },

@@ -6,6 +6,7 @@ import { fonts } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from '../global/common';
+import { getUserInfo, setMyNFT } from '../global/global';
 
 export default function NFTScreen({ openNFT, setOpenNFT }) {
   /* ================================ For Mobile Responsive ===============================*/
@@ -13,6 +14,11 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
   useEffect(() => {
+    getUserInfo(localStorage.token).then(response => {
+      if(response.data.code == "00"){
+        setCharacter(response.data.data.character.name)
+      }
+    })
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
@@ -21,6 +27,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    
   }, []);
   /* ================================ For Mobile Responsive ===============================*/
   // Initial Variables
@@ -29,7 +36,8 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
 
   const { user, setUser,
     setLoadingState,
-
+    character,
+    setCharacter
   } = React.useContext(GameContext);
 
   const renderAvatar = ({ item, index }) => (
@@ -44,7 +52,15 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
     }} onClick={() => {
       const new_user = deepCopy(user);
       new_user.avatar = index;
+      new_user.collection = new_user.nfts[index].collection
       setUser(new_user);
+      setMyNFT(new_user.collection).then(response => {
+        console.log("update user response ======> ", response.data.data)
+        if(response.data.code == "00"){
+          console.log("here---------------")
+          setCharacter(response.data.data.character.name)
+        }
+      })
       console.log('set avatar', new_user);
     }}>
       <img
@@ -141,6 +157,33 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
             {(user && user.nfts) ? user.nfts.map((item, index) => {
               return renderAvatar({ item, index })
             }) : 'NFTs not found'}
+          </View>
+          <View style={{
+            padding: '25px',
+            display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+            overflowY: 'scroll',
+            scrollbarWidth: 'none',
+            margin: 'auto',
+            flex: 1, justifyContent: 'center'
+          }}>
+            <View style={{
+              padding: '10px',
+              width: isPC ? '100%' : '80%',
+              display: 'flex', flexDirection: 'column',
+              cursor: 'pointer',
+              background: 'rgba(0,0,255,0.1)',
+              borderRadius: '10px'
+            }} >
+              <img
+                src={character ? require(`../assets/character/${character}.png`) : require(`../assets/character/bacon.png`)}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  margin: 'auto',
+                  borderRadius: '10%',
+                }}
+              />
+            </View>
           </View>
         </View>
       </View>

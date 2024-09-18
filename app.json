@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Bouncy Bacon",
-    "slug": "bouncy-bacon",
+    "name": "Mobber Game",
+    "slug": "mobber-game",
     "privacy": "public",
     "orientation": "portrait",
     "primaryColor": "#87C6FF",

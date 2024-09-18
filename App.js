@@ -48,6 +48,7 @@ import LeaderboardScreen from "./screens/LeaderboardScreen";
 import GameRoomScreen from "./screens/GameRoomScreen";
 import AdminScreen from "./screens/AdminScreen";
 import NFTScreen from "./screens/NFTScreen";
+import DepositScreen from "./screens/DepositScreen";
 
 // Global variables
 const Stack = createStackNavigator();
@@ -80,6 +81,8 @@ export default function App() {
                 options={{ headerShown: false }} />
 
               <Stack.Screen name="AdminScreen" component={AdminScreen}
+                options={{ headerShown: false }} />
+                <Stack.Screen name="DepositScreen" component={DepositScreen}
                 options={{ headerShown: false }} />
 
               {/* // Single play on the local machine */}

@@ -426,7 +426,7 @@ function GameScreen(props) {
 
   useEffect(() => {
 
-    console.log("GameScreen")
+    console.log("###################################GameScreen")
 
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
@@ -436,6 +436,7 @@ function GameScreen(props) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+
   }, []);
 
   /* ================================ For Mobile Responsive ===============================*/

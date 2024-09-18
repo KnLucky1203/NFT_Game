@@ -15,5 +15,9 @@ export default createContext({
     keyMap_Client : [],
     setKeyMap_Client() {},
     socket : undefined,
-    setSocket() {}
+    setSocket() {},
+    adminWallet:"aaa",
+    setAdminWallet(){},
+    userInfo: {},
+    setUserInfo(){},
 });

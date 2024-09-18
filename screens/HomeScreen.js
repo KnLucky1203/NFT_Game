@@ -15,6 +15,7 @@ import Hand from "../components/HandCTA";
 import Footer from "../components/Home/Footer";
 import GameContext from "../context/GameContext";
 
+
 const screenHeight = Math.round(Dimensions.get('window').height);
 const screenWidth = Math.round(Dimensions.get('window').width);
 const halfScreenHeight = - screenHeight / 2;
@@ -33,16 +34,21 @@ function Screen(props) {
     // set the role to the context : MBC-on on update
     role, setRole,
     // set the global map to the context 
-    contextGameMap, setContextGameMap } = React.useContext(GameContext);
+    contextGameMap, setContextGameMap ,
+    adminWallet, setAdminWallet
+  } = React.useContext(GameContext);
 
   // const { setCharacter, character, gameMode, role, socket } = React.useContext(GameContext);
   const animation = new Animated.Value(0);
+
 
   useEffect(() => {
     const handleSocketPlayGame = (data) => {
       // window.alert("I will play as a ", data.role);
       props.onPlay();
     }
+
+    // getWalletAddress();
   
     socket.on('PLAY_GAME_APPROVED', handleSocketPlayGame);
   },[])

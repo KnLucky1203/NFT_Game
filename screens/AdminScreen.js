@@ -11,7 +11,7 @@ import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
-import { getAdminData, getCharacters, updateScore } from '../global/global';
+import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT } from '../global/global';
 
 // Initial Variables
 
@@ -51,7 +51,7 @@ export default function AdminScreen() {
       columnGap: '10px',
     }}>
       <img
-        src={item.image}
+        src={/.*\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(item.image) ? item.image : require(`../assets/nfts/nft-collection.webp`)}
         style={{
           position: 'relative',
           width: '50px',
@@ -61,7 +61,35 @@ export default function AdminScreen() {
           marginLeft: '10px',
         }}
       />
-      {isPC && <Text style={{ margin: 'auto', flex: '1', textAlign: 'center', color: 'white', width: '100%', fontSize: '16px' }}>{item.address}</Text>}
+      {isPC && <Text 
+                style={{ 
+                  margin: 'auto', 
+                  flex: '1', 
+                  textAlign: 'center', 
+                  color: 'white', 
+                  width: '100%', 
+                  fontSize: '16px' 
+                }}>
+                  {item.address}
+              </Text>
+      }
+      <img
+        src={ 
+          selCharacter?.name ?
+          require(`../assets/character/${selCharacter?.name}.png`) : 
+          (item?.character?.name) ? 
+          require(`../assets/character/${item?.character?.name}.png`) : 
+          require(`../assets/nfts/nft-collection.webp`)
+        }
+        style={{
+          position: 'relative',
+          width: '50px',
+          height: '50px',
+          borderRadius: '9px',
+          border: commonStyle.border,
+          marginLeft: '10px',
+        }}
+      />
       <Dropdown
         style={{  // main selected item
           width: '140px',
@@ -113,28 +141,71 @@ export default function AdminScreen() {
           width: '30px',
           height: '30px',
         }}
-        data={modelList}
+        data={characters}
         maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder="Select model"
-        value={item.model}
-        onChange={model => {
-          const new_admin = deepCopy(admin);
-          new_admin.nfts[index].model = model.value;
-          setAdmin(new_admin);
+        labelField="name"
+        valueField="symbol"
+        placeholder="Select Character"
+        value={name}
+        renderItem={renderCharacterItem}
+        onChange={async(character) => {
+          console.log("chnage charac====> ", character)
+          setSelCharacter(character)
+          updateNFTCharacter(item.id, character.id).then(res => {
+            const new_admin = deepCopy(admin);
+            if(res.data.code === '00') {
+              new_admin.nfts[index].character = {
+                id: res.data.data.character.id, 
+                name: res.data.data.character.name
+              };
+              setAdmin(new_admin);
+            }
+          })
         }}
+        
       />
       <View style={{
         ...commonStyle.button,
         margin: 'auto',
       }}
         onClick={() => {
-          const new_admin = deepCopy(admin);
-          new_admin.nfts.splice(index, 1);
-          setAdmin(new_admin);
+          deleteNFT(item.id).then(nft => {
+            const new_admin = deepCopy(admin);
+            new_admin.nfts.splice(index, 1);
+            setAdmin(new_admin);
+          })
         }}>Delete</View>
     </View >
+  );
+
+  const renderSelectedCharacterItem = (item) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+        <Text style={{
+          fontSize: 16,
+          color: 'green',
+        }}>
+          Selected: {item.name}
+        </Text>
+      </View>
+    );
+  }
+  const renderCharacterItem = (item) => (
+    <View style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      columnGap: '10px',
+    }}>
+      <Image source={require(`../assets/character/${item.name}.png`)} style={{
+        width: "30px", height: "40px"
+      }} />
+      <Text style={{ color: '#fff' }}>{item.name}</Text>
+    </View>
   );
   // --- Admin Dashboard ---
   const [admin, setAdmin] = useState({
@@ -144,17 +215,7 @@ export default function AdminScreen() {
     taxPerUnit: 0
   })
   const [characters, setCharacters] = useState([])
-  const [selCharacters, setSelCharacters] = useState([])
-  const modelList = [
-    { label: 'Model 1', value: '1' },
-    { label: 'Model 2', value: '2' },
-    { label: 'Model 3', value: '3' },
-    { label: 'Model 4', value: '4' },
-    { label: 'Model 5', value: '5' },
-    { label: 'Model 6', value: '6' },
-    { label: 'Model 7', value: '7' },
-    // ... more items
-  ];
+  const [selCharacter, setSelCharacter] = useState({})
   
   const getRateFromServer = async () => {
     let rateResponse = await getRate();
@@ -210,12 +271,27 @@ export default function AdminScreen() {
   const [newNFT, setNewNFT] = useState('');
   const [rate, setRate] = useState(0);
   const addNewNFT = () => {
-    getNFTOne(newNFT).then((nft) => {
-      let new_admin = deepCopy(admin)
-      if (!new_admin.nfts)
-        new_admin.nfts = [];
-      new_admin.nfts.push(nft)
-      setAdmin(new_admin);
+    // getNFTOne(newNFT).then((nft) => {
+    //   let new_admin = deepCopy(admin)
+    //   if (!new_admin.nfts)
+    //     new_admin.nfts = [];
+    //   new_admin.nfts.push(nft)
+    //   setAdmin(new_admin);
+    // })
+    addNFT(newNFT, selCharacter.id).then(response => {
+        let new_admin = deepCopy(admin)
+        if (!new_admin.nfts)
+          new_admin.nfts = [];
+        if (response.data.code == "00"){
+          console.log("after add nft ===>", response.data)
+          new_admin.nfts.push({
+            id: response.data.data.id,
+            address: response.data.data.address,
+            image: response.data.data.image,
+          })
+        }
+        
+        setAdmin(new_admin);
     })
   }
 
@@ -348,7 +424,7 @@ export default function AdminScreen() {
                 setNewNFT(e.target.value);
               }}
             />
-            <Dropdown
+            {/* <Dropdown
               style={{  // main selected item
                 width: '140px',
                 cursor: 'pointer',
@@ -401,16 +477,17 @@ export default function AdminScreen() {
               }}
               data={characters}
               maxHeight={300}
-              labelField="symbol"
-              valueField="name"
+              labelField="name"
+              valueField="symbol"
               placeholder="Select Character"
               value={name}
+              renderItem={renderCharacterItem}
               onChange={character => {
                 // const new_characters = deepCopy(characters);
                 // new_characters.nfts[index].model = character.id;
-                setSelCharacters([...selCharacters, character.id]);
+                setSelCharacter(character);
               }}
-            />
+            /> */}
             <View style={{
               ...commonStyle.button,
               width: '65px',

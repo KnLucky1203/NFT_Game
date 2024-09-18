@@ -110,10 +110,11 @@ const GuideScreen = () => {
                 }}>
                     <View style={{
                         width: '100%',
-                        height: isPC ? '300px' : '185px',
+                        // height: isPC ? '300px' : '185px',
                         // borderBottom: '1px solid white',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        marginTop: '40px'
                     }}>
                         <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon', }}>Get Started</Text>
                         <Text style={{
@@ -132,17 +133,23 @@ const GuideScreen = () => {
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-
+                        {/* 
                         <Text style={{ marginTop: '36px', color: 'white', fontSize: '36px', fontFamily: 'Horizon', }}>
                             Title Here
-                        </Text>
+                        </Text> */}
+                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        Welcome to Mobber! The game of Mob Collective.</Text>
+                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        There are two game options to choose from.</Text>
 
-                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC?'70%':'90%', textAlign: 'center' }}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tortor tortor, convallis id maximus non, semper eu sapien. Aliquam efficitur urna ac sapien ornare, vitae ornare nunc placerat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi massa ante, accumsan quis sollicitudin ut, sodales eget sapien. Praesent rhoncus elit et urna cursus facilisis.
+                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        PVP (Multiplayer) – Place a bet with your friends on who is going to get the highest score during the game. Winner takes all. The player who reaches the highest score in the game wins all tokens your have bet. You think you’re the best?! Put your money where your mouth is. 
                         </Text>
-
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC?'70%':'90%', textAlign: 'center' }}>
-                            Suspendisse potenti. Quisque tristique eros id dui ultrices fringilla. Vivamus luctus magna urna, at gravida turpis cursus eu. Donec nec eros lobortis, venenatis lectus vitae, sagittis velit. Nulla sed sollicitudin metus. Mauris eget finibus nisi, et convallis ex. Mauris enim nunc, molestie vel porta ac, aliquet sit amet mauris. Pellentesque id feugiat purus.
+                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        P2E (Single player) – Compete on the global leader boards to rise to the top with the highest scores. Earn $RISE token each time you play. The higher the score you get during the game the more $RISE you earn which can be withdrawn at the end of the game. You win it, you take it. 
+                        </Text>
+                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        The global leader boards will play a role in our communities reward shed so the alpha is to own Mob Collective NFTs and RISE to the top!
                         </Text>
                     </View>
 

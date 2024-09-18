@@ -142,7 +142,7 @@ const LandingScreen = () => {
             }
             if (data.cmd == "START_GAME_APPROVED") {
                 // window.alert("ROLE:", role);
-                // console.log("Reached Approve");
+                console.log("Reached Approve");
                 navigation.navigate("GameScreen_2");
             }
         }

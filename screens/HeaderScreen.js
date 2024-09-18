@@ -102,6 +102,7 @@ const LoadingScreen = ({ path }) => {
     }
   }, [walletProvider]);
   const onConnectBtnClick = () => {
+    
     if (isConnected) {
       if (web3modal) web3modal.open();
     } else {

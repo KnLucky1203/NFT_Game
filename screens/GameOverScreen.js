@@ -85,12 +85,14 @@ function GameOver({ ...props }) {
   /* ================================ For Mobile Responsive ===============================*/
 
   const restartGame = () => {
+    if (gameMode == 2) {
     if (role == "client") {
       socket.emit('message', JSON.stringify({
         cmd: 'CLIENT_PLAY_AGAIN',
       }));
     }
     navigation.navigate("GameRoomScreen");
+  }
     props.setGameState('none');
     // setGameMode(0);
     // navigation.navigate("GameScreen");

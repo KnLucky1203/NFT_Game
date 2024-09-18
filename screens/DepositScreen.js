@@ -30,81 +30,164 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, TextInput, Image, Platform, Dimensions, Linking, Switch, ScrollView } from 'react-native';
-import SwitchToggle from 'react-native-switch-toggle';
-import GameContext from '../context/GameContext';
-// Personal informations
-import HeaderScreen from "./HeaderScreen";
+import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'react-native';
+import { globalMap } from "../global/globalMap";
 
-import { colors, commonStyle, fonts } from '../global/commonStyle';
-import { getScoreList, getUserInfo } from '../global/global';
+// Personal informations
+import GameContext from '../context/GameContext';
+import HeaderScreen from "./HeaderScreen";
+import { colors, fonts, commonStyle } from "../global/commonStyle";
+import { initialWindowSafeAreaInsets } from 'react-native-safe-area-context';
+import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
+
+import { Connection, PublicKey, Transaction, clusterApiUrl, sendAndConfirmTransaction, Keypair } from '@solana/web3.js';
+import { getDepositAddress } from "../global/global";
+import {
+  getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, Token,
+  getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction,
+  getMint
+} from '@solana/spl-token';
 // Guide Page component
-const LeaderboardScreen = () => {
+const DepositScreen = () => {
+  const { user, setUser } = React.useContext(GameContext);
 
   /* ================================ For Mobile Responsive ===============================*/
+  const [path, setPath] = useState("room");
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
-  const [top10, setTop10] = useState(true);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
-  // const [userInfo, setUserInfo] = useState({});
-  const {
-    userInfo,
-    setUserInfo,
-  } = React.useContext(GameContext);
-  const getScoreInfo = async () => {
-    let response = await getScoreList(top10?"top10":"global", 10, 0);
-    // console.log("response ============> ", response)
-    console.log("recoe = ", response.data.code);
-    if (response.data.code == "00") {
-      console.log(response.data.data);
-      
-      setData(response.data.data);
-    }
-  }
-  
+  const [amount, setAmount] = useState(1);
+  const [serverId, setServerId] = useState('');
+  const { walletProvider, connection } = useWeb3ModalProvider();
+  const { address, chainId } = useWeb3ModalAccount()
+
   useEffect(() => {
-    getScoreInfo();
-    // if(localStorage.token) getUserInfo(localStorage.token).then(response => {
-    //   if(response.data.code == "00"){
-    //     setUserInfo(response.data.data)
-    //   }
-    // });
+
+    Linking.getInitialURL().then(url => {
+      if (url) {
+        const _serverId = url.split('/?')[1];
+        console.log("server id : ", _serverId);
+        if (_serverId) {
+          setServerId(_serverId);
+        }
+        // setRoomPath(FRONTEND_URL + "/?" + _serverId);
+      }
+    }).catch(err => console.error('An error occurred', err));
+
+
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
+
+
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-    
-  }, [top10]);
+  }, []);
+
   /* ================================ For Mobile Responsive ===============================*/
+
   // Initial Variables
   const navigation = useNavigation();
+  const {
+    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo,
+  } = React.useContext(GameContext);
 
-  const [path, setPath] = useState("leaderboard");
+  const setBetAmount = (value) => {
 
-  const [data, setData] = useState([]);
-
-  const getRankStyle = (rank) => {
-    if (rank == 1) {
-      return { color: 'black', background: 'rgba(243, 179, 76, 1)', borderRadius: '50%', border: '2px solid yellow' }
-    } else if (rank == 2) {
-      return { color: 'black', background: 'gray', borderRadius: '50%', border: '2px solid white' }
-    } else if (rank == 3) {
-      return { color: 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: '2px solid yellow' }
+    console.log("serverId============", serverId);
+    if (serverId) {
+      window.alert("Server already select the amount of deposit token");
+      return;
     }
-    return { background: 'black', borderRadius: '50%', border: '2px solid white' }
+    setAmount(value);
   }
 
+  const depositToken = async () => {
+
+    let response;
+    try {
+      response = await getDepositAddress();
+    } catch (error) {
+      console.error('Error fetching deposit address:', error);
+      return;
+    }
+
+    const tokenAddr = response.data.data.tokenAddress;
+
+    if (!walletProvider || !address || !connection) {
+      window.alert('walletProvider or address is undefined');
+      return;
+    }
+    try {
+      const myAddr = address; // The address of the user
+      const adminWalletAddr = response.data.data.depositAddress; // Admin address
+/*
+      const sender = new PublicKey(myAddr); // User's public key
+      const receiver = new PublicKey(adminWalletAddr); // Admin's public key
+      const mint = new PublicKey(tokenAddr); // Token mint address
+
+      const fromATA = getAssociatedTokenAddressSync(mint, sender);
+      const toATA = getAssociatedTokenAddressSync(mint, receiver);
+
+      let instructions = [];
+      const info = await connection.getAccountInfo(toATA);
+      if (!info) {
+        instructions.push(createAssociatedTokenAccountInstruction(sender, toATA, receiver, mint));
+      }
+      const tokenMint = await getMint(connection, mint);
+      instructions.push(createTransferInstruction(fromATA, toATA, sender, amount * 10 ** tokenMint.decimals));
+
+      const tx = new Transaction().add(...instructions);
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = sender;
+      console.log("deposit1--------------->");
+      const signature = await walletProvider.sendTransaction(tx, connection);
+
+      console.log("deposit2--------------->", signature);
+      await connection.confirmTransaction(signature, 'processed');
+
+      console.log("deposit3--------------->", signature);
+      setDeposited(true);
+      socket.emit('message', JSON.stringify({
+        cmd: 'TOKEN_DEPOSITED', role: role
+      }));
+      
+*/    
+      console.log("^^^^^^^^^^^^^^",globalMap);
+      if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
+        socket.emit('message', JSON.stringify({
+          cmd: 'ACTION_JOIN_GAME',
+          name: serverId.toString(),
+          player2: userInfo.username,
+        }));
+      } else {
+        socket.emit('message', JSON.stringify({
+          cmd: 'ACTION_CREATE_ROOM',
+          player1: userInfo.username,
+          map: globalMap,
+          amount: amount
+        }));
+      }
+
+    } catch (error) {
+      console.error('Error depositng:', error);
+      return;
+    }
+
+
+    return;
+  }
   // Receiving events from the server
 
   return (
     <View style={{
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: fonts.fantasy,
+      fontFamily: fonts.fantasy
     }}>
       <HeaderScreen path={path}></HeaderScreen>
 
@@ -121,9 +204,9 @@ const LeaderboardScreen = () => {
           <View style={{
             width: '50%', height: '100%',
             display: 'flex',
-            borderRight: commonStyle.border,
+            borderRight: commonStyle.border
           }}>
-            <Image source={require("../assets/avatar/avatar_player3.png")}
+            <Image source={require("../assets/avatar/avatar_player4.png")}
               style={{
                 width: '100%', height: '100%',
                 margin: 'auto'
@@ -136,102 +219,100 @@ const LeaderboardScreen = () => {
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
-          columnGap: '10px',
           width: isPC ? '50%' : '100%',
           height: '100%',
           textAlign: 'center',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: isMobile ? 'flex-end' : 'center',
+          rowGap: isPC ? '20px' : '10px',
         }}>
+
+          <Text style={{ color: 'white', fontSize: '24px', fontFamily: 'Horizon', }}>Multiplayer Robby</Text>
+          <Text style={{
+            fontSize: isPC ? '96px' : '64px',
+            color: '#FDC6D3',
+            WebkitTextStroke: '1px #EF587B',
+            filter: 'drop-shadow(0px 0px 20px #EF587B)',
+            fontWeight: '700',
+            // textShadow: '0 0 5px #fff',
+            fontFamily: 'Horizon'
+          }}>Deposit Tokens</Text>
+
           <View style={{
-            width: '100%',
-            height: isPC ? '300px' : '185px',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderBottom: commonStyle.border,
+            display: 'flex', flexDirection: 'row',
+            justifyContent: 'center', alignItems: 'center',
+            columnGap: '10px'
           }}>
-            <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon' }}>Top Mobbers</Text>
             <Text style={{
-              fontSize: isPC ? '96px' : '64px',
-              color: '#FDC6D3',
-              WebkitTextStroke: '1px #EF587B',
-              filter: 'drop-shadow(0px 0px 20px #EF587B)',
-              fontWeight: '700',
-              // textShadow: '0 0 5px #fff',
-              fontFamily: 'Horizon'
-            }}>Leaderboard</Text>
-            <View style={{
-              display: 'flex', flexDirection: 'row',
-              marginTop: '30px', alignItems: 'center',
-              columnGap: '10px'
-            }}>
-              <Text style={{
-                color: top10 ? 'gray' : 'white',
-                fontFamily: 'Horizon',
-                fontSize: '16px'
-              }}>
-                Top 10 only
-              </Text>
-              <SwitchToggle
-                switchOn={top10}
-                onPress={() => { 
-                  // getScoreList(top10?"top10":"global", 10, 0).then(res => {
-
-                  // })
-                  setTop10(!top10)
-                }}
-                circleColorOff="#FFFFFF"
-                circleColorOn="#FFFFFF"
-                backgroundColorOn="#EF587B"
-                backgroundColorOff="#5CE1E6"
-                containerStyle={{
-                  width: 51,
-                  height: 31,
-                  borderRadius: 25,
-                  padding: 2,
-                }}
-                circleStyle={{
-                  width: 27,
-                  height: 27,
-                  borderRadius: 15,
-                }}
-              />
-              <Text style={{
-                color: !top10 ? 'gray' : 'white',
-                fontFamily: 'Horizon',
-                fontSize: '16px'
-              }}>
-                Global Players
-              </Text>
-            </View>
+              ...amount == 1 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(1)
+              }
+              }
+            >1</Text>
+            <Text style={{
+              ...amount == 5 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(5)
+              }
+              }
+            >5</Text>
+            <Text style={{
+              ...amount == 10 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(10)
+              }
+              }
+            >10</Text>
+            <Text style={{
+              ...amount == 50 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(50)
+              }
+              }
+            >50</Text>
+            <Text style={{
+              ...amount == 100 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(100)
+              }
+              }
+            >100</Text>
           </View>
-          <ScrollView style={{
-            width: isPC ? '50vw' : '100%',
-            height: '600px',
-          }} showsVerticalScrollIndicator={false}>
-            {data.map((player, index) => {
-              return (<View style={{
-                display: 'flex', flexDirection: 'row',
-                width: '100%', justifyContent: 'space-between',
-                padding: '10px',
-                border: commonStyle.border,
-              }}>
-                <Text style={{
-                  color: 'white', fontSize: '20px',
-                  width: '40px',
-                  fontFamily: 'Horizon',
 
-                  borderRadius: '50%',
-                  ...getRankStyle(index + 1)
-                }}>{index + 1}</Text>
-                <Text style={{ color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
-                <Text style={{ width:"40px", color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
-              </View>);
-            })}
-          </ScrollView>
+          <Text style={{
+            ...commonStyle.button,
+            marginTop: '20px',
+            fontFamily: 'Horizon',
+          }}
+            onClick={depositToken}
+          >
+            Deposit
+          </Text>
 
 
-
+          {isMobile &&
+            <Image source={require("../assets/avatar/avatar_player4.png")}
+              style={{
+                width: '100%', height: '50%',
+                marginLeft: 'auto'
+              }}
+            />}
         </View>
       </View>
 
@@ -239,7 +320,7 @@ const LeaderboardScreen = () => {
   );
 };
 
-export default LeaderboardScreen;
+export default DepositScreen;
 
 
 {/*

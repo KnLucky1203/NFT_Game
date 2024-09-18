@@ -40,12 +40,14 @@ import { keyMap_1, keyMap_2, keyMap_Both, keyMap_None } from "../global/keyMap";
 import JoiningDialog from './JoiningDialog';
 import HighScoreDialog from './HighScore';
 import HeaderScreen from "./HeaderScreen";
+import { getDepositAddress } from "../global/global";
 
 import { fonts } from '../global/commonStyle';
 import { socket, FRONTEND_URL, SERVER_URL, registerUser, loginUser, getRate } from '../global/global';
 
 import { commonStyle } from '../global/commonStyle';
 import { cacheRate } from '../src/GameSettings';
+import { getUserInfo } from '../global/global';
 // Landing Page component
 const LandingScreen = () => {
 
@@ -54,12 +56,21 @@ const LandingScreen = () => {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
-
+  const getWalletAddress =  async () => {
+    let response = await getDepositAddress();
+    // console.log("VVVVVVVVVVVV  ", response.data.data.depositAddress);
+    let add = response.data.data.depositAddress;
+    // console.log("TTTTTTTTTTTT ", add);
+    setAdminWallet(add);
+    // console.log("VVVVVVVVVVVV  ", adminWallet);
+  }
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
+    
+    // getWalletAddress();
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -85,6 +96,8 @@ const LandingScreen = () => {
     setLoadingState,
     // Room State
     myRoomInfo, setMyRoomInfo,
+    adminWallet, setAdminWallet,
+    setUserInfo,
   } = React.useContext(GameContext);
 
   // Initial hook functions
@@ -158,6 +171,10 @@ const LandingScreen = () => {
       localStorage.token = response.data.token;
       localStorage.rate = rateResponse.data.data.rate;
       // console.log("$$$$$$$$$$$$ ", localStorage.token, localStorage.rate);
+      getUserInfo(localStorage.token).then(res => {
+        if(res.data.code == "00")
+          setUserInfo(res.data.data)
+      })
     }
     else {
       setStateMsg(response.data.message)
@@ -195,6 +212,7 @@ const LandingScreen = () => {
         }
       }
       else if (data.cmd == "SIGNAL_ROOM_JOINED") {
+        console.log("@@@@@@@@@@@@@@@@@@@@SIGNAL_ROOM_JOINED ", data);
         setLoadingState(false);
         if (data.status) {
           setLoadingState(false);
@@ -257,7 +275,7 @@ const LandingScreen = () => {
         }
       }
       if (data.cmd == "START_GAME_APPROVED") {
-        // console.log("approve !!!!!!!!!!!!!!!!!!");
+        console.log("approve !!!!!!!!!!!!!!!!!!");
         navigation.navigate("GameScreen_2");
       }
     }
@@ -480,20 +498,21 @@ const LandingScreen = () => {
                   fontFamily: 'Horizon'
                 }}
                   onClick={() => {
-                    setLoadingState(true);
-                    if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
-                      socket.emit('message', JSON.stringify({
-                        cmd: 'ACTION_JOIN_GAME',
-                        name: serverId.toString(),
-                        player2: userName
-                      }));
-                    } else {
-                      socket.emit('message', JSON.stringify({
-                        cmd: 'ACTION_CREATE_ROOM',
-                        player1: cUserName,
-                        map: globalMap
-                      }));
-                    }
+                    navigation.navigate("DepositScreen");
+                    // setLoadingState(true);
+                    // if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
+                    //   socket.emit('message', JSON.stringify({
+                    //     cmd: 'ACTION_JOIN_GAME',
+                    //     name: serverId.toString(),
+                    //     player2: userName
+                    //   }));
+                    // } else {
+                    //   socket.emit('message', JSON.stringify({
+                    //     cmd: 'ACTION_CREATE_ROOM',
+                    //     player1: cUserName,
+                    //     map: globalMap
+                    //   }));
+                    // }
                   }}>
                   Play Multi - PVP
                 </Text>

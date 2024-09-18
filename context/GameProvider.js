@@ -3,9 +3,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import GameContext from "./GameContext";
 import { keyMap_None } from "../global/keyMap";
 import { Animated, View, Image, Dimensions } from "react-native";
+import { getDepositAddress } from "../global/global";
 
-const STORAGE_KEY = "@BouncyBacon:Character";
-const defaultState = { character: "bacon", highscore: 0 };
+let STORAGE_KEY = "@BouncyBacon:Character";
+let defaultState = { character: "bacon", highscore: 0 };
+
 // const STORAGE_KEY = "@BouncyBrent:Character";
 // const defaultState = { character: "brent", highscore: 0 };
 // const STORAGE_KEY = "@BouncyAvocoder:Character";
@@ -19,12 +21,13 @@ const defaultState = { character: "bacon", highscore: 0 };
 
 const SHOULD_REHYDRATE = true;
 
-async function cacheAsync(value) {
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-}
+// async function cacheAsync(value) {
+//   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+// }
 
 
 export default function GameProvider({ children }) {
+ 
   async function rehydrateAsync() {
     if (!SHOULD_REHYDRATE || !AsyncStorage) {
       return defaultState;
@@ -38,6 +41,7 @@ export default function GameProvider({ children }) {
     }
   }
   const [user, setUser] = useState({});
+  const [userInfo, setUserInfo] = useState({});
   const [character, setCharacter] = useState(defaultState.character);
   const [highscore, setHighscore] = useState(defaultState.highscore);
   const [gameMode, setGameMode] = useState(0); // 0 : PVE , 1 : PVP
@@ -46,6 +50,7 @@ export default function GameProvider({ children }) {
   const [keyMap_Server, setKeyMap_Server] = useState(keyMap_None);
   const [keyMap_Client, setKeyMap_Client] = useState(keyMap_None);
   const [socket, setSocket] = useState();
+  const [adminWallet, setAdminWallet] = useState("");
   const [myRoomInfo, setMyRoomInfo] = useState({
     room_state : "closed", // or 'opened'
     room_name : "",
@@ -79,6 +84,7 @@ export default function GameProvider({ children }) {
     return () => {
       subscription?.remove(); // Clean up the listener
     };
+    
   }, []);
 
 
@@ -121,7 +127,7 @@ export default function GameProvider({ children }) {
   React.useEffect(() => {
     const parseModulesAsync = async () => {
       try {
-        const { user, character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client } = await rehydrateAsync();
+        const { user, character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client, adminWallet } = await rehydrateAsync();
         setUser(user);
         setCharacter(character);
         setHighscore(highscore);
@@ -130,6 +136,7 @@ export default function GameProvider({ children }) {
         setRole(role);
         setKeyMap_Server(keyMap_Server);
         setKeyMap_Client(keyMap_Client);
+        setAdminWallet(adminWallet);
       } catch (ignored) { }
     };
 
@@ -141,6 +148,8 @@ export default function GameProvider({ children }) {
       value={{
         user,
         setUser,
+        userInfo,
+        setUserInfo,
         loadingState,
         setLoadingState,
         character,
@@ -160,7 +169,9 @@ export default function GameProvider({ children }) {
         socket,
         setSocket,
         myRoomInfo,
-        setMyRoomInfo
+        setMyRoomInfo,
+        adminWallet,
+        setAdminWallet
       }}
     >
       {innerLoading == true &&
