@@ -75,11 +75,9 @@ export default function AdminScreen() {
       }
       <img
         src={ 
-          selCharacter?.name ?
-          require(`../assets/character/${selCharacter?.name}.png`) : 
           (item?.character?.name) ? 
           require(`../assets/character/${item?.character?.name}.png`) : 
-          require(`../assets/nfts/nft-collection.webp`)
+          require(`../assets/character/bacon.png`)
         }
         style={{
           position: 'relative',

@@ -214,7 +214,8 @@ const LeaderboardScreen = () => {
                 display: 'flex', flexDirection: 'row',
                 width: '100%', justifyContent: 'space-between',
                 padding: '10px',
-                border: commonStyle.border,
+                border: userInfo.id==player.id?"1px solid #EF587B":commonStyle.border,
+                backgroundColor: userInfo.id==player.id ? '#FDC6D3' : ""
               }}>
                 <Text style={{
                   color: 'white', fontSize: '20px',
@@ -222,6 +223,7 @@ const LeaderboardScreen = () => {
                   fontFamily: 'Horizon',
 
                   borderRadius: '50%',
+                  backgroundColor: userInfo.id==player.id ?"#EF587B":"",
                   ...getRankStyle(index + 1)
                 }}>{index + 1}</Text>
                 <Text style={{ color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
