@@ -522,7 +522,7 @@ function GameScreen(props) {
                   gameMode={gameMode}
                   newGlobalMap={contextGameMap}
                   keyMap={client_keyMaps[1]}
-                  character={character}
+                  character={character} 
                   side="left"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}

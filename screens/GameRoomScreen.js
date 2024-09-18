@@ -36,16 +36,18 @@ import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'rea
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { colors, fonts, commonStyle } from "../global/commonStyle";
+import { initialWindowSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Guide Page component
 const GameRoomScreen = () => {
-  const { user, setUser } = React.useContext(GameContext);
+  const { user, setUser} = React.useContext(GameContext);
 
   /* ================================ For Mobile Responsive ===============================*/
 
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
+  const [amount, setAmount] = useState(1);
 
   useEffect(() => {
 
@@ -59,9 +61,36 @@ const GameRoomScreen = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
+
+    const handleSocketAmount = (data) => {
+      console.log("---amount1---", data.amount);
+      setAmount(data.amount);
+    }
+    const handleSocketRoom = (data) => {
+      // console.log("handleSocketRoom in gameroomscreen",data);
+      console.log("---amount2---", data.amount);
+      if (data.cmd == "CLIENT_PLAY_AGAIN_APPROVED") {
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          client_ready: true
+        }));
+      }
+      // setAmount(data.amount);
+    }
+
+    if (role == "server")
+      setBetAmount(myRoomInfo.amount);
+    else {
+      console.log("---amount3---", myRoomInfo.amount);
+      setAmount(myRoomInfo.amount);
+    }
+
+    socket.on('BET_AMOUNT_SET', handleSocketAmount);
+    socket.on('ROOM', handleSocketRoom);
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
+      socket.off('BET_AMOUNT_SET', handleSocketAmount);
     };
   }, []);
 
@@ -118,6 +147,20 @@ const GameRoomScreen = () => {
     document.body.removeChild(textArea);
   };
 
+  const setBetAmount = (value) => {
+    if (role == "server") {
+      console.log("---amount4---",value);
+    setAmount(value);
+    socket.emit('message', JSON.stringify({
+      cmd: 'SET_BET_AMOUNT',
+      amount: value,
+    }));
+  }
+  else {
+    window.alert("Only Server can set amount");
+  }
+  }
+
 
   // Receiving events from the server
 
@@ -167,13 +210,13 @@ const GameRoomScreen = () => {
 
           <Text style={{ color: 'white', fontSize: '24px', fontFamily: 'Horizon', }}>Multiplayer Robby</Text>
           <Text style={{
-              fontSize: isPC ? '96px' : '64px',
-              color: '#FDC6D3',
-              WebkitTextStroke: '1px #EF587B',
-              filter: 'drop-shadow(0px 0px 20px #EF587B)',
-              fontWeight: '700',
-              // textShadow: '0 0 5px #fff',
-              fontFamily: 'Horizon'
+            fontSize: isPC ? '96px' : '64px',
+            color: '#FDC6D3',
+            WebkitTextStroke: '1px #EF587B',
+            filter: 'drop-shadow(0px 0px 20px #EF587B)',
+            fontWeight: '700',
+            // textShadow: '0 0 5px #fff',
+            fontFamily: 'Horizon'
           }}>HANG TIGHT...</Text>
           <View style={{
             display: 'flex', flexDirection: 'row',
@@ -206,7 +249,7 @@ const GameRoomScreen = () => {
 
           {myRoomInfo && myRoomInfo.room_my_role == 0 &&
             < View style={{ display: 'flex', flexDirection: 'row', columnGap: '10px', alignItems: 'center' }}>
-              <Text style={{ fontFamily: 'Horizon',fontSize: isPC ? '18px' : '12px', color: copied ? 'rgba(239, 88, 123, 0.8)' : colors.accent, fontWeight: '800', textDecoration: 'underline', textUnderlineOffset: '10px', cursor: 'pointer' }}
+              <Text style={{ fontFamily: 'Horizon', fontSize: isPC ? '18px' : '12px', color: copied ? 'rgba(239, 88, 123, 0.8)' : colors.accent, fontWeight: '800', textDecoration: 'underline', textUnderlineOffset: '10px', cursor: 'pointer' }}
                 onClick={() => {
                   copyToClipboard(myRoomInfo.room_path);
                 }}>
@@ -219,20 +262,76 @@ const GameRoomScreen = () => {
                 }} />
 
             </View>}
-
+          <View style={{
+            display: 'flex', flexDirection: 'row',
+            justifyContent: 'center', alignItems: 'center',
+            columnGap: '10px'
+          }}>
+            <Text style={{
+              ...amount==1?commonStyle.toggleBtn1:commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {setBetAmount(1)
+                }
+              }
+            >1</Text>
+            <Text style={{
+              ...amount==5?commonStyle.toggleBtn1:commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {setBetAmount(5)
+                }
+              }
+            >5</Text>
+            <Text style={{
+              ...amount==10?commonStyle.toggleBtn1:commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {setBetAmount(10)
+                }
+              }
+            >10</Text>
+            <Text style={{
+              ...amount==50?commonStyle.toggleBtn1:commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {setBetAmount(50)
+                }
+              }
+            >50</Text>
+            <Text style={{
+              ...amount==100?commonStyle.toggleBtn1:commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {setBetAmount(100)
+                }
+              }
+            >100</Text>
+          </View>
           <Text style={{
             ...commonStyle.button,
             marginTop: '20px',
             fontFamily: 'Horizon',
           }}
             onClick={() => {
+              console.log("$$$$$$$$$$$$$$$$$$$ amount = ", amount);
               if (myRoomInfo.room_my_role == 0) {
                 if (myRoomInfo.players[1].player_name != undefined &&
                   myRoomInfo.players[1].player_state == 1
                 ) {
+                  if (myRoomInfo.client_ready) {
                   socket.emit('message', JSON.stringify({
                     cmd: 'ACTION_START_GAME', role: role
                   }));
+                }
+                else {
+                  window.alert('Client is not ready');
+                }
                   // window.alert("ACTION START GAME!!!");
                 } else {
                   window.alert('Client not joined');

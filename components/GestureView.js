@@ -111,6 +111,7 @@ class GestureView extends Component {
   };
 
   handleMoving = (data) => {
+    console.log("@@@@@ ", this.role, data.role, this,this.align, data.align);
 
     if (this.role == data.role && this.align == data.align) {
 
@@ -130,6 +131,7 @@ class GestureView extends Component {
           const direction = this._keyMap[e.code];
 
           if (direction) {
+            this.props.onSwipe(direction);
             this.socket.emit('message', JSON.stringify({
               cmd: 'MOVE_PERSON',
               direction: direction,
@@ -141,8 +143,9 @@ class GestureView extends Component {
 
         } else if (this.role = 'client') {
           const direction = this._keyMap[e.code];
-
+          
           if (direction) {
+            this.props.onSwipe(direction);
             this.socket.emit('message', JSON.stringify({
               cmd: 'MOVE_PERSON',
               direction: direction,
@@ -228,6 +231,16 @@ class GestureView extends Component {
         onTap && onTap(gestureState);
         break;
     }
+    // console.log("swipeDrection = ", swipeDirection);
+    // if (swipeDirection) {
+      this.socket.emit('message', JSON.stringify({
+        cmd: 'MOVE_PERSON',
+        direction: swipeDirection?swipeDirection:SWIPE_UP,
+        role: this.role,
+        keyMap: this._keyMap,
+        align: this.align
+      }));
+    // }
   };
 
   // _getSwipeDirection = (gestureState) => {

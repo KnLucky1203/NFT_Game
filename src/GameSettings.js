@@ -1,7 +1,7 @@
 export const groundLevel = 0.4;
 export const sceneColor = 0x87C6FF;
 export const startingRow = 8;
-export const maxRows = 30;
+export const maxRows = 50;
 export const disableDriftwood = false;
 export const CAMERA_EASING = 0.03;
 export const MAP_OFFSET = -30;

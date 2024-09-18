@@ -171,6 +171,7 @@ const LoadingScreen = ({ path }) => {
           }}
         />
       </View>
+
       <View style={{
         position: 'relative',
         background: 'black',
@@ -184,6 +185,7 @@ const LoadingScreen = ({ path }) => {
       }}>
         {isPC &&
           <>
+
             {/* {(user && user.isAdmin) && ( */}
             <Text style={{
               fontFamily: 'Horizon',

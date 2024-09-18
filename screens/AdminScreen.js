@@ -11,7 +11,7 @@ import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
-import { getAdminData, updateScore } from '../global/global';
+import { getAdminData, getCharacters, updateScore } from '../global/global';
 
 // Initial Variables
 
@@ -143,6 +143,8 @@ export default function AdminScreen() {
     rewardToken: '',
     taxPerUnit: 0
   })
+  const [characters, setCharacters] = useState([])
+  const [selCharacters, setSelCharacters] = useState([])
   const modelList = [
     { label: 'Model 1', value: '1' },
     { label: 'Model 2', value: '2' },
@@ -153,31 +155,7 @@ export default function AdminScreen() {
     { label: 'Model 7', value: '7' },
     // ... more items
   ];
-  // useEffect(() => {
-  //   setAdmin({
-  //     taxWallet: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6',
-  //     token: '',
-  //     tokenPerUnit: 0.5,
-  //     nfts: [
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 1' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 2' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 3' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 4' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 5' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 6' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 7' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 8' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 9' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 10' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 11' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 12' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 13' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 14' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 15' },
-  //       { address: '7GrU15pFFsWvJvNyihX9nvuCBDYumYjbd8WFsQWkd9G6', image: 'http://127.0.0.1:19006/static/media/avatar_player2.c39196b1457387601200.png', name: 'test name 16' },
-  //     ]
-  //   }); // TODO: local test
-  // }, [])
+  
   const getRateFromServer = async () => {
     let rateResponse = await getRate();
     localStorage.rate = rateResponse.data.data.rate;
@@ -199,13 +177,19 @@ export default function AdminScreen() {
     }
   
     if (walletProvider) {
-      getAdminData(walletProvider.publicKey.toBase58()).then((data) => {
-        setAdmin(data.data);
+      getAdminData(walletProvider.publicKey.toBase58()).then((response) => {
+        if(response.data.code == "00")
+          setAdmin(response.data.data);
+      })
+      getCharacters().then((response) => {
+        if(response.data.code == "00")          
+          setCharacters(response.data.data)
       })
     } else {
 
     }
   }, [walletProvider]);
+  console.log("characters ====", characters)
 
   const setTaxWallet = (text) => {
     let new_admin = deepCopy(admin)
@@ -362,6 +346,69 @@ export default function AdminScreen() {
               type="text" placeholder="Input new nft mint address."
               onChange={(e) => {
                 setNewNFT(e.target.value);
+              }}
+            />
+            <Dropdown
+              style={{  // main selected item
+                width: '140px',
+                cursor: 'pointer',
+                // backgroundColor: 'black',
+                textAlign: 'center',
+                border: commonStyle.border,
+                borderRadius: '50px',
+                height: '45px',
+                margin: 'auto',
+              }}
+              containerStyle={{ // main selected item
+                backgroundColor: 'black',
+                textAlign: 'center',
+              }}
+              placeholderStyle={{ // placeholder text style
+                color: 'grey',
+                // backgroundColor: 'black',
+                textAlign: 'center',
+                // border: '1px solid white'
+              }}
+              selectedTextStyle={{  // main selected item text style
+                color: 'white',
+                // backgroundColor: 'black',
+                textAlign: 'center',
+                borderWidth: commonStyle.border,
+              }}
+              itemContainerStyle={{ // list item container style
+                backgroundColor: 'black',
+                textAlign: 'center',
+              }}
+              itemTextStyle={{  // list item text style
+                // backgroundColor: 'black',
+                color: 'white',
+                textAlign: 'center',
+              }}
+              activeColor='#222222'
+              mode={isPC ? 'auto' : 'modal'}
+              ref={isPC ? top : undefined}
+              inputSearchStyle={{  // list item text style
+                backgroundColor: '#FF0000',
+                color: 'white',
+                textAlign: 'center',
+              }}
+              iconStyle={{  // main drop icon style
+                // backgroundColor: '#0000FF',
+                color: 'white',
+                textAlign: 'center',
+                width: '30px',
+                height: '30px',
+              }}
+              data={characters}
+              maxHeight={300}
+              labelField="symbol"
+              valueField="name"
+              placeholder="Select Character"
+              value={name}
+              onChange={character => {
+                // const new_characters = deepCopy(characters);
+                // new_characters.nfts[index].model = character.id;
+                setSelCharacters([...selCharacters, character.id]);
               }}
             />
             <View style={{

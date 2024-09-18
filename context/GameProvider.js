@@ -4,12 +4,14 @@ import GameContext from "./GameContext";
 import { keyMap_None } from "../global/keyMap";
 import { Animated, View, Image, Dimensions } from "react-native";
 
+const STORAGE_KEY = "@BouncyBacon:Character";
+const defaultState = { character: "bacon", highscore: 0 };
 // const STORAGE_KEY = "@BouncyBrent:Character";
 // const defaultState = { character: "brent", highscore: 0 };
 // const STORAGE_KEY = "@BouncyAvocoder:Character";
 // const defaultState = { character: "avocoder", highscore: 0 };
-const STORAGE_KEY = "@BouncyWheeler:Character";
-const defaultState = { character: "wheeler", highscore: 0 };
+// const STORAGE_KEY = "@BouncyBrent:Character";
+// const defaultState = { character: "brent", highscore: 0 };
 // const STORAGE_KEY = "@BouncyPalmer:Character";
 // const defaultState = { character: "palmer", highscore: 0 };
 // const STORAGE_KEY = "@BouncyJuwan:Character";
@@ -49,6 +51,8 @@ export default function GameProvider({ children }) {
     room_name : "",
     room_path : "",
     room_my_role : 0, // 0 : server, 1 : client
+    amount: 1,
+    client_ready: true,
     players : [{
       player_name : "",
       player_id : "",

@@ -170,7 +170,7 @@ const LandingScreen = () => {
     }
 
     const handleSocketRoom = (data) => {
-      // console.log("handleSocketRoom = ", data);
+      console.log("handleSocketRoom in landingScreen ", data);
       if (data.cmd === "SIGNAL_ROOM_CREATED") {
         setLoadingState(false);
 
@@ -184,6 +184,7 @@ const LandingScreen = () => {
             room_name: data.name,
             room_path: FRONTEND_URL + "/?" + data.name,
             room_my_role: 0,
+            client_read: true,
             players: data.players
           }));
 
@@ -208,6 +209,7 @@ const LandingScreen = () => {
               room_state: 'opened',
               room_my_role: 0,
               players: data.players,
+              amount: 1
             }));
 
             console.log("Joined : ", myRoomInfo);
@@ -222,6 +224,7 @@ const LandingScreen = () => {
               room_state: 'opened',
               room_my_role: 1,
               players: data.players,
+              amount: data.amount
             }));
 
             console.log("Joined : ", myRoomInfo);

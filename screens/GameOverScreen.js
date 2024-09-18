@@ -9,7 +9,7 @@ import { colors } from "../global/commonStyle";
 import { socket} from '../global/global';
 
 function GameOver({ ...props }) {
-  const { gameMode, setGameMode, character, role } = React.useContext(GameContext);
+  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo, } = React.useContext(GameContext);
   const navigation = useNavigation();
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -25,6 +25,14 @@ function GameOver({ ...props }) {
     setSocket,
   } = React.useContext(GameContext);
   useEffect(() => {
+    console.log("GameRoomScreen on over screen : ", myRoomInfo);
+    if (role == "server") {
+      setMyRoomInfo(prevRoomInfo => ({
+        ...prevRoomInfo,
+        client_ready: false
+      }));
+
+    }
     setSocket(socket);
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
@@ -77,6 +85,12 @@ function GameOver({ ...props }) {
   /* ================================ For Mobile Responsive ===============================*/
 
   const restartGame = () => {
+    if (role == "client") {
+      socket.emit('message', JSON.stringify({
+        cmd: 'CLIENT_PLAY_AGAIN',
+      }));
+    }
+    navigation.navigate("GameRoomScreen");
     props.setGameState('none');
     // setGameMode(0);
     // navigation.navigate("GameScreen");

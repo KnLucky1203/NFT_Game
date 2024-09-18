@@ -60,7 +60,7 @@ const LoadingScreen = () => {
     // Personal variables
     const [isLoading, setIsLoading] = useState(true);
     const [loadingPercent, setLoadingPercent] = useState(1);
-    const [speed, setSpeed] = useState(1); // MBC- Change the speed to 1 on the devMode
+    const [speed, setSpeed] = useState(100); // MBC- Change the speed to 1 on the devMode
 
     useEffect(() => {
         if (loadingPercent < 100) {
@@ -84,7 +84,6 @@ const LoadingScreen = () => {
     useEffect(() => {
         if (loadingPercent >= 100) {
             setIsLoading(false);
-
             setTimeout(() => {
                 navigation.navigate("LandingScreen");
             }, 10); // MBC - this must be changed which shows the delay after loading

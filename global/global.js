@@ -39,6 +39,10 @@ export const getNFTswithImage = async (wallet) => {
   return await axios(SERVER_URL + '/api/nft_images/' + wallet)
 }
 
+export const getCharacters = async () => {
+  return await axios(SERVER_URL + '/api/v1/base/character')
+}
+
 export const getWalletInfo = async (wallet) => {
   console.log('getWalletInfo', wallet)
   return await axios(SERVER_URL + '/api/v1/user/wallet_info/' + wallet)
@@ -51,7 +55,7 @@ export const getNFTOne = async (mint) => {
 
 export const getAdminData = async (wallet) => {
   console.log('getAdminData', wallet)
-  return await axios(SERVER_URL + '/api/admin_data/' + wallet)
+  return await axios(SERVER_URL + '/api/v1/admin/dashboard/data/' + wallet)
 }
 
 export const getWalletSOLBalance_bn = async (conn, wallet) => {

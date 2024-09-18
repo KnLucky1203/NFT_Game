@@ -31,6 +31,26 @@ export const commonStyle = {
     cursor: 'pointer',
     fontFamily: 'Horizon'
   },
+  toggleBtn1: {
+    padding: '14px',
+    fontSize: '16px',
+    color: 'white',
+    backgroundColor: colors.accent,
+    boxShadow: redShadow,
+    borderRadius: '54px',
+    cursor: 'pointer',
+    fontFamily: 'Horizon'
+  },
+  toggleBtn2: {
+    padding: '14px',
+    fontSize: '16px',
+    color: 'white',
+    backgroundColor: `rgba(188, 188, 188, 188)`,
+    boxShadow: redShadow,
+    borderRadius: '54px',
+    cursor: 'pointer',
+    fontFamily: 'Horizon'
+  },
   border: '1px solid '+ colors.borderColor
   // ----- Header -----
 
