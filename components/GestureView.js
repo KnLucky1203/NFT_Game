@@ -111,7 +111,6 @@ class GestureView extends Component {
   };
 
   handleMoving = (data) => {
-    console.log("@@@@@ ", this.role, data.role, this,this.align, data.align);
 
     if (this.role == data.role && this.align == data.align) {
 
@@ -301,7 +300,7 @@ class GestureView extends Component {
   };
 
   render() {
-    const { style, ...props } = this.props;
+    const { style, ...props } = this.props; 
     // const {socket} = useContext(GameContext);
 
 
@@ -329,3 +328,4 @@ class GestureView extends Component {
 }
 
 export default GestureView;
+ 

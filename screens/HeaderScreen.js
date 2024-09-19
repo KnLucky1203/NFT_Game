@@ -44,9 +44,10 @@ import { deepCopy, jsonUpdate } from '../global/common';
 import GameContext from '../context/GameContext';
 import NFTDialog from './NFTScreen';
 import AdminDialog from './AdminScreen';
+import toast from 'react-hot-toast';
 
 // Landing Page component
-const LoadingScreen = ({ path }) => {
+const HeaderScreen = ({ path }) => {
 
   /* ================================ For Mobile Responsive ===============================*/
 
@@ -84,7 +85,7 @@ const LoadingScreen = ({ path }) => {
 
   // Personal variables
   const { user, setUser,
-    setLoadingState
+    setLoadingState, userInfo, setUserInfo,
   } = React.useContext(GameContext);
   // -- Web3 --
   const [isConnected, setIsConnected] = useState(false);
@@ -101,8 +102,8 @@ const LoadingScreen = ({ path }) => {
       setIsConnected(false)
     }
   }, [walletProvider]);
+
   const onConnectBtnClick = () => {
-    
     if (isConnected) {
       if (web3modal) web3modal.open();
     } else {
@@ -125,7 +126,7 @@ const LoadingScreen = ({ path }) => {
       printConsole('walletProvider or address is undefined');
       return;
     }
-    const new_user = deepCopy(user);
+    let new_user = deepCopy(user);
     new_user.wallet = walletProvider.publicKey.toBase58()
     localStorage.wallet = new_user.wallet;
     // console.log("wwwwwwwwwwwwwwwwww ", localStorage.wallet);
@@ -133,11 +134,21 @@ const LoadingScreen = ({ path }) => {
       getWalletSOLBalance(connection, new_user.wallet).then((balance) => new_user.solAmount = balance / 1e9),
       // getWalletTokenBalance(connection, new_user.wallet, token).then((balance) => new_user.tokenAmount = balance),
       // getNFTswithImage(conn, new_user.wallet).then((nfts) => new_user.nfts = nfts),
-      getWalletInfo(new_user.wallet).then((info) => {
-        console.log("AAAAAAAAAAA==========", info)
-        new_user.tokenAmount = info.data.data.tokenAmount;
-        new_user.nfts = info.data.data.nfts;
-        new_user.isAdmin = info.data.isAdmin;
+      getWalletInfo(new_user.wallet).then((res) => {
+        if(res.data.code == "00"){
+          new_user.tokenAmount = res.data.data.tokenAmount;
+          new_user.nfts = res.data.data.nfts;
+          new_user.isAdmin = res.data.data.isAdmin;
+          // if(!userInfo.isAdmin) {
+          //   let new_userInfo = deepCopy(userInfo);
+          //   new_userInfo.isAdmin = res.data.data.isAdmin;
+          //   setUserInfo(new_userInfo);
+          // }
+        }else{
+          toast.error("Response Error:", res?.data?.message)
+        }
+      }).catch(err => {
+        console.log("Fatal Error: ", err)
       })
     ])
     setUser(new_user)
@@ -188,6 +199,7 @@ const LoadingScreen = ({ path }) => {
           <>
 
             {/* {(user && user.isAdmin) && ( */}
+            {userInfo.isAdmin || user.isAdmin &&
             <Text style={{
               fontFamily: 'Horizon',
               fontSize: '20px',
@@ -200,7 +212,7 @@ const LoadingScreen = ({ path }) => {
               }}
             >
               Admin
-            </Text>
+            </Text>}
             {/* )} */}
             <Text style={{
               fontFamily: 'Horizon',
@@ -258,7 +270,10 @@ const LoadingScreen = ({ path }) => {
                 }}
                 onClick={() => {
                   setLoadingState(true);
-                  navigation.navigate("NFTScreen");
+                  if(localStorage.token)
+                    navigation.navigate("NFTScreen");
+                  else
+                    toast("Please log in!")
                   setTimeout(() => {
                     setLoadingState(false);
                   }, 1000);
@@ -458,5 +473,5 @@ const LoadingScreen = ({ path }) => {
   );
 };
 
-export default LoadingScreen;
+export default HeaderScreen;
 

@@ -4,17 +4,16 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
-
-
+import { toast } from 'react-hot-toast';
 // Personal informations
 import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
-import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT } from '../global/global';
+import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT, setRewardRate } from '../global/global';
 
 // Initial Variables
-
+const wallet = localStorage.wallet;
 export default function AdminScreen() {
   /* ================================ For Mobile Responsive ===============================*/
   const [evalWidth, setEvalWidth] = useState(768);
@@ -38,7 +37,8 @@ export default function AdminScreen() {
   // Personal Variables
   const { walletProvider, connection } = useWeb3ModalProvider()
 
-
+  if(wallet == "" || wallet == undefined) toast("Connect wallet!")
+    
   const renderAdminAvatar = ({ item, index }) => (
     <View style={{
       marginBottom: '10px',
@@ -176,21 +176,6 @@ export default function AdminScreen() {
     </View >
   );
 
-  const renderSelectedCharacterItem = (item) => {
-    return (
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <Text style={{
-          fontSize: 16,
-          color: 'green',
-        }}>
-          Selected: {item.name}
-        </Text>
-      </View>
-    );
-  }
   const renderCharacterItem = (item) => (
     <View style={{
       flexDirection: 'row',
@@ -222,8 +207,18 @@ export default function AdminScreen() {
   } 
 
   const setRateValue = async () => {
-    await setRate(rate);
-    localStorage.rate= rate;
+    let response = await setRewardRate(rate);
+    if(response?.data?.code == "00"){
+      toast.success("Rate setted!", { style: {
+        backgroundColor: 'white',
+        color: 'black',
+        boxShadow: '5px 5px 10px 3px rgba(210, 0, 0, 0.7)',
+        borderRadius: '10px',
+        fontWeight: 400
+      }})
+      localStorage.rate= rate;
+    }
+    
   }
 
 
@@ -281,298 +276,313 @@ export default function AdminScreen() {
         if (!new_admin.nfts)
           new_admin.nfts = [];
         if (response.data.code == "00"){
-          console.log("after add nft ===>", response.data)
+          toast.success("New NFT added!", { style: {
+            backgroundColor: 'white',
+            color: 'black',
+            boxShadow: '5px 5px 10px 3px rgba(210, 0, 0, 0.7)',
+            borderRadius: '10px',
+            fontWeight: 400
+          }})
           new_admin.nfts.push({
             id: response.data.data.id,
             address: response.data.data.address,
             image: response.data.data.image,
           })
-        }
-        
+        } else 
+          toast.error("New NFT adding failed!", { style: {
+            backgroundColor: 'white',
+            color: 'black',
+            boxShadow: '5px 5px 10px 3px rgba(210, 0, 0, 0.7)',
+            borderRadius: '10px',
+            fontWeight: 400
+          }})
         setAdmin(new_admin);
     })
   }
 
   return (
-    <View style={{
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: fonts.fantasy,
-    }}>
-      <HeaderScreen path={path}></HeaderScreen>
-
+    
       <View style={{
-        position: 'relative',
-        height: 'calc(100vh - 100px)',
-        background: 'black',
         display: 'flex',
-        flexDirection: isPC ? 'row' : 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
+        fontFamily: fonts.fantasy,
       }}>
-        {isPC &&
-          <View style={{
-            width: '50%', height: '100%',
-            display: 'flex',
-            borderRight: commonStyle.border
-          }}>
-            <Image source={require("../assets/avatar/nft_mobber_2.jpg")}
-              style={{
-                width: '100%', height: '100%',
-                margin: 'auto'
-              }}
-            />
-          </View>
-        }
-
+        <HeaderScreen path={path}></HeaderScreen>
+        
         <View style={{
           position: 'relative',
+          height: 'calc(100vh - 100px)',
+          background: 'black',
           display: 'flex',
-          flexDirection: 'column',
-          columnGap: '10px',
-          width: isPC ? '50%' : '100%',
-          height: '100%',
-          textAlign: 'center',
+          flexDirection: isPC ? 'row' : 'column',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}>
-
-          <Text style={{
-              fontSize: isPC ? '96px' : '64px',
-              color: '#FDC6D3',
-              WebkitTextStroke: '1px #EF587B',
-              filter: 'drop-shadow(0px 0px 20px #EF587B)',
-              fontWeight: '700',
-              // textShadow: '0 0 5px #fff',
-              fontFamily: 'Horizon'
-          }}>Admin Dashboard</Text>
-          <View style={{
-            display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
-            width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
-          }}>
-            <Text style={{
-              width:'100px',
-              color: 'white',
-              fontSize: '20px',
-              display: 'block',
-              fontFamily: 'Horizon',
-            }}
-            >
-              Owner Wallet
-            </Text>
-            <TextInput style={{
-              width: '100%',
-              maxWidth: '510px',
-              padding: '0.5rem',
-              flex: 1,
-              border: '1px solid gray',
-              borderRadius: '30px',
-              background: 'transparent',
-              fontSize: '16px',
-              textAlign: 'left',
-              lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon'
-            }}
-              type="text" placeholder="Tax Wallet"
-              value={admin.taxWallet}
-              onChange={(e) => {
-                setNewTaxWallet()
-              }}
-              autoFocus />
+          {isPC &&
             <View style={{
-              ...commonStyle.button,
-              width: '65px',
-            }}
-              onClick={() => {
-                setTaxWallet(e.target.value);
-              }}>Set
+              width: '50%', height: '100%',
+              display: 'flex',
+              borderRight: commonStyle.border
+            }}>
+              <Image source={require("../assets/avatar/nft_mobber_2.jpg")}
+                style={{
+                  width: '100%', height: '100%',
+                  margin: 'auto'
+                }}
+              />
             </View>
-          </View>
+          }
+
           <View style={{
-            display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
-            width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            columnGap: '10px',
+            width: isPC ? '50%' : '100%',
+            height: '100%',
+            textAlign: 'center',
+            alignItems: 'center',
+            justifyContent: 'space-between'
           }}>
+
             <Text style={{
-              width:'100px',
-              color: 'white',
-              fontSize: '20px',
-              display: 'block',
-              fontFamily: 'Horizon',
-            }}
-            >
-              Add New NFT
-            </Text>
-            <TextInput style={{
-              width: '100%',
-              maxWidth: '510px',
-              padding: '0.5rem',
-              flex: 1,
-              border: '1px solid gray',
-              borderRadius: '30px',
-              background: 'transparent',
-              fontSize: '16px',
-              textAlign: 'left',
-              lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon',
-            }}
-              type="text" placeholder="Input new nft mint address."
-              onChange={(e) => {
-                setNewNFT(e.target.value);
-              }}
-            />
-            {/* <Dropdown
-              style={{  // main selected item
-                width: '140px',
-                cursor: 'pointer',
-                // backgroundColor: 'black',
-                textAlign: 'center',
-                border: commonStyle.border,
-                borderRadius: '50px',
-                height: '45px',
-                margin: 'auto',
-              }}
-              containerStyle={{ // main selected item
-                backgroundColor: 'black',
-                textAlign: 'center',
-              }}
-              placeholderStyle={{ // placeholder text style
-                color: 'grey',
-                // backgroundColor: 'black',
-                textAlign: 'center',
-                // border: '1px solid white'
-              }}
-              selectedTextStyle={{  // main selected item text style
-                color: 'white',
-                // backgroundColor: 'black',
-                textAlign: 'center',
-                borderWidth: commonStyle.border,
-              }}
-              itemContainerStyle={{ // list item container style
-                backgroundColor: 'black',
-                textAlign: 'center',
-              }}
-              itemTextStyle={{  // list item text style
-                // backgroundColor: 'black',
-                color: 'white',
-                textAlign: 'center',
-              }}
-              activeColor='#222222'
-              mode={isPC ? 'auto' : 'modal'}
-              ref={isPC ? top : undefined}
-              inputSearchStyle={{  // list item text style
-                backgroundColor: '#FF0000',
-                color: 'white',
-                textAlign: 'center',
-              }}
-              iconStyle={{  // main drop icon style
-                // backgroundColor: '#0000FF',
-                color: 'white',
-                textAlign: 'center',
-                width: '30px',
-                height: '30px',
-              }}
-              data={characters}
-              maxHeight={300}
-              labelField="name"
-              valueField="symbol"
-              placeholder="Select Character"
-              value={name}
-              renderItem={renderCharacterItem}
-              onChange={character => {
-                // const new_characters = deepCopy(characters);
-                // new_characters.nfts[index].model = character.id;
-                setSelCharacter(character);
-              }}
-            /> */}
+                fontSize: isPC ? '96px' : '64px',
+                color: '#FDC6D3',
+                WebkitTextStroke: '1px #EF587B',
+                filter: 'drop-shadow(0px 0px 20px #EF587B)',
+                fontWeight: '700',
+                // textShadow: '0 0 5px #fff',
+                fontFamily: 'Horizon'
+            }}>Admin Dashboard</Text>
             <View style={{
-              ...commonStyle.button,
-              width: '65px',
-            }}
-              onClick={() => {
-                addNewNFT()
-              }}>Add
-            </View>
-          </View>
-          
-
-
-          <View style={{
-            display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
-            width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
-          }}>
-            <Text style={{
-              width:'100px',
-              color: 'white',
-              fontSize: '20px',
-              display: 'block',
-              fontFamily: 'Horizon',
-            }}
-            >
-              Token Rate
-            </Text>
-            <TextInput style={{
-              width: '100%',
-              maxWidth: '510px',
-              padding: '0.5rem',
-              flex: 1,
-              border: '1px solid gray',
-              borderRadius: '30px',
-              background: 'transparent',
-              fontSize: '16px',
-              textAlign: 'left',
-              lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon',
-            }}
-              type="text" placeholder="Input token rate." value={rate}
-              onChange={(e) => {
-                setRate(e.target.value);
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
+              width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+            }}>
+              <Text style={{
+                width:'100px',
+                color: 'white',
+                fontSize: '20px',
+                display: 'block',
+                fontFamily: 'Horizon',
               }}
-            />
-            <View style={{
-              ...commonStyle.button,
-              width: '65px',
-            }}
-              onClick={() => {
-                setRateValue()
-              }}>Set
+              >
+                Owner Wallet
+              </Text>
+              <TextInput style={{
+                width: '100%',
+                maxWidth: '510px',
+                padding: '0.5rem',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                fontSize: '16px',
+                textAlign: 'left',
+                lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon'
+              }}
+                type="text" placeholder="Tax Wallet"
+                value={admin.taxWallet}
+                onChange={(e) => {
+                  setNewTaxWallet()
+                }}
+                autoFocus />
+              <View style={{
+                ...commonStyle.button,
+                width: '65px',
+              }}
+                onClick={() => {
+                  setTaxWallet(e.target.value);
+                }}>Set
+              </View>
             </View>
-          </View>
-          <View style={{
-            width: '100%',
-            maxWidth: '800px',
-          }}></View>
+            <View style={{
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
+              width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+            }}>
+              <Text style={{
+                width:'100px',
+                color: 'white',
+                fontSize: '20px',
+                display: 'block',
+                fontFamily: 'Horizon',
+              }}
+              >
+                Add New NFT
+              </Text>
+              <TextInput style={{
+                width: '100%',
+                maxWidth: '510px',
+                padding: '0.5rem',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                fontSize: '16px',
+                textAlign: 'left',
+                lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+              }}
+                type="text" placeholder="Input new nft mint address."
+                onChange={(e) => {
+                  setNewNFT(e.target.value);
+                }}
+              />
+              {/* <Dropdown
+                style={{  // main selected item
+                  width: '140px',
+                  cursor: 'pointer',
+                  // backgroundColor: 'black',
+                  textAlign: 'center',
+                  border: commonStyle.border,
+                  borderRadius: '50px',
+                  height: '45px',
+                  margin: 'auto',
+                }}
+                containerStyle={{ // main selected item
+                  backgroundColor: 'black',
+                  textAlign: 'center',
+                }}
+                placeholderStyle={{ // placeholder text style
+                  color: 'grey',
+                  // backgroundColor: 'black',
+                  textAlign: 'center',
+                  // border: '1px solid white'
+                }}
+                selectedTextStyle={{  // main selected item text style
+                  color: 'white',
+                  // backgroundColor: 'black',
+                  textAlign: 'center',
+                  borderWidth: commonStyle.border,
+                }}
+                itemContainerStyle={{ // list item container style
+                  backgroundColor: 'black',
+                  textAlign: 'center',
+                }}
+                itemTextStyle={{  // list item text style
+                  // backgroundColor: 'black',
+                  color: 'white',
+                  textAlign: 'center',
+                }}
+                activeColor='#222222'
+                mode={isPC ? 'auto' : 'modal'}
+                ref={isPC ? top : undefined}
+                inputSearchStyle={{  // list item text style
+                  backgroundColor: '#FF0000',
+                  color: 'white',
+                  textAlign: 'center',
+                }}
+                iconStyle={{  // main drop icon style
+                  // backgroundColor: '#0000FF',
+                  color: 'white',
+                  textAlign: 'center',
+                  width: '30px',
+                  height: '30px',
+                }}
+                data={characters}
+                maxHeight={300}
+                labelField="name"
+                valueField="symbol"
+                placeholder="Select Character"
+                value={name}
+                renderItem={renderCharacterItem}
+                onChange={character => {
+                  // const new_characters = deepCopy(characters);
+                  // new_characters.nfts[index].model = character.id;
+                  setSelCharacter(character);
+                }}
+              /> */}
+              <View style={{
+                ...commonStyle.button,
+                width: '65px',
+              }}
+                onClick={() => {
+                  addNewNFT()
+                }}>Add
+              </View>
+            </View>
+            
 
-          <View style={{
-            width: '100%',
-            maxWidth: '800px',
-          }}>
 
-            <Text style={{
-              color: 'white',
-              fontSize: '20px',
-              display: 'block',
-              marginRight: 'auto',
-              marginLeft: '30px',
-              fontFamily: 'Horizon',
-            }}
-            >
-              NFT List
-            </Text>
-          </View>
-          <View style={{
-            marginTop: '10px', display: 'flex', flexDirection: 'column', flex: 1, height: '100%',
-            border: '1px solid gray', borderRadius: '16px', width: '100%', padding: '10px',
-            overflowY: 'scroll', scrollbarWidth: 'thin', maxWidth: '800px', marginBottom: '20px',
-          }}>
-            {(admin && admin.nfts) ? admin.nfts.map((item, index) => {
-              return renderAdminAvatar({ item, index })
-            }) : ''}
+            <View style={{
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
+              width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+            }}>
+              <Text style={{
+                width:'100px',
+                color: 'white',
+                fontSize: '20px',
+                display: 'block',
+                fontFamily: 'Horizon',
+              }}
+              >
+                Token Rate
+              </Text>
+              <TextInput style={{
+                width: '100%',
+                maxWidth: '510px',
+                padding: '0.5rem',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                fontSize: '16px',
+                textAlign: 'left',
+                lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+              }}
+                type="text" placeholder="Input token rate." value={rate}
+                onChange={(e) => {
+                  setRate(e.target.value);
+                }}
+              />
+              <View style={{
+                ...commonStyle.button,
+                width: '65px',
+              }}
+                onClick={() => {
+                  setRateValue()
+                }}>Set
+              </View>
+            </View>
+            <View style={{
+              width: '100%',
+              maxWidth: '800px',
+            }}></View>
+
+            <View style={{
+              width: '100%',
+              maxWidth: '800px',
+            }}>
+
+              <Text style={{
+                color: 'white',
+                fontSize: '20px',
+                display: 'block',
+                marginRight: 'auto',
+                marginLeft: '30px',
+                fontFamily: 'Horizon',
+              }}
+              >
+                NFT List
+              </Text>
+            </View>
+            <View style={{
+              marginTop: '10px', display: 'flex', flexDirection: 'column', flex: 1, height: '100%',
+              border: '1px solid gray', borderRadius: '16px', width: '100%', padding: '10px',
+              overflowY: 'scroll', scrollbarWidth: 'thin', maxWidth: '800px', marginBottom: '20px',
+            }}>
+              {(admin && admin.nfts) ? admin.nfts.map((item, index) => {
+                return renderAdminAvatar({ item, index })
+              }) : ''}
+            </View>
           </View>
         </View>
-      </View>
-    </View >
+        
+      </View >
+    
   );
 }

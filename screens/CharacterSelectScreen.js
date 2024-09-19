@@ -32,10 +32,10 @@ class CharacterSelect extends Component {
       {
         message: `${character}! #BouncyBacon @expo`,
         url: 'https://crossyroad.netlify.com',
-        title: 'Bouncy Bacon',
+        title: 'Mobber Game',
       },
       {
-        dialogTitle: 'Share Bouncy Bacon',
+        dialogTitle: 'Share Mobber Game',
         excludedActivityTypes: [
           'com.apple.UIKit.activity.AirDrop', // This speeds up showing the share sheet by a lot
           'com.apple.UIKit.activity.AddToReadingList', // This is just lame :)

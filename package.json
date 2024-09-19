@@ -38,6 +38,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-native": "0.64.3",
+    "react-native-alert-notification": "^0.4.0",
     "react-native-element-dropdown": "^2.12.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-switch-toggle": "^2.2.1",

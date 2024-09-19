@@ -48,6 +48,7 @@ import { socket, FRONTEND_URL, SERVER_URL, registerUser, loginUser, getRate } fr
 import { commonStyle } from '../global/commonStyle';
 import { cacheRate } from '../src/GameSettings';
 import { getUserInfo } from '../global/global';
+import toast from 'react-hot-toast';
 // Landing Page component
 const LandingScreen = () => {
 
@@ -165,15 +166,25 @@ const LandingScreen = () => {
     let response = await loginUser(userName, password);
 
     if (response.data.code == "00") {
-      let rateResponse = await getRate();
       setCUserName(userName);
       setStateMsg("");
       localStorage.token = response.data.token;
-      localStorage.rate = rateResponse.data.data.rate;
+      let rateResponse = await getRate();
+      if(rateResponse.data.code == "00"){
+        if(rateResponse?.data?.data?.rate)
+          localStorage.rate = rateResponse?.data?.data?.rate;
+        else toast("Set reward rate!")
+      }else{
+        toast("Reward Rate setting failed!")
+      }
+      
       // console.log("$$$$$$$$$$$$ ", localStorage.token, localStorage.rate);
+      
       getUserInfo(localStorage.token).then(res => {
-        if(res.data.code == "00")
+        if(res.data.code == "00"){
+          console.log("Get user Info============", res.data.data)
           setUserInfo(res.data.data)
+        }
       })
     }
     else {
@@ -187,7 +198,6 @@ const LandingScreen = () => {
     }
 
     const handleSocketRoom = (data) => {
-      console.log("handleSocketRoom in landingScreen ", data);
       if (data.cmd === "SIGNAL_ROOM_CREATED") {
         setLoadingState(false);
 

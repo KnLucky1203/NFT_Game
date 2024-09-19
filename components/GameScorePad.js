@@ -18,6 +18,7 @@ const textShadow = generateTextShadow(4);
 const textShadowHighscore = generateTextShadow(2);
 
 export default function ScorePad({ gameOver, score,rate, ...props }) {
+  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo, } = React.useContext(GameContext);
   const [highscore, setHighscore] = useState(0);
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -38,7 +39,6 @@ export default function ScorePad({ gameOver, score,rate, ...props }) {
     };
     getUserTopSorce();
     window.addEventListener('resize', handleResize);
-    console.log("cash Rate = ", rate);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -61,12 +61,12 @@ export default function ScorePad({ gameOver, score,rate, ...props }) {
   return (
     <View style={{
       position: 'absolute', left: '0px', bottom: '0px', background: 'black', zIndex: '5000',
-      width: isPC ? '300px' : '250px', height: isPC ? '150px' : '125px',
+      width: gameMode==0 ? (isPC?'300px' : '250px'):(isPC?"150px":"125px"), height: isPC ? '150px' : '125px',
       display: 'flex', flexDirection: 'row',
       borderTopRightRadius: '50px', border: '2px solid gray',
     }}>
       <View style={{
-        width: '50%', display: 'flex', flexDirection: 'column', borderRight: '2px solid gray',
+        width: gameMode==0?'50%':"100%", display: 'flex', flexDirection: 'column', borderRight: gameMode==0?'2px solid gray':"",
         alignItems: 'center',
         textAlign: 'center',
         // rowGap: '10px',
@@ -82,13 +82,15 @@ export default function ScorePad({ gameOver, score,rate, ...props }) {
               fontFamily: 'Horizon'
 
         }}>{score}</Text>
+        {gameMode==0&&
         <Text style={{
           fontSize: '20px',
           fontFamily: 'Horizon',
           color: 'white',
 
-        }}>Top {highscore}</Text>
+        }}>Top {highscore}</Text>}
       </View>
+      {gameMode==0&&
       <View style={{
         width: '50%', alignItems: 'center',
         display: 'flex', flexDirection: 'row',
@@ -99,6 +101,7 @@ export default function ScorePad({ gameOver, score,rate, ...props }) {
         />
         <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '20px', fontFamily: fonts.fantasy }}>x {(score * rate).toFixed(3)}</Text>
       </View>
+}
     </View >
     // <View pointerEvents="none" style={[styles.container, { top: Math.max(top, 16), left: Math.max(left, 8) }]}>
     //   <Text style={[styles.score, textShadow]}>{score}</Text>

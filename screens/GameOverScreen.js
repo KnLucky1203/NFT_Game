@@ -6,10 +6,18 @@ import { fonts } from '../global/commonStyle';
 import { useNavigation } from "@react-navigation/native";
 import { commonStyle } from "../global/commonStyle";
 import { colors } from "../global/commonStyle";
-import { socket} from '../global/global';
+import { socket, claimToken} from '../global/global';
+import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 
+import { Connection, PublicKey, Transaction, clusterApiUrl, sendAndConfirmTransaction, Keypair } from '@solana/web3.js';
+import { getDepositAddress } from "../global/global";
+import {
+  getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, Token,
+  getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction,
+  getMint
+} from '@solana/spl-token';
 function GameOver({ ...props }) {
-  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo, } = React.useContext(GameContext);
+  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo,setLoadingState } = React.useContext(GameContext);
   const navigation = useNavigation();
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -20,6 +28,10 @@ function GameOver({ ...props }) {
   const [pvpEndFlag, setPvpEndflag] = useState(false);
   const [resultString, setResultString] = useState("");
   const [otherScore, setOtherScore] = useState(0);
+  const [rewardable, setrewardable] = useState(false);
+  
+  const { walletProvider, connection } = useWeb3ModalProvider();
+  const { address, chainId } = useWeb3ModalAccount()
   const {
     // set the socket to the context
     setSocket,
@@ -47,6 +59,7 @@ function GameOver({ ...props }) {
           setOtherScore(data.score2);
           if (data.score1> data.score2) {
             setResultString("You Won");
+            setrewardable(true);
           }
           else if (data.score1 < data.score2) {
             setResultString("You Lost");            
@@ -59,6 +72,7 @@ function GameOver({ ...props }) {
           setOtherScore(data.score1);
           if (data.score1 < data.score2) {
             setResultString("You Won");
+            setrewardable(true);
           }
           else if (data.score1 > data.score2) {
             setResultString("You Lost");
@@ -83,9 +97,81 @@ function GameOver({ ...props }) {
   }, []);
 
   /* ================================ For Mobile Responsive ===============================*/
+  const depositToken = async () => {
 
-  const restartGame = () => {
+    let response;
+    try {
+      response = await getDepositAddress();
+    } catch (error) {
+      console.error('Error fetching deposit address:', error);
+      return;
+    }
+
+    const tokenAddr = response.data.data.tokenAddress;
+
+    if (!walletProvider || !address || !connection) {
+      window.alert('walletProvider or address is undefined');
+      return;
+    }
+    
+    setLoadingState(true);
+    try {
+      const myAddr = address; // The address of the user
+      const adminWalletAddr = response.data.data.depositAddress; // Admin address
+
+      const sender = new PublicKey(myAddr); // User's public key
+      const receiver = new PublicKey(adminWalletAddr); // Admin's public key
+      const mint = new PublicKey(tokenAddr); // Token mint address
+
+      const fromATA = getAssociatedTokenAddressSync(mint, sender);
+      const toATA = getAssociatedTokenAddressSync(mint, receiver);
+
+      let instructions = [];
+      const info = await connection.getAccountInfo(toATA);
+      if (!info) {
+        instructions.push(createAssociatedTokenAccountInstruction(sender, toATA, receiver, mint));
+      }
+      const tokenMint = await getMint(connection, mint);
+      instructions.push(createTransferInstruction(fromATA, toATA, sender, myRoomInfo.amount * 10 ** tokenMint.decimals));
+
+      const tx = new Transaction().add(...instructions);
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = sender;
+      console.log("deposit1--------------->");
+      const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
+
+      // console.log("deposit2--------------->", signature);
+      // await connection.confirmTransaction(signature, 'processed');
+
+      // console.log("deposit3--------------->", signature);
+      // let res = await sendAndConfirmVersionedTransactions(connection, tx);
+      // console.log("res = ", res);
+      // socket.emit('message', JSON.stringify({
+      //   cmd: 'TOKEN_DEPOSITED', role: role
+      // }));
+
+      
+    } catch (error) {
+      console.error('Error depositng:', error);
+      setLoadingState(false);
+      return;
+    }
+
+    setLoadingState(false);
+
+    return;
+  }
+  const getReward = async () => {
+    setLoadingState(true);
+    console.log("amount = ", myRoomInfo.amount*2);
+    await claimToken(myRoomInfo.amount*2, localStorage.wallet, localStorage.token);
+    setrewardable(false);
+    setLoadingState(false);
+  }
+  const restartGame = async () => {
     if (gameMode == 2) {
+      await depositToken();
     if (role == "client") {
       socket.emit('message', JSON.stringify({
         cmd: 'CLIENT_PLAY_AGAIN',
@@ -126,6 +212,12 @@ function GameOver({ ...props }) {
       }}>
         {!pvpEndFlag||gameMode==0?"GAME OVER":resultString}
       </Text>
+      <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                columnGap: '10px',
+              }}>
       <Text style={{
         textAlign: 'center',
         fontSize: '20px',
@@ -133,7 +225,7 @@ function GameOver({ ...props }) {
         color: 'white',
          fontFamily: 'Horizon'
       }}>
-        You score is&nbsp;&nbsp;
+        You score: &nbsp;
         <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{props.score}</Text>
       </Text>
       {pvpEndFlag&&<Text style={{
@@ -143,9 +235,41 @@ function GameOver({ ...props }) {
         color: 'white',
          fontFamily: 'Horizon'
       }}>
-        Other score is&nbsp;&nbsp;
+        Other score: &nbsp;
         <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{otherScore}</Text>
       </Text>}
+      </View>
+      {gameMode==2&&resultString=="You Won"&&pvpEndFlag&&
+      <Text style={{
+        textAlign: 'center',
+        fontSize: '20px',
+        fontWeight: '900',
+        color: 'white',
+         fontFamily: 'Horizon'
+      }}>
+        You Reward: &nbsp;
+        <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{myRoomInfo.amount*2}</Text>
+      </Text>
+      }
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                columnGap: '10px',
+              }}>
+                {rewardable&&
+      <Text style={{
+        ...commonStyle.button,
+        fontFamily: fonts.fantasy,
+        marginTop: '25px',
+        marginBottom: '10px',
+        fontFamily: 'Horizon',
+      }}
+        onClick={getReward}  
+      >
+        Get Reward
+      </Text>
+      }
       {pvpEndFlag||gameMode==0?<Text style={{
         ...commonStyle.button,
         fontFamily: fonts.fantasy,
@@ -165,6 +289,7 @@ function GameOver({ ...props }) {
       }}>
         Wait Other!!!
       </Text>}
+      </View>
     </Animated.View>
 
   );

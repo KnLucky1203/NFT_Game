@@ -40,7 +40,7 @@ import { initialWindowSafeAreaInsets } from 'react-native-safe-area-context';
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 
 import { Connection, PublicKey, Transaction, clusterApiUrl, sendAndConfirmTransaction, Keypair } from '@solana/web3.js';
-import { getDepositAddress } from "../global/global";
+import { claimToken, getDepositAddress } from "../global/global";
 import {
   getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, Token,
   getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction,
@@ -48,7 +48,7 @@ import {
 } from '@solana/spl-token';
 // Guide Page component
 const GameRoomScreen = () => {
-  const { user, setUser } = React.useContext(GameContext);
+  const { user, setUser, setLoadingState } = React.useContext(GameContext);
 
   /* ================================ For Mobile Responsive ===============================*/
 
@@ -79,9 +79,15 @@ const GameRoomScreen = () => {
       console.log("---amount1---", data.amount);
       setAmount(data.amount);
     }
+
+    const claimTokenHere = async () =>{
+      console.log("claim passive = ", myRoomInfo.amount);
+      setLoadingState(true);
+      await claimToken(myRoomInfo.amount, localStorage.wallet, localStorage.token);
+      setLoadingState(false);
+    }
+
     const handleSocketRoom = (data) => {
-      // console.log("handleSocketRoom in gameroomscreen",data);
-      console.log("---handleSocketRoom---", data);
       if (data.cmd == "CLIENT_PLAY_AGAIN_APPROVED") {
         setMyRoomInfo(prevRoomInfo => ({
           ...prevRoomInfo,
@@ -89,12 +95,25 @@ const GameRoomScreen = () => {
         }));
       }
 
+      if (data.cmd == "ROOM_CLOSED") {
+        
+        claimTokenHere();
+
+        navigation.navigate("LandingScreen");
+        window.alert("Server Room closed");
+      }
+
+
       if (data.cmd == "SERVER_DEPOSITED") {
         setServerDeposited(true);
       }
 
       if (data.cmd == "CLIENT_DEPOSITED") {
         setClientDeposited(true);
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          client_ready: true
+        }));
       }
       // setAmount(data.amount);
     }
@@ -175,15 +194,38 @@ const GameRoomScreen = () => {
     if (role == "server") {
       console.log("---amount4---", value);
       setAmount(value);
-      socket.emit('message', JSON.stringify({
-        cmd: 'SET_BET_AMOUNT',
-        amount: value,
-      }));
+      // socket.emit('message', JSON.stringify({
+      //   cmd: 'SET_BET_AMOUNT',
+      //   amount: value,
+      // }));
     }
     else {
       window.alert("Only Server can set amount");
     }
   }
+  const refundExit = async () => {
+    // console.log("-------------refundExit----------");
+    setLoadingState(true);
+    let response = await claimToken(myRoomInfo.amount, localStorage.wallet, localStorage.token);
+
+    console.log(" $$$$$$$$$$$",response);
+    
+    console.log("claim active = ", myRoomInfo.amount);
+    
+    if (role =="client") {
+      socket.emit('message', JSON.stringify({
+        cmd: 'CLIENT_JOIN_EXIT'
+      }));
+    }
+    else if(role =="server") {
+      socket.emit('message', JSON.stringify({
+        cmd: 'CLOSE_ROOM'
+      }));
+    }
+    setLoadingState(false);
+    navigation.navigate("LandingScreen");
+  }
+
   const depositToken = async () => {
     if (deposited) {
       window.alert("You already deposited");
@@ -378,7 +420,15 @@ const GameRoomScreen = () => {
 
             </View>}
           
-
+            <Text style={{
+            ...commonStyle.button,
+            marginTop: '20px',
+            fontFamily: 'Horizon',
+          }}
+            onClick={refundExit}
+          >
+            Refund and Exit
+          </Text>
 
             <Text style={{
               ...commonStyle.button,

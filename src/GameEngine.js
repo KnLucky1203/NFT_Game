@@ -36,10 +36,10 @@ export default class Engine {
     let _width = width;
     // let scaleConstant = 1920;
 
-    console.log("CCCCCCCCCCCCCCCCCCCamera info");
-    console.log("width:", _width);
-    console.log("height:", height);
-    console.log("scale:", scale);
+    // console.log("CCCCCCCCCCCCCCCCCCCamera info");
+    // console.log("width:", _width);
+    // console.log("height:", height);
+    // console.log("scale:", scale);
 
     // let calScaleX = scaleConstant/_width;
     // let calScaleY = scaleConstant/height;

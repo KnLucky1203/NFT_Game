@@ -32,7 +32,7 @@ import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'react-native';
 import { globalMap } from "../global/globalMap";
-import { socket } from '../global/global';
+import { sendAndConfirmVersionedTransactions, socket ,sendAndConfirmLegacyTransactions} from '../global/global';
 // Personal informations
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
@@ -49,7 +49,7 @@ import {
 } from '@solana/spl-token';
 // Guide Page component
 const DepositScreen = () => {
-  const { user, setUser,  } = React.useContext(GameContext);
+  const { user, setUser, } = React.useContext(GameContext);
 
   /* ================================ For Mobile Responsive ===============================*/
   const [path, setPath] = useState("room");
@@ -69,6 +69,10 @@ const DepositScreen = () => {
         console.log("server id : ", _serverId);
         if (_serverId) {
           setServerId(_serverId);
+          socket.emit('message', JSON.stringify({
+            cmd: 'GET_AMOUNT',
+            name: _serverId,
+          }));
         }
         // setRoomPath(FRONTEND_URL + "/?" + _serverId);
       }
@@ -81,19 +85,11 @@ const DepositScreen = () => {
     };
 
     const handleSocketRoom = (data) => {
-      console.log("------RETURN_AMOUNT")
       if (data.cmd === "RETURN_AMOUNT") {
         setAmount(data.serverAmount);
       }
     };
 
-    if (serverId) {
-
-    socket.emit('message', JSON.stringify({
-      cmd: 'GET_AMOUNT',
-      name: serverId.toString(),
-    }));
-  }
     socket.on('ROOM', handleSocketRoom);
     window.addEventListener('resize', handleResize);
     return () => {
@@ -107,7 +103,7 @@ const DepositScreen = () => {
   // Initial Variables
   const navigation = useNavigation();
   const {
-    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo,
+    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo,setLoadingState
   } = React.useContext(GameContext);
 
   const setBetAmount = (value) => {
@@ -136,43 +132,46 @@ const DepositScreen = () => {
       window.alert('walletProvider or address is undefined');
       return;
     }
+    
+    setLoadingState(true);
     try {
       const myAddr = address; // The address of the user
       const adminWalletAddr = response.data.data.depositAddress; // Admin address
-      /*
-            const sender = new PublicKey(myAddr); // User's public key
-            const receiver = new PublicKey(adminWalletAddr); // Admin's public key
-            const mint = new PublicKey(tokenAddr); // Token mint address
-      
-            const fromATA = getAssociatedTokenAddressSync(mint, sender);
-            const toATA = getAssociatedTokenAddressSync(mint, receiver);
-      
-            let instructions = [];
-            const info = await connection.getAccountInfo(toATA);
-            if (!info) {
-              instructions.push(createAssociatedTokenAccountInstruction(sender, toATA, receiver, mint));
-            }
-            const tokenMint = await getMint(connection, mint);
-            instructions.push(createTransferInstruction(fromATA, toATA, sender, amount * 10 ** tokenMint.decimals));
-      
-            const tx = new Transaction().add(...instructions);
-            const { blockhash } = await connection.getLatestBlockhash();
-            tx.recentBlockhash = blockhash;
-            tx.feePayer = sender;
-            console.log("deposit1--------------->");
-            const signature = await walletProvider.sendTransaction(tx, connection);
-      
-            console.log("deposit2--------------->", signature);
-            await connection.confirmTransaction(signature, 'processed');
-      
-            console.log("deposit3--------------->", signature);
-            setDeposited(true);
-            socket.emit('message', JSON.stringify({
-              cmd: 'TOKEN_DEPOSITED', role: role
-            }));
-            
-      */
-      console.log("^^^^^^^^^^^^^^", globalMap);
+
+      const sender = new PublicKey(myAddr); // User's public key
+      const receiver = new PublicKey(adminWalletAddr); // Admin's public key
+      const mint = new PublicKey(tokenAddr); // Token mint address
+
+      const fromATA = getAssociatedTokenAddressSync(mint, sender);
+      const toATA = getAssociatedTokenAddressSync(mint, receiver);
+
+      let instructions = [];
+      const info = await connection.getAccountInfo(toATA);
+      if (!info) {
+        instructions.push(createAssociatedTokenAccountInstruction(sender, toATA, receiver, mint));
+      }
+      const tokenMint = await getMint(connection, mint);
+      instructions.push(createTransferInstruction(fromATA, toATA, sender, amount * 10 ** tokenMint.decimals));
+
+      const tx = new Transaction().add(...instructions);
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = sender;
+      console.log("deposit1--------------->");
+      const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
+
+      // console.log("deposit2--------------->", signature);
+      // await connection.confirmTransaction(signature, 'processed');
+
+      // console.log("deposit3--------------->", signature);
+      // let res = await sendAndConfirmVersionedTransactions(connection, tx);
+      // console.log("res = ", res);
+      // socket.emit('message', JSON.stringify({
+      //   cmd: 'TOKEN_DEPOSITED', role: role
+      // }));
+
+
+      console.log("^^^^^^^^^^^^^^", userInfo);
       if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
         socket.emit('message', JSON.stringify({
           cmd: 'ACTION_JOIN_GAME',
@@ -180,6 +179,11 @@ const DepositScreen = () => {
           player2: userInfo.username,
         }));
       } else {
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          amount: amount,
+          client_ready: true,
+        }));
         socket.emit('message', JSON.stringify({
           cmd: 'ACTION_CREATE_ROOM',
           player1: userInfo.username,
@@ -190,9 +194,11 @@ const DepositScreen = () => {
 
     } catch (error) {
       console.error('Error depositng:', error);
+      setLoadingState(false);
       return;
     }
 
+    setLoadingState(false);
 
     return;
   }

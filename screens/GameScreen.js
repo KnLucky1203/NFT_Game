@@ -426,8 +426,6 @@ function GameScreen(props) {
 
   useEffect(() => {
 
-    console.log("###################################GameScreen")
-
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
@@ -435,6 +433,13 @@ function GameScreen(props) {
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
+      if (gameMode == 2) {
+      socket.emit('message', JSON.stringify({ 
+        cmd: 'REGISTER_SCORE',            
+        role: role,
+        score: -1 }));
+      }
+        socket.off('ROOM', handleSocketEndGame);
     };
 
   }, []);

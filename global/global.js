@@ -22,6 +22,7 @@ export const metadata = {
   url: 'https://appkit-solana.vercel.app', // origin must match your domain & subdomain
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
 };
+const token = localStorage.token;
 export const solanaConfig = defaultSolanaConfig({
   metadata,
   chains,
@@ -43,35 +44,67 @@ export const getCharacters = async () => {
   return await axios(SERVER_URL + '/api/v1/base/character')
 }
 
-export const addNFT = async(address, character) => {
-  console.log("add nft called..............")
-  return await axios.post(SERVER_URL + '/api/v1/admin/nft/create', {
-    headers: {
-      Authorization: wallet
+// -------------Admins Router Begin----------------------
+export const addNFT = async (address, character) => {
+  return await axios.post(SERVER_URL + '/api/v1/admin/nft/create', 
+    {
+      nftMintAddress: address,
+      character: character,
+      wallet,
     },
-    nftMintAddress: address,
-    character: character,
-  })
-}
-
-export const updateNFTCharacter = async(id, character) => {
-  console.log("update nft called..............")
-  return await axios.post(SERVER_URL + '/api/v1/admin/nft/update', {
-    headers: {
-      Authorization: wallet
-    }, 
-    nftId: id,
-    character: character,
-  })
-}
-
-export const deleteNFT = async(id) => {
-  return await axios.delete(SERVER_URL + '/api/v1/admin/nft/delete/' + id, {
-    headers: {
-      Authorization: wallet
+    {
+      headers: {
+        Authorization: `bearer ${token}`,
     },
   })
 }
+
+export const updateNFTCharacter = async (id, character) => {
+  return await axios.post(SERVER_URL + '/api/v1/admin/nft/update', 
+    {
+      nftId: id,
+      character,
+      wallet
+    },
+    {
+      headers: {
+        Authorization: `bearer ${token}`,
+      },
+    })
+}
+
+export const deleteNFT = async (id) => {
+  return await axios.post(SERVER_URL + '/api/v1/admin/nft/delete',
+    { wallet: wallet,
+      nftId: id, 
+    },
+    {
+      headers: {
+        Authorization: `bearer ${token}`,
+      },
+    },
+    
+  )
+}
+
+export const getAdminData = async (wallet) => {
+  return await axios(SERVER_URL + '/api/v1/admin/dashboard/data/' + wallet, {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  })
+}
+
+export const setRewardRate = async (rate) => {
+  return await axios.patch(SERVER_URL + '/api/v1/admin/reward/rate', 
+    { rate, wallet }, 
+    {
+      headers: {
+        Authorization: `bearer ${token}`,
+      }
+    });
+}
+// -------------Admins Router End----------------------
 
 export const getWalletInfo = async (wallet) => {
   console.log('getWalletInfo', wallet)
@@ -81,11 +114,6 @@ export const getWalletInfo = async (wallet) => {
 export const getNFTOne = async (mint) => {
   console.log('getNFTOne', mint)
   return await axios(SERVER_URL + '/api/nft_one/' + mint)
-}
-
-export const getAdminData = async (wallet) => {
-  console.log('getAdminData', wallet)
-  return await axios(SERVER_URL + '/api/v1/admin/dashboard/data/' + wallet)
 }
 
 export const getWalletSOLBalance_bn = async (conn, wallet) => {
@@ -122,23 +150,15 @@ export const loginUser = async (username, password) => {
 }
 
 export const getScoreList = async (sortBy, limit, page) => {
-  return await axios.get(SERVER_URL + '/api/v1/user/score/list?sortBy='+sortBy+'&limit='+limit+"&page="+page);
+  return await axios.get(SERVER_URL + '/api/v1/user/score/list?sortBy=' + sortBy + '&limit=' + limit + "&page=" + page);
 }
 
 export const getRate = async (sortBy, limit, page) => {
   return await axios.get(SERVER_URL + '/api/v1/base/reward/rate?mode=PVE');
 }
 
-export const setrate = async (rate) => {
-  return await axios.patch(SERVER_URL + '/api/v1/admin/reward/rate',{rate},  {
-    headers: {
-      Authorization: `bearer ${token}`,
-    },
-  });
-}
-
 export const getUserInfo = async (token) => {
-  return await axios.get(SERVER_URL + '/api/v1/user/info',  {
+  return await axios.get(SERVER_URL + '/api/v1/user/info', {
     headers: {
       Authorization: `bearer ${token}`,
     },
@@ -146,12 +166,20 @@ export const getUserInfo = async (token) => {
 }
 
 export const getDepositAddress = async () => {
-  return await axios.get(SERVER_URL + '/api/v1/base/deposit/address',  {
+  return await axios.get(SERVER_URL + '/api/v1/base/deposit/address', {
   });
 }
 
 export const updateScore = async (score, wallet, token) => {
-  return await axios.post(SERVER_URL + '/api/v1/user/score/update',{score, wallet},  {
+  return await axios.post(SERVER_URL + '/api/v1/user/score/update', { score, wallet }, {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  });
+}
+
+export const claimToken = async (score, wallet, token) => {
+  return await axios.post(SERVER_URL + '/api/v1/user/token/claim', { score, wallet }, {
     headers: {
       Authorization: `bearer ${token}`,
     },
@@ -159,10 +187,10 @@ export const updateScore = async (score, wallet, token) => {
 }
 
 export const setMyNFT = async (nft_colletcion) => {
-  const token = localStorage.token;
   return await axios.patch(SERVER_URL + '/api/v1/user/nft/update/' + nft_colletcion, {}, {
     headers: {
       Authorization: `bearer ${token}`,
     },
   });
 }
+

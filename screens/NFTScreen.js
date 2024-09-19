@@ -7,6 +7,7 @@ import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from '../global/common';
 import { getUserInfo, setMyNFT } from '../global/global';
+import toast from 'react-hot-toast';
 
 export default function NFTScreen({ openNFT, setOpenNFT }) {
   /* ================================ For Mobile Responsive ===============================*/
@@ -16,7 +17,10 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
   useEffect(() => {
     getUserInfo(localStorage.token).then(response => {
       if(response.data.code == "00"){
-        setCharacter(response.data.data.character.name)
+        if(response?.data?.data?.character?.name)
+          setCharacter(response.data.data.character.name)
+      }else {
+        toast.error("Please log in!")
       }
     })
     const handleResize = () => {
@@ -55,11 +59,26 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
       new_user.collection = new_user.nfts[index].collection
       setUser(new_user);
       setMyNFT(new_user.collection).then(response => {
-        console.log("update user response ======> ", response.data.data)
         if(response.data.code == "00"){
-          console.log("here---------------")
-          setCharacter(response.data.data.character.name)
+          if(response?.data?.data?.character?.name){
+            setCharacter(response.data.data.character.name)
+            toast.success(
+              `Selected character: ${response?.data?.data?.character?.name}`, 
+              { 
+                style: {
+                  backgroundColor: 'white',
+                  color: 'black',
+                  boxShadow: '5px 5px 10px 3px rgba(210, 0, 0, 0.7)',
+                  borderRadius: '10px',
+                  fontWeight: 400
+                }
+              }
+            )
+          }
         }
+      }).catch(res => {
+        console.log("ERROR++++++++++", res?.response.data.error)
+        toast.error("Error: ", res?.response?.data?.error)
       })
       console.log('set avatar', new_user);
     }}>
@@ -130,13 +149,13 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
         }}>
           <View style={{
             width: '100%',
-            height: isPC ? '200px' : '100px',
+            height: isPC ? '100px' : '100px',
             borderBottom: "1px solid gray",
             justifyContent: 'center',
             alignItems: 'center'
           }}>
             <Text style={{
-              fontSize: isPC ? '96px' : '64px',
+              fontSize: isPC ? '74px' : '64px',
               color: '#FDC6D3',
               WebkitTextStroke: '1px #EF587B',
               filter: 'drop-shadow(0px 0px 20px #EF587B)',
@@ -159,6 +178,24 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
             }) : 'NFTs not found'}
           </View>
           <View style={{
+            width: '100%',
+            height: isPC ? '100px' : '100px',
+            borderBottom: "1px solid gray",
+            borderTop: "1px solid gray",
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <Text style={{
+              fontSize: isPC ? '74px' : '64px',
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              // textShadow: '0 0 5px #fff',
+              fontFamily: 'Horizon'
+            }}>My Character</Text>
+          </View>
+          <View style={{
             padding: '25px',
             display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
             overflowY: 'scroll',
@@ -168,21 +205,27 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
           }}>
             <View style={{
               padding: '10px',
-              width: isPC ? '100%' : '80%',
+              width: '100%',
               display: 'flex', flexDirection: 'column',
               cursor: 'pointer',
-              background: 'rgba(0,0,255,0.1)',
+              // background: 'rgba(0,0,255,0.1)',
               borderRadius: '10px'
             }} >
-              <img
-                src={character ? require(`../assets/character/${character}.png`) : require(`../assets/character/bacon.png`)}
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  margin: 'auto',
-                  borderRadius: '10%',
-                }}
-              />
+              <View style={{
+                padding: isPC? '30px': '50px',
+                borderRadius: '10px',
+                background: 'rgba(0,0,255,0.2)',
+              }}>
+                <img
+                  src={character ? require(`../assets/character/${character}.png`) : require(`../assets/character/bacon.png`)}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    margin: 'auto',
+                    borderRadius: '10%',
+                  }}
+                />
+              </View>
             </View>
           </View>
         </View>

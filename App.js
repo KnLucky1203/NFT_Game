@@ -27,7 +27,7 @@
  */
 // Sample Libraries
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { WebView } from 'react-native-webview';
 import { useFonts } from "expo-font";
@@ -49,7 +49,9 @@ import GameRoomScreen from "./screens/GameRoomScreen";
 import AdminScreen from "./screens/AdminScreen";
 import NFTScreen from "./screens/NFTScreen";
 import DepositScreen from "./screens/DepositScreen";
-
+import Screen from "./screens/HomeScreen";
+import { AlertNotificationRoot } from 'react-native-alert-notification';
+import { Toaster } from "react-hot-toast";
 // Global variables
 const Stack = createStackNavigator();
 
@@ -58,6 +60,7 @@ export default function App() {
     <GameProvider>
       <AssetLoading>
         <SafeAreaProvider>
+
           <NavigationContainer>
             <Stack.Navigator>
 
@@ -82,7 +85,9 @@ export default function App() {
 
               <Stack.Screen name="AdminScreen" component={AdminScreen}
                 options={{ headerShown: false }} />
-                <Stack.Screen name="DepositScreen" component={DepositScreen}
+              <Stack.Screen name="DepositScreen" component={DepositScreen}
+                options={{ headerShown: false }} />
+              <Stack.Screen name="HomeScreen" component={Screen}
                 options={{ headerShown: false }} />
 
               {/* // Single play on the local machine */}
@@ -104,6 +109,7 @@ export default function App() {
           </NavigationContainer>
         </SafeAreaProvider>
       </AssetLoading>
+      <Toaster />
     </GameProvider>
 
   );

@@ -3,7 +3,7 @@
 [![Expo](/.style/header.png)](https://crossyroad.netlify.com/)
 
 <p align="center"> 
-  <a aria-label="Expo Bouncy Bacon is free to use" href="/LICENSE" target="_blank">
+  <a aria-label="Expo Mobber Game is free to use" href="/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-success.svg?style=flat-square&color=33CC12" target="_blank" />
   </a>
 

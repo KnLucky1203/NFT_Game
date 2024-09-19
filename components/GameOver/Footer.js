@@ -13,12 +13,12 @@ import { useNavigation } from "@react-navigation/native";
 async function shareAsync() {
   await Share.share(
     {
-      message: `Check out Bouncy Bacon by @baconbrix`,
+      message: `Check out Mobber Game by @baconbrix`,
       url: 'https://crossyroad.netlify.com',
-      title: 'Bouncy Bacon',
+      title: 'Mobber Game',
     },
     {
-      dialogTitle: 'Share Bouncy Bacon',
+      dialogTitle: 'Share Mobber Game',
       excludedActivityTypes: [
         'com.apple.UIKit.activity.AirDrop', // This speeds up showing the share sheet by a lot
         'com.apple.UIKit.activity.AddToReadingList', // This is just lame :)
