@@ -1,7 +1,7 @@
 import { Box3, Object3D } from 'three';
-
 import ModelLoader from '../../src/ModelLoader';
 
+import GameContext from "../../context/GameContext";
 export default class Road extends Object3D {
   active = false;
   cars = [];
@@ -80,10 +80,11 @@ export default class Road extends Object3D {
     }
   };
 
-  constructor(heroWidth, onCollide, randValArray) {
+  constructor(heroWidth, onCollide, randValArray, collideCheck) {
     super();
     this.heroWidth = heroWidth;
     this.onCollide = onCollide;
+    this.collideCheck = collideCheck;
     const { _road } = ModelLoader;
 
     this.road = _road.models['1'].children[0].clone();
@@ -124,6 +125,10 @@ export default class Road extends Object3D {
   };
 
   shouldCheckCollision = ({ player, car }) => {
+    
+
+    if (!this.collideCheck)
+      return;
     if (Math.round(player.position.z) == this.position.z && player.isAlive) {
       const { mesh, collisionBox } = car;
 

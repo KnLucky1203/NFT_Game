@@ -259,7 +259,7 @@ export default function AdminScreen() {
   }
 
   const setRateValue = async () => {
-    if(newNFT == undefined || newNFT == "") {
+    if(rate == undefined || rate == "") {
       toast.error("Input rate value")
       return
     }
@@ -397,40 +397,42 @@ export default function AdminScreen() {
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
-            columnGap: '10px',
+            rowGap: '15px',
             width: isPC ? '50%' : '100%',
+            padding: "20px",
             height: '100%',
             textAlign: 'center',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
-
             <Text style={{
                 fontSize: isPC ? '96px' : '64px',
                 color: '#FDC6D3',
                 WebkitTextStroke: '1px #EF587B',
                 filter: 'drop-shadow(0px 0px 20px #EF587B)',
                 fontWeight: '700',
-                // textShadow: '0 0 5px #fff',
                 fontFamily: 'Horizon'
-            }}>Admin Dashboard</Text>            
+            }}>Admin Dashboard</Text>   
+
             <View style={{
-              display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
-              width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', 
+              maxWidth: '800px',
+              width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',
             }}>
               <Text style={{
-                width:'100px',
+                width:'80px',
                 color: 'white',
                 fontSize: '20px',
                 display: 'block',
                 fontFamily: 'Horizon',
+                textAlign: 'left'
               }}
               >
                 Add New NFT
               </Text>
               <TextInput style={{
                 width: '100%',
-                maxWidth: '510px',
+                maxWidth: '620px',
                 padding: '0.5rem',
                 flex: 1,
                 border: '1px solid gray',
@@ -456,26 +458,25 @@ export default function AdminScreen() {
                 }}>Add
               </View>
             </View>
-            
-
 
             <View style={{
-              display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
-              width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', maxWidth: '800px',
+              width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',
             }}>
               <Text style={{
-                width:'100px',
+                width:'80px',
                 color: 'white',
                 fontSize: '20px',
                 display: 'block',
                 fontFamily: 'Horizon',
+                textAlign: 'left'
               }}
               >
                 Token Rate
               </Text>
               <TextInput style={{
                 width: '100%',
-                maxWidth: '510px',
+                maxWidth: '620px',
                 padding: '0.5rem',
                 flex: 1,
                 border: '1px solid gray',
@@ -501,10 +502,6 @@ export default function AdminScreen() {
                 }}>Set
               </View>
             </View>
-            <View style={{
-              width: '100%',
-              maxWidth: '800px',
-            }}></View>
 
             <View style={{
               width: '100%',
@@ -515,8 +512,7 @@ export default function AdminScreen() {
                 color: 'white',
                 fontSize: '20px',
                 display: 'block',
-                marginRight: 'auto',
-                marginLeft: '30px',
+                textAlign: 'left',
                 fontFamily: 'Horizon',
               }}
               >
@@ -526,13 +522,13 @@ export default function AdminScreen() {
             <View style={{
               marginTop: '10px', display: 'flex', flexDirection: 'column', flex: 1, height: '100%',
               border: '1px solid gray', borderRadius: '16px', width: '100%', padding: '10px',
-              overflowY: 'scroll', scrollbarWidth: 'thin', maxWidth: '800px', marginBottom: '20px',
+              overflowY: 'scroll', scrollbarWidth: 'thin', maxWidth: '800px', marginBottom: '20px',              
             }}>
               {(admin && admin.nfts) ? admin.nfts.map((item, index) => {
                 return renderAdminAvatar({ item, index })
               }) : ''}
             </View>
-          </View>
+          </View>          
         </View>
         
       </View >

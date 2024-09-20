@@ -30,7 +30,7 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, TextInput, Image, Platform, Dimensions, Linking, Switch, ScrollView } from 'react-native';
+import { View, Text, TextInput, Image, Platform, Dimensions, Linking, Switch, ScrollView, Animated } from 'react-native';
 import SwitchToggle from 'react-native-switch-toggle';
 import GameContext from '../context/GameContext';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -58,7 +58,9 @@ const LeaderboardScreen = () => {
     console.log("recoe = ", response.data.code);
     if (response.data.code == "00") {
       console.log(response.data.data);
-      
+      const height1 = parseInt(response.data.data.length) * 52;
+      setContentHeight(height1)
+      // setContentHeight(parseInt(response.data.data.length) * 62)
       setData(response.data.data);
     }
   }
@@ -87,7 +89,13 @@ const LeaderboardScreen = () => {
   const [path, setPath] = useState("leaderboard");
 
   const [data, setData] = useState([]);
-
+  const [isHovered, setIsHovered] = useState(null)
+  const [scrollY, setScrollY] = useState(new Animated.Value(0));
+  const [contentHeight, setContentHeight] = useState(620);
+    // Assume the total scrollable content height
+  console.log("Dimension =====", Dimensions.get("window").height - 285)
+  const windowHeight = isPC ? Dimensions.get('window').height - 400 : Dimensions.get("window").height - 285;
+  console.log("window height ==========", windowHeight);
   const getRankStyle = (rank, player) => {
     if (rank == 1) {
       return { color: 'black', background: '#F3B34C', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #F6D65D' }
@@ -100,7 +108,7 @@ const LeaderboardScreen = () => {
   }
 
   // Receiving events from the server
-
+  
   return (
     <View style={{
       display: 'flex',
@@ -207,23 +215,41 @@ const LeaderboardScreen = () => {
               </Text>
             </View>
           </View>
-          <ScrollView style={{
-            width: isPC ? '50vw' : '100%',
-            height: '600px',
-          }} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={{
+              width: isPC ? '50vw' : '100%',
+              height: '600px',
+              flex: 1,
+            }}
+            contentContainerStyle={{
+              // paddingRight: 10,
+              paddingRight: contentHeight > windowHeight ? 8 : 0,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            bounces={true} // Enable bouncing effect on iOS
+            overScrollMode="always" // Enable overscroll effect on Android
+            showsVerticalScrollIndicator={false}
+            onScroll={ Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: false }
+            )}
+            scrollEventThrottle={16}
+          >
             {data.map((player, index) => {
-              return (<View style={{
+              return (<View style={[{
                 display: 'flex', flexDirection: 'row',
                 alignItems: 'center',
                 width: '100%', justifyContent: 'space-between',
                 padding: '10px',
                 border: userInfo.id==player.id?"1px solid #EF587B":commonStyle.border,
                 backgroundColor: userInfo.id==player.id ? '#FDC6D3' : ""
-              }}>
+              }, isHovered == index && {backgroundColor: 'rgba(255, 255, 255, 0.1)' }]} onMouseEnter={() => {setIsHovered(index)}} onMouseLeave={() => setIsHovered(null)}>
                 <View style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  columnGap: '10px'
+                  columnGap: '10px',
+                  alignItems: 'center',
                 }}>
                 <Text style={{
                   color: 'white', fontSize: '20px',
@@ -244,8 +270,30 @@ const LeaderboardScreen = () => {
             })}
           </ScrollView>
 
-
-
+          {contentHeight > windowHeight && <Animated.View
+            style={[
+              {
+                position: 'absolute',
+                top: isPC ? 300: 185,
+                right: 2,
+                width: 5,
+                backgroundColor: '#ef587b',
+                borderRadius: 3,
+              },
+              {
+                height: parseFloat(windowHeight) / (parseFloat(contentHeight) / parseFloat(windowHeight)), // Set indicator height based on content height
+                transform: [
+                  {
+                    translateY: scrollY.interpolate({
+                      inputRange: [0, Math.abs(contentHeight - windowHeight)],
+                      outputRange: [0, Math.abs(windowHeight - windowHeight / (contentHeight / windowHeight))],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              },
+            ]}
+          />}
         </View>
       </View>
 

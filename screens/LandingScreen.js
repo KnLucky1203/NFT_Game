@@ -212,6 +212,10 @@ const LandingScreen = () => {
             room_path: FRONTEND_URL + "/?" + data.name,
             room_my_role: 0,
             client_read: true,
+            deposit1: false,
+            deposit2: false,
+            amount: 0,
+            otherOver: false,
             players: data.players
           }));
 

@@ -60,6 +60,7 @@ export default function GameProvider({ children }) {
     client_ready: true,
     deposited1:false,
     deposited2:false,
+    otherOver:false,
     players : [{
       player_name : "",
       player_id : "",

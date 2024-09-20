@@ -131,7 +131,6 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
           width: '80%',
           margin: 'auto',
           borderRadius: '10%',
-          boxShadow: item.name == character ? '10px 10px 10px rgba(255,0,0,0.5)' : 'none',
         }}
       />
       <Text style={{ color: 'white', fontSize: isPC ? '18px' : '32px' }}>{item.name}</Text>

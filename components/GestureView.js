@@ -274,7 +274,7 @@ class GestureView extends Component {
     } else {
       // Vertical Swipe
       if (dy > SWIPE_THRESHOLD) {
-        return SWIPE_DOWN;
+        return SWIPE_RIGHT;
       } else if (dy < -SWIPE_THRESHOLD) {
         return SWIPE_UP;
       }

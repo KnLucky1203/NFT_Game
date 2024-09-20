@@ -1,8 +1,8 @@
 import { Dimensions } from "react-native";
-
 import { swipeDirections } from "../components/GestureView";
 import AudioManager from "../src/AudioManager";
 import ModelLoader from "../src/ModelLoader";
+import GameContext from "../context/GameContext";
 import Characters from "./Characters";
 import {
   CrossyCamera,
@@ -31,8 +31,10 @@ const normalizeAngle = (angle) => {
 };
 
 export default class Engine {
+
   updateScale = () => {
     const { width, height, scale } = Dimensions.get("window");
+
     let _width = width;
     // let scaleConstant = 1920;
 
@@ -49,14 +51,15 @@ export default class Engine {
 
 
     if (this.camera) {
-      this.camera.updateScale({ width, height, scale});
+      this.camera.updateScale({ width, height, scale });
     }
     if (this.renderer) {
       this.renderer.setSize(_width * scale, height * scale);
     }
   };
 
-  setupGame = (gameMode, character, globalMap) => {
+  setupGame = (gameMode, character, globalMap, isMap) => {
+    console.log("setup game ismap = ", isMap);
     this.scene = new CrossyScene({});
 
     this.camera = new CrossyCamera();
@@ -74,7 +77,8 @@ export default class Engine {
       heroWidth: 0.7,
       scene: this.scene,
       onCollide: this.onCollide,
-      newGlobalMap: globalMap
+      newGlobalMap: globalMap,
+      collideCheck: !isMap,
     });
 
     this.camCount = 0;
@@ -92,6 +96,7 @@ export default class Engine {
   }
 
   onCollide = async (obstacle = {}, type = "feathers", collision) => {
+    // console.log("----collide----");
     if (this.isGameEnded()) {
       return;
     }
@@ -106,7 +111,7 @@ export default class Engine {
     }
     this.scene.useParticle(this._hero, type, obstacle.speed);
     this.scene.rumble();
-    console.log("---collide gameover---------");
+    // console.log("---collide gameover---------");
     this.gameOver();
   };
 
@@ -131,7 +136,7 @@ export default class Engine {
 
   // Move scene forward
   forwardScene = () => {
-    
+
     this.scene.world.position.z -=
       (this._hero.position.z - startingRow + this.scene.world.position.z) *
       CAMERA_EASING;

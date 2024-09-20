@@ -191,6 +191,8 @@ function GameOver({ ...props }) {
       ...prevRoomInfo,
       deposit1: false,
       deposit2: false,
+      otherOver: false,
+      amount:0
     }));
     navigation.navigate("DepositScreen");
   }

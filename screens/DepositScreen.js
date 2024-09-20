@@ -512,7 +512,7 @@ const DepositScreen = () => {
                 color: 'white',
                 fontFamily: 'Horizon'
               }}>
-                Other Ready: &nbsp;
+                Player2: &nbsp;
                 <Text style={{ color: myRoomInfo.deposit2 ? colors.agreeSafe : colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.deposit2 ? "Yes" : "No"}</Text>
               </Text>
             </View>}

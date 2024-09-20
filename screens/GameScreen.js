@@ -64,6 +64,8 @@ class Game extends Component {
     this.character = props.character;
     this.isDarkMode = props.isDarkMode;
     this.rate = localStorage.rate;
+    this.isMap = props.isMap;
+    
     
   }
   /// Reserve State for UI related updates...
@@ -110,7 +112,8 @@ class Game extends Component {
       useNativeDriver: true,
       duration: 200,
       onComplete: ({ finished }) => {
-        this.engine.setupGame(this.gameMode, this.props.character, this.newGlobalMap);
+        // console.log("gameEngine = ", this.isMap);
+        this.engine.setupGame(this.gameMode, this.props.character, this.newGlobalMap, this.isMap);
         this.engine.init();
 
         if (finished) {
@@ -221,7 +224,7 @@ class Game extends Component {
       this.setState({ gameState: State.Game.gameOver });
       // this.props.navigation.navigate('GameOver')
     };
-    this.engine.setupGame(this.gameMode, this.props.character, this.newGlobalMap);
+    this.engine.setupGame(this.gameMode, this.props.character, this.newGlobalMap,this.isMap);
     this.engine.init();
   }
 
@@ -412,7 +415,7 @@ function GameScreen(props) {
   const scheme = useColorScheme();
   const navigation = useNavigation();
 
-  const { gameMode, socket, character, contextGameMap, role, setRole } = React.useContext(GameContext);
+  const { gameMode, socket, character, contextGameMap, role, setRole , setMyRoomInfo} = React.useContext(GameContext);
 
   const server_keyMaps = [keyMap_1, keyMap_None];
   const client_keyMaps = [keyMap_None, keyMap_2];
@@ -449,6 +452,12 @@ function GameScreen(props) {
   const handleSocketEndGame = (data) => {
     if (data.cmd == "END_GAME") {
       navigation.navigate("LandingScreen");
+    }
+    if (data.cmd == "OTHER_IS_OVER") {
+      setMyRoomInfo(prevRoomInfo => ({
+        ...prevRoomInfo,
+        otherOver: true
+      }));
     }
   }
 
@@ -505,6 +514,7 @@ function GameScreen(props) {
                   side="left"
                   isMobile={isMobile}
                   style={{ background: 'red' }}
+                  isMap={false}
                 />
               </View>
 
@@ -517,6 +527,7 @@ function GameScreen(props) {
                   side="right"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}
+                  isMap={true}
                 />
 
               </View>
@@ -532,6 +543,7 @@ function GameScreen(props) {
                   side="left"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}
+                  isMap={false}
                 />
               </View>
 
@@ -544,6 +556,7 @@ function GameScreen(props) {
                   side="right"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}
+                  isMap={true}
                 />
               </View>
             </>}

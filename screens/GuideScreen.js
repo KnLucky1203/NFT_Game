@@ -97,66 +97,77 @@ const GuideScreen = () => {
                         />
                     </View>
                 }
-
                 <View style={{
                     position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
                     columnGap: '10px',
                     width: isPC ? '50%' : '100%',
-                    height: '100%',
                     textAlign: 'center',
                     alignItems: 'center',
+                    // rowGap: '25px',
+                    backgroundColor: 'black',
+                    padding: '25px'
                 }}>
-                    <View style={{
-                        width: '100%',
-                        // height: isPC ? '300px' : '185px',
-                        // borderBottom: '1px solid white',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginTop: '40px'
-                    }}>
-                        <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon', }}>Get Started</Text>
-                        <Text style={{
-                            fontSize: isPC ? '96px' : '64px',
-                            color: '#FDC6D3',
-                            WebkitTextStroke: '1px #EF587B',
-                            filter: 'drop-shadow(0px 0px 20px #EF587B)',
-                            fontWeight: '700',
-                            // textShadow: '0 0 5px #fff',
-                            fontFamily: 'Horizon'
-                        }}>How to Play</Text>
-                    </View>
-                    <View style={{
-                        width: '100%',
-                        backgroundColor: 'black',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        {/* 
+                {/* <View style={{
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    columnGap: '10px',
+                    width: isPC ? '50%' : '100%',
+                    height: '100%',
+                    textAlign: 'center',m
+                    alignItems: 'center',
+                }}> */}
+                <View style={{
+                    width: '100%',
+                    // height: isPC ? '300px' : '185px',
+                    // borderBottom: '1px solid white',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: '40px'
+                }}>
+                    <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon', }}>Get Started</Text>
+                    <Text style={{
+                        fontSize: isPC ? '96px' : '64px',
+                        color: '#FDC6D3',
+                        WebkitTextStroke: '1px #EF587B',
+                        filter: 'drop-shadow(0px 0px 20px #EF587B)',
+                        fontWeight: '700',
+                        // textShadow: '0 0 5px #fff',
+                        fontFamily: 'Horizon'
+                    }}>How to Play</Text>
+                </View>
+                <View style={{
+                    width: '100%',
+                    backgroundColor: 'black',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    {/* 
                         <Text style={{ marginTop: '36px', color: 'white', fontSize: '36px', fontFamily: 'Horizon', }}>
                             Title Here
                         </Text> */}
-                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                    <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
                         Welcome to Mobber! The game of Mob Collective.</Text>
-                        <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                    <Text style={{ marginTop: '36px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
                         There are two game options to choose from.</Text>
 
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
-                        PVP (Multiplayer) – Place a bet with your friends on who is going to get the highest score during the game. Winner takes all. The player who reaches the highest score in the game wins all tokens your have bet. You think you’re the best?! Put your money where your mouth is. 
-                        </Text>
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
-                        P2E (Single player) – Compete on the global leader boards to rise to the top with the highest scores. Earn $RISE token each time you play. The higher the score you get during the game the more $RISE you earn which can be withdrawn at the end of the game. You win it, you take it. 
-                        </Text>
-                        <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                    <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        PVP (Multiplayer) – Place a bet with your friends on who is going to get the highest score during the game. Winner takes all. The player who reaches the highest score in the game wins all tokens your have bet. You think you’re the best?! Put your money where your mouth is.
+                    </Text>
+                    <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
+                        P2E (Single player) – Compete on the global leader boards to rise to the top with the highest scores. Earn $RISE token each time you play. The higher the score you get during the game the more $RISE you earn which can be withdrawn at the end of the game. You win it, you take it.
+                    </Text>
+                    <Text style={{ marginTop: '20px', color: 'white', fontSize: '20px', fontFamily: 'Horizon', width: isPC ? '70%' : '90%', textAlign: 'center' }}>
                         The global leader boards will play a role in our communities reward shed so the alpha is to own Mob Collective NFTs and RISE to the top!
-                        </Text>
-                    </View>
-
-
-
+                    </Text>
                 </View>
+
+
+
             </View>
+        </View>
 
         </View >
     );
