@@ -49,6 +49,8 @@ import { commonStyle } from '../global/commonStyle';
 import { cacheRate } from '../src/GameSettings';
 import { getUserInfo } from '../global/global';
 import toast from 'react-hot-toast';
+import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
+
 // Landing Page component
 const LandingScreen = () => {
 
@@ -585,22 +587,30 @@ const LandingScreen = () => {
                 
                 <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom:'10px' }}>{stateMsg}</Text>
                 <View style={{
-              display: 'flex', flexDirection: 'row',
-              alignItems: 'center',
-              columnGap: '10px'
-            }}>
-              <Text style={[commonStyle.button,{width: '150px'}]}
-                onClick={entering}
-              >
-                Enter Mobber
-              </Text>
-              <Text style={[commonStyle.button,{width: '150px'}]}
-                onClick={() => {
-                  setOnRegister(true);
-                }}
-              >
-                Sign Up
-              </Text>
+                  display: 'flex', flexDirection: 'row',
+                  alignItems: 'center',
+                  columnGap: '10px'
+                }}>
+                  
+                    
+                    <Text style={[commonStyle.button,{width: '150px'}]}
+                      onClick={entering}
+                    >
+                      <SimpleIcon name="login" size={20}/>
+                      &nbsp;&nbsp;Enter Mobber
+                    </Text>
+                  
+                  
+                    
+                    <Text style={[commonStyle.button,{width: '150px'}]}
+                      onClick={() => {
+                        setOnRegister(true);
+                      }}
+                    >
+                      <SimpleIcon name="user-follow" size={20} />
+                      &nbsp;&nbsp;Sign Up
+                    </Text>
+                  
               </View>
             </>
           }

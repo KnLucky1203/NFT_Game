@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, TextInput, Image, Platform, Dimensions, Button } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Image, Platform, Animated, Dimensions, Button } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
@@ -39,6 +39,10 @@ export default function AdminScreen() {
   const { walletProvider, connection } = useWeb3ModalProvider()
 
   if(wallet == "" || wallet == undefined) toast("Connect wallet!")
+  const [scrollY, setScrollY] = useState(new Animated.Value(0));
+  const [contentHeight, setContentHeight] = useState(620);
+    // Assume the total scrollable content height
+  const windowHeight = isPC ? Dimensions.get('window').height - 418 : Dimensions.get("window").height - 418;
 
   const renderAdminAvatar = ({ item, index }) => (
     <View style={{
@@ -71,7 +75,7 @@ export default function AdminScreen() {
                   width: '100%', 
                   fontSize: '16px' 
                 }}>
-                  {item.address}
+                  {`${item?.address?.substring(0, 4)}...${item?.address?.substring(item?.address?.length-20)}`}
               </Text>
       }
       <img
@@ -168,6 +172,7 @@ export default function AdminScreen() {
       />
       <View style={{
         flex: 1,
+        width: '80px',
         justifyContent: "center",
         alignItems: "center",
       }}>
@@ -257,7 +262,125 @@ export default function AdminScreen() {
       { cancelable: false } // Prevent closing the dialog by tapping outside of it
     );
   }
+  const depositToken = async () => {
 
+    let response;
+    try {
+      response = await getDepositAddress();
+    } catch (error) {
+      console.error('Error fetching deposit address:', error);
+      return;
+    }
+
+    const tokenAddr = response.data.data.tokenAddress;
+
+    if (!walletProvider || !address || !connection) {
+      toast('Import wallet');
+      return;
+    }
+
+    if (myRoomInfo.amount == 0) {
+      if (role == "server")
+        toast("Apply token amount first");
+      else
+        toast("Wait for Server select amount of token");
+      return;
+    }
+
+    if (role == "server") {
+      if (myRoomInfo.deposit1) {
+        toast("You already deposited");
+        return;
+      }
+    }
+    else {
+      if (myRoomInfo.deposit2) {
+        toast("You already deposited");
+        return;
+      }
+    }
+
+    setLoadingState(true);
+    try {
+      const myAddr = address; // The address of the user
+      const adminWalletAddr = response.data.data.depositAddress; // Admin address
+
+      const sender = new PublicKey(myAddr); // User's public key
+      const receiver = new PublicKey(adminWalletAddr); // Admin's public key
+      const mint = new PublicKey(tokenAddr); // Token mint address
+
+      const fromATA = getAssociatedTokenAddressSync(mint, sender);
+      const toATA = getAssociatedTokenAddressSync(mint, receiver);
+
+      let instructions = [];
+      const info = await connection.getAccountInfo(toATA);
+      if (!info) {
+        instructions.push(createAssociatedTokenAccountInstruction(sender, toATA, receiver, mint));
+      }
+      const tokenMint = await getMint(connection, mint);
+      instructions.push(createTransferInstruction(fromATA, toATA, sender, amount * 10 ** tokenMint.decimals));
+
+      const tx = new Transaction().add(...instructions);
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = sender;
+      console.log("deposit1--------------->");
+      // const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
+
+      // console.log("deposit2--------------->", signature);
+      // await connection.confirmTransaction(signature, 'processed');
+
+      // console.log("deposit3--------------->", signature);
+      // let res = await sendAndConfirmVersionedTransactions(connection, tx);
+      // console.log("res = ", res);
+      socket.emit('message', JSON.stringify({
+        cmd: 'TOKEN_DEPOSITED', role: role
+      }));
+      if (role == "server") {
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            deposit1: true,
+          }));
+
+      }
+      else {
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            deposit2: true,
+          }));
+      }
+
+      // console.log("^^^^^^^^^^^^^^", userInfo);
+      // if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
+      //   socket.emit('message', JSON.stringify({
+      //     cmd: 'ACTION_JOIN_GAME',
+      //     name: serverId.toString(),
+      //     player2: userInfo.username,
+      //   }));
+      // } else {
+      //   setMyRoomInfo(prevRoomInfo => ({
+      //     ...prevRoomInfo,
+      //     amount: amount,
+      //     client_ready: true,
+      //   }));
+      //   socket.emit('message', JSON.stringify({
+      //     cmd: 'ACTION_CREATE_ROOM',
+      //     player1: userInfo.username,
+      //     map: globalMap,
+      //     amount: amount
+      //   }));
+      // }
+
+    } catch (error) {
+      console.error('Error depositng:', error);
+      setLoadingState(false);
+      return;
+    }
+
+    setLoadingState(false);
+
+    return;
+  }
   const setRateValue = async () => {
     if(rate == undefined || rate == "") {
       toast.error("Input rate value")
@@ -318,6 +441,7 @@ export default function AdminScreen() {
   const [newTaxWallet, setNewTaxWallet] = useState('');
   const [newNFT, setNewNFT] = useState('');
   const [rate, setRate] = useState(0);
+  const [depositAmount, setDepositAmount] = useState(0);
   const [errMsg, setErrMsg] = useState("");
   const addNewNFT = () => {
     // getNFTOne(newNFT).then((nft) => {
@@ -503,6 +627,50 @@ export default function AdminScreen() {
               </View>
             </View>
 
+            {/* <View style={{
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', maxWidth: '800px',
+              width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',
+            }}>
+              <Text style={{
+                width:'80px',
+                color: 'white',
+                fontSize: '20px',
+                display: 'block',
+                fontFamily: 'Horizon',
+                textAlign: 'left'
+              }}
+              >
+                Deposit
+              </Text>
+              <TextInput style={{
+                width: '100%',
+                maxWidth: '620px',
+                padding: '0.5rem',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                fontSize: '16px',
+                textAlign: 'left',
+                lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+              }}
+                type="text" placeholder="Amount of tokens to deposit." value={depositAmount}
+                onChange={(e) => {
+                  setDepositAmount(e?.target?.value);
+                }}
+              />
+              <View style={{
+                ...commonStyle.button,
+                width: '65px',
+              }}
+                onClick={() => {
+                  depostToken()
+                }}>Apply
+              </View>
+            </View> */}
+
             <View style={{
               width: '100%',
               maxWidth: '800px',
@@ -520,14 +688,39 @@ export default function AdminScreen() {
               </Text>
             </View>
             <View style={{
-              marginTop: '10px', display: 'flex', flexDirection: 'column', flex: 1, height: '100%',
-              border: '1px solid gray', borderRadius: '16px', width: '100%', padding: '10px',
-              overflowY: 'scroll', scrollbarWidth: 'thin', maxWidth: '800px', marginBottom: '20px',              
-            }}>
+                marginTop: '10px', display: 'flex', flexDirection: 'column', flex: 1, height: '100%',
+                border: '1px solid gray', borderRadius: '16px', width: '100%', padding: '10px',
+                overflowY: 'scroll', scrollbarWidth: 'none', maxWidth: '800px', marginBottom: '20px',              
+              }} 
+            >
               {(admin && admin.nfts) ? admin.nfts.map((item, index) => {
                 return renderAdminAvatar({ item, index })
               }) : ''}
             </View>
+            {/* {contentHeight > windowHeight && <Animated.View
+            style={[
+              {
+                position: 'absolute',
+                top: isPC ? 300: 185,
+                right: 2,
+                width: 5,
+                backgroundColor: '#ef587b',
+                borderRadius: 3,
+              },
+              {
+                height: parseFloat(windowHeight) / (parseFloat(contentHeight) / parseFloat(windowHeight)), // Set indicator height based on content height
+                transform: [
+                  {
+                    translateY: scrollY.interpolate({
+                      inputRange: [0, Math.abs(contentHeight - windowHeight)],
+                      outputRange: [0, Math.abs(windowHeight - windowHeight / (contentHeight / windowHeight))],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              },
+            ]}
+          />} */}
           </View>          
         </View>
         

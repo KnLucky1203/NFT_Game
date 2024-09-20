@@ -93,16 +93,15 @@ const LeaderboardScreen = () => {
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
   const [contentHeight, setContentHeight] = useState(620);
     // Assume the total scrollable content height
-  console.log("Dimension =====", Dimensions.get("window").height - 285)
   const windowHeight = isPC ? Dimensions.get('window').height - 400 : Dimensions.get("window").height - 285;
-  console.log("window height ==========", windowHeight);
+  
   const getRankStyle = (rank, player) => {
     if (rank == 1) {
-      return { color: 'black', background: '#F3B34C', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #F6D65D' }
+      return { color: player.id == userInfo.id ? 'white' : 'black', background: '#F3B34C', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #F6D65D' }
     } else if (rank == 2) {
-      return { color: 'black', background: '#BEBEBE', borderRadius: '50%', border: player.id == userInfo.id ? 0 :'2px solid #E6E6E6' }
+      return { color: player.id == userInfo.id ? 'white' : 'black', background: '#BEBEBE', borderRadius: '50%', border: player.id == userInfo.id ? 0 :'2px solid #E6E6E6' }
     } else if (rank == 3) {
-      return { color: 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #E9B06D' }
+      return { color: player.id == userInfo.id ? 'white' : 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #E9B06D' }
     }
     return { background: 'black', borderRadius: '50%', border: '2px solid white' }
   }
@@ -223,7 +222,7 @@ const LeaderboardScreen = () => {
             }}
             contentContainerStyle={{
               // paddingRight: 10,
-              paddingRight: contentHeight > windowHeight ? 8 : 0,
+              paddingRight: contentHeight > windowHeight ? 9 : 0,
               justifyContent: 'center',
               alignItems: 'center'
             }}
@@ -248,8 +247,9 @@ const LeaderboardScreen = () => {
                 <View style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  columnGap: '10px',
+                  columnGap: '20px',
                   alignItems: 'center',
+                  width: '80px'
                 }}>
                 <Text style={{
                   color: 'white', fontSize: '20px',
@@ -262,10 +262,13 @@ const LeaderboardScreen = () => {
                   backgroundColor: userInfo.id==player.id ?"#EF587B":"",
                   ...getRankStyle(index + 1, player)
                 }}>{index + 1}</Text>
-                  {userInfo.id == player.id && <Text style={{ color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}}><Icon name="share-social" size={20}/></Text>}
+                  {userInfo.id == player.id && <Text style={{ color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}}><Icon name="share-social" size={25}/></Text>}
                 </View>
-                <Text style={{ color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
-                <Text style={{ width:"40px", color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
+                
+                <Text style={{ color: userInfo.id==player.id ? "#ef587b":  'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
+                <View style={{ width: '80px', display: 'flex', justifyContent: 'end', flexDirection: 'row'}}>
+                  <Text style={{ width:"40px", color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
+                </View>
               </View>);
             })}
           </ScrollView>

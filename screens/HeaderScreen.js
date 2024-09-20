@@ -299,16 +299,18 @@ const HeaderScreen = ({ path }) => {
               display: 'flex', flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center'
-            }}>
+            }}
+            onClick={() => {
+              navigation.navigate("AdminScreen")
+            }}
+            >
             <Text style={{
               fontFamily: 'Horizon',
               fontSize: '20px',
               cursor: 'pointer',
               color: 'white',
             }}
-              onClick={() => {
-                navigation.navigate("AdminScreen")
-              }}
+              
             >
               <Icon name="settings-outline" size={25}/>
             </Text>

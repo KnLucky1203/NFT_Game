@@ -16,6 +16,7 @@ import {
   getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction,
   getMint
 } from '@solana/spl-token';
+import Icon from 'react-native-vector-icons/Ionicons';
 function GameOver({ ...props }) {
   const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo,setLoadingState } = React.useContext(GameContext);
   const navigation = useNavigation();
@@ -221,6 +222,9 @@ function GameOver({ ...props }) {
       borderRadius: '20px',
       opacity: fadeAnim
     }}>
+      <View style={{ position: 'absolute', top: 20, right: 20, color: 'white'}}>
+        <Icon name="share-social" size={30} style={{color: 'white'}}/>
+      </View>
       <Text style={{
               fontSize: isPC ? '96px' : '64px',
               color: '#FDC6D3',
@@ -245,8 +249,9 @@ function GameOver({ ...props }) {
         color: 'white',
          fontFamily: 'Horizon'
       }}>
-        You score: &nbsp;
+        You scored: &nbsp;
         <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{props.score}</Text>
+        &nbsp;Cash Tokens
       </Text>
       {pvpEndFlag&&<Text style={{
         textAlign: 'center',
