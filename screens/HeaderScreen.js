@@ -294,13 +294,12 @@ const HeaderScreen = ({ path }) => {
               padding: '10px',
               background: 'rgba(039, 88, 123, 1)',
               boxShadow: '0px 3px 10px gray',
-              borderRadius: '20px',
+              borderRadius: '50px',
               display: 'flex', flexDirection: 'row',
             }}>
             <Text style={{
               fontFamily: 'Horizon',
               fontSize: '20px',
-              padding: '10px',
               cursor: 'pointer',
               color: path == 'admin' ? colors.accent : 'white',
             }}
@@ -308,7 +307,7 @@ const HeaderScreen = ({ path }) => {
                 navigation.navigate("AdminScreen")
               }}
             >
-              <Icon name="settings-outline" size={30}/>
+              <Icon name="settings-outline" size={20}/>
             </Text>
             </View>}
 

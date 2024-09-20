@@ -116,6 +116,10 @@ const GameRoomScreen = () => {
           client_ready: true
         }));
       }
+
+      if (data.cmd == "TO_DEPOSIT_PAGE") {
+        navigation.navigate("DepositScreen");
+      }
       // setAmount(data.amount);
     }
 
