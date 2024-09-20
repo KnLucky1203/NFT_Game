@@ -42,9 +42,9 @@ import { getWalletSOLBalance, getWalletInfo, getNFTsWithImage, getNFTOne, getAdm
 import { metadata, chains, solanaConfig, projectId } from '../global/global';
 import { deepCopy, jsonUpdate } from '../global/common';
 import GameContext from '../context/GameContext';
-import NFTDialog from './NFTScreen';
-import AdminDialog from './AdminScreen';
 import toast from 'react-hot-toast';
+// import NFTDialog from './NFTScreen';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 // Landing Page component
 const HeaderScreen = ({ path }) => {
@@ -80,6 +80,7 @@ const HeaderScreen = ({ path }) => {
     setOpenMenu(false);
   };
 
+  console.log("Header called ===> ", userInfo )
   // Initial Variables
   const navigation = useNavigation();
 
@@ -145,7 +146,7 @@ const HeaderScreen = ({ path }) => {
           //   setUserInfo(new_userInfo);
           // }
         }else{
-          toast.error("Response Error:", res?.data?.message)
+          toast.error("Response Error:", res?.data?.data?.error)
         }
       }).catch(err => {
         console.log("Fatal Error: ", err)
@@ -197,23 +198,6 @@ const HeaderScreen = ({ path }) => {
       }}>
         {isPC &&
           <>
-
-            {/* {(user && user.isAdmin) && ( */}
-            {userInfo.isAdmin || user.isAdmin &&
-            <Text style={{
-              fontFamily: 'Horizon',
-              fontSize: '20px',
-              padding: '10px',
-              cursor: 'pointer',
-              color: path == 'admin' ? colors.accent : 'white',
-            }}
-              onClick={() => {
-                navigation.navigate("AdminScreen")
-              }}
-            >
-              Admin
-            </Text>}
-            {/* )} */}
             <Text style={{
               fontFamily: 'Horizon',
               fontSize: '20px',
@@ -305,6 +289,28 @@ const HeaderScreen = ({ path }) => {
                 {address ? address.substring(0, 4) + '...' + address.substring(address.length - 4) : 'Connect Wallet'}
               </Text>
             </View>
+            { userInfo.isAdmin &&
+             <View style={{
+              padding: '10px',
+              background: 'rgba(039, 88, 123, 1)',
+              boxShadow: '0px 3px 10px gray',
+              borderRadius: '20px',
+              display: 'flex', flexDirection: 'row',
+            }}>
+            <Text style={{
+              fontFamily: 'Horizon',
+              fontSize: '20px',
+              padding: '10px',
+              cursor: 'pointer',
+              color: path == 'admin' ? colors.accent : 'white',
+            }}
+              onClick={() => {
+                navigation.navigate("AdminScreen")
+              }}
+            >
+              <Icon name="settings-outline" size={30}/>
+            </Text>
+            </View>}
 
           </>
         }

@@ -77,8 +77,9 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
           }
         }
       }).catch(res => {
-        console.log("ERROR++++++++++", res?.response.data.error)
-        toast.error("Error: ", res?.response?.data?.error)
+        console.log("ERROR++++++++++", res?.response.data)
+        console.log("ERROR++++++++++", res?.response.data.message)
+        toast.error("Error: ", res?.response?.data)
       })
       console.log('set avatar', new_user);
     }}>

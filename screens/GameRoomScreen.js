@@ -46,6 +46,7 @@ import {
   getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction,
   getMint
 } from '@solana/spl-token';
+import { toast } from 'react-hot-toast';
 // Guide Page component
 const GameRoomScreen = () => {
   const { user, setUser, setLoadingState } = React.useContext(GameContext);
@@ -80,7 +81,7 @@ const GameRoomScreen = () => {
       setAmount(data.amount);
     }
 
-    const claimTokenHere = async () =>{
+    const claimTokenHere = async () => {
       console.log("claim passive = ", myRoomInfo.amount);
       setLoadingState(true);
       await claimToken(myRoomInfo.amount, localStorage.wallet, localStorage.token);
@@ -96,7 +97,7 @@ const GameRoomScreen = () => {
       }
 
       if (data.cmd == "ROOM_CLOSED") {
-        
+
         claimTokenHere();
 
         navigation.navigate("LandingScreen");
@@ -208,16 +209,16 @@ const GameRoomScreen = () => {
     setLoadingState(true);
     let response = await claimToken(myRoomInfo.amount, localStorage.wallet, localStorage.token);
 
-    console.log(" $$$$$$$$$$$",response);
-    
+    console.log(" $$$$$$$$$$$", response);
+
     console.log("claim active = ", myRoomInfo.amount);
-    
-    if (role =="client") {
+
+    if (role == "client") {
       socket.emit('message', JSON.stringify({
         cmd: 'CLIENT_JOIN_EXIT'
       }));
     }
-    else if(role =="server") {
+    else if (role == "server") {
       socket.emit('message', JSON.stringify({
         cmd: 'CLOSE_ROOM'
       }));
@@ -274,10 +275,10 @@ const GameRoomScreen = () => {
       tx.feePayer = sender;
       console.log("deposit1--------------->");
       const signature = await walletProvider.sendTransaction(tx, connection);
-      
+
       console.log("deposit2--------------->", signature);
       await connection.confirmTransaction(signature, 'processed');
-      
+
       console.log("deposit3--------------->", signature);
       setDeposited(true);
       socket.emit('message', JSON.stringify({
@@ -298,23 +299,32 @@ const GameRoomScreen = () => {
       if (myRoomInfo.players[1].player_name != undefined &&
         myRoomInfo.players[1].player_state == 1
       ) {
-        if (myRoomInfo.client_ready) {
-            socket.emit('message', JSON.stringify({
-              cmd: 'ACTION_START_GAME', role: role
-            }));
-         
-        }
-        else {
-          window.alert('Client is not ready');
-        }
+        // navigation.navigate("DepositScreen");
+        // if (myRoomInfo.client_ready) {
+        //     socket.emit('message', JSON.stringify({
+        //       cmd: 'ACTION_START_GAME', role: role
+        //     }));
+
+        // }
+        // else {
+        //   window.alert('Client is not ready');
+        // }
         // window.alert("ACTION START GAME!!!");
-      } else {
-        window.alert('Client not joined');
+        socket.emit('message', JSON.stringify({
+          cmd: 'GO_TO_DEPOSIT', role: role
+        }));
+      }
+      else {
+        toast("Client not joined")
+        // window.alert('Client not joined');
       }
     } else if (myRoomInfo.room_my_role == 1) {
-      window.alert('client has no permission to start game');
+      toast("Client has no permission to start game")
+      // window.alert('client has no permission to start game');
     } else {
-      window.alert("Someone joined in an untracked way!");
+      toast("Someone joined in an untracked way!")
+
+      // window.alert("Someone joined in an untracked way!");
     }
   }
 
@@ -419,8 +429,8 @@ const GameRoomScreen = () => {
                 }} />
 
             </View>}
-          
-            <Text style={{
+
+          <Text style={{
             ...commonStyle.button,
             marginTop: '20px',
             fontFamily: 'Horizon',
@@ -430,15 +440,15 @@ const GameRoomScreen = () => {
             Refund and Exit
           </Text>
 
-            <Text style={{
-              ...commonStyle.button,
-              marginTop: '20px',
-              fontFamily: 'Horizon',
-            }}
-              onClick={playMobber}
-            >
-              Play Mobber!
-            </Text>
+          <Text style={{
+            ...commonStyle.button,
+            marginTop: '20px',
+            fontFamily: 'Horizon',
+          }}
+            onClick={playMobber}
+          >
+            Play Mobber!
+          </Text>
 
           {isMobile &&
             <Image source={require("../assets/avatar/avatar_player4.png")}

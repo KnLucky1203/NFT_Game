@@ -139,7 +139,7 @@ function GameOver({ ...props }) {
       tx.recentBlockhash = blockhash;
       tx.feePayer = sender;
       console.log("deposit1--------------->");
-      const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
+      // const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
 
       // console.log("deposit2--------------->", signature);
       // await connection.confirmTransaction(signature, 'processed');
@@ -171,7 +171,7 @@ function GameOver({ ...props }) {
   }
   const restartGame = async () => {
     if (gameMode == 2) {
-      await depositToken();
+  //     await depositToken();
     if (role == "client") {
       socket.emit('message', JSON.stringify({
         cmd: 'CLIENT_PLAY_AGAIN',
@@ -279,7 +279,7 @@ function GameOver({ ...props }) {
       }}
         onClick={restartGame}  
       >
-        Play Again
+        Play Again          
       </Text>:<Text style={{
         textAlign: 'center',
         fontSize: '30px',

@@ -158,7 +158,7 @@ const DepositScreen = () => {
       tx.recentBlockhash = blockhash;
       tx.feePayer = sender;
       console.log("deposit1--------------->");
-      const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
+      // const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
 
       // console.log("deposit2--------------->", signature);
       // await connection.confirmTransaction(signature, 'processed');

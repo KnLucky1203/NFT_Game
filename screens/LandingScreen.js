@@ -508,21 +508,21 @@ const LandingScreen = () => {
                   fontFamily: 'Horizon'
                 }}
                   onClick={() => {
-                    navigation.navigate("DepositScreen");
-                    // setLoadingState(true);
-                    // if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
-                    //   socket.emit('message', JSON.stringify({
-                    //     cmd: 'ACTION_JOIN_GAME',
-                    //     name: serverId.toString(),
-                    //     player2: userName
-                    //   }));
-                    // } else {
-                    //   socket.emit('message', JSON.stringify({
-                    //     cmd: 'ACTION_CREATE_ROOM',
-                    //     player1: cUserName,
-                    //     map: globalMap
-                    //   }));
-                    // }
+                    // navigation.navigate("DepositScreen");
+                    setLoadingState(true);
+                    if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
+                      socket.emit('message', JSON.stringify({
+                        cmd: 'ACTION_JOIN_GAME',
+                        name: serverId.toString(),
+                        player2: userName
+                      }));
+                    } else {
+                      socket.emit('message', JSON.stringify({
+                        cmd: 'ACTION_CREATE_ROOM',
+                        player1: cUserName,
+                        map: globalMap
+                      }));
+                    }
                   }}>
                   Play Multi - PVP
                 </Text>

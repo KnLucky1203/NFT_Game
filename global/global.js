@@ -12,6 +12,7 @@ export const socket = io(SERVER_URL);
 // --- Web3 Modal Import ---
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 import { solana, solanaTestnet, solanaDevnet } from '@web3modal/solana/chains'
+import toast from "react-hot-toast";
 
 // --- Web3Modal Connect Settings ---
 export const chains = [solana, solanaTestnet, solanaDevnet]
@@ -187,6 +188,10 @@ export const claimToken = async (score, wallet, token) => {
 }
 
 export const setMyNFT = async (nft_colletcion) => {
+  if(!token) {
+    toast.error("Please log in");
+    return;
+  }
   return await axios.patch(SERVER_URL + '/api/v1/user/nft/update/' + nft_colletcion, {}, {
     headers: {
       Authorization: `bearer ${token}`,

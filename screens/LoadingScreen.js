@@ -116,10 +116,12 @@ const LoadingScreen = () => {
                 fontWeight: '800',
                 padding: '5px',
                 fontWeight : '900',
-                color: 'rgba(253, 198, 211, 1)',
-                WebkitTextStroke: '2px rgba(239, 88, 123, 1)',
-                filter: 'drop-shadow(3px 5px 8px #ff0000)',
-                textShadow: '0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de'
+                
+                color: '#FDC6D3',
+                WebkitTextStroke: '1px #EF587B',
+                filter: 'drop-shadow(0px 0px 20px #EF587B)',
+                fontWeight: '700',
+                fontFamily: 'Horizon'
                 // ...(isMobile ? { left: '0px' } : {}), 
             }}>
                 {loadingPercent} %

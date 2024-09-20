@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 import { toast } from 'react-hot-toast';
+import { Alert } from "react-native"
 // Personal informations
 import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
@@ -38,7 +39,7 @@ export default function AdminScreen() {
   const { walletProvider, connection } = useWeb3ModalProvider()
 
   if(wallet == "" || wallet == undefined) toast("Connect wallet!")
-    
+
   const renderAdminAvatar = ({ item, index }) => (
     <View style={{
       marginBottom: '10px',
@@ -157,22 +158,38 @@ export default function AdminScreen() {
                 name: res.data.data.character.name
               };
               setAdmin(new_admin);
+              toast.success("Character updated!");
+            }else {
+              toast.error("Character updating failed!")
             }
           })
         }}
         
       />
       <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+      <View style={{
         ...commonStyle.button,
         margin: 'auto',
       }}
         onClick={() => {
-          deleteNFT(item.id).then(nft => {
-            const new_admin = deepCopy(admin);
-            new_admin.nfts.splice(index, 1);
-            setAdmin(new_admin);
-          })
+          deleteNFT(item.id).then(res => {
+            if(res.data.code == "00"){
+              const new_admin = deepCopy(admin);
+              new_admin.nfts.splice(index, 1);
+              setAdmin(new_admin);
+              toast.success("Character deleted!")
+            } else {
+              toast.success("Character deleting failed!")
+            }
+          }).catch(err => {
+
+          })     
         }}>Delete</View>
+        </View>
     </View >
   );
 
@@ -202,11 +219,50 @@ export default function AdminScreen() {
   
   const getRateFromServer = async () => {
     let rateResponse = await getRate();
-    localStorage.rate = rateResponse.data.data.rate;
-    setRate(localStorage.rate);
+    if(rateResponse?.data?.code === "00"){
+      localStorage.rate = rateResponse.data.data.rate;
+      setRate(localStorage.rate);
+    }
   } 
 
+  const confirmDelete = () => {
+    return Alert.alert(
+      'Delete NFT',  // Title of the alert
+      'Are you sure you want to delete this item?', // Message of the alert
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'), // Cancel action
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => {
+            deleteNFT(item.id).then(res => {
+              if(res.data.code == "00"){
+                const new_admin = deepCopy(admin);
+                new_admin.nfts.splice(index, 1);
+                setAdmin(new_admin);
+                toast.success("Character deleted!")
+              } else {
+                toast.success("Character deleting failed!")
+              }
+            }).catch(err => {
+
+            })     
+          },
+          style: 'destructive', // 'destructive' is available on iOS to indicate a destructive action
+        },
+      ],
+      { cancelable: false } // Prevent closing the dialog by tapping outside of it
+    );
+  }
+
   const setRateValue = async () => {
+    if(newNFT == undefined || newNFT == "") {
+      toast.error("Input rate value")
+      return
+    }
     let response = await setRewardRate(rate);
     if(response?.data?.code == "00"){
       toast.success("Rate setted!", { style: {
@@ -220,7 +276,6 @@ export default function AdminScreen() {
     }
     
   }
-
 
   useEffect(() => {
     if (localStorage.rate == undefined) {
@@ -240,7 +295,7 @@ export default function AdminScreen() {
           setCharacters(response.data.data)
       })
     } else {
-
+      toast.error("Connect wallet!")
     }
   }, [walletProvider]);
   console.log("characters ====", characters)
@@ -263,6 +318,7 @@ export default function AdminScreen() {
   const [newTaxWallet, setNewTaxWallet] = useState('');
   const [newNFT, setNewNFT] = useState('');
   const [rate, setRate] = useState(0);
+  const [errMsg, setErrMsg] = useState("");
   const addNewNFT = () => {
     // getNFTOne(newNFT).then((nft) => {
     //   let new_admin = deepCopy(admin)
@@ -271,6 +327,10 @@ export default function AdminScreen() {
     //   new_admin.nfts.push(nft)
     //   setAdmin(new_admin);
     // })
+    if(newNFT == undefined || newNFT == "") {
+      toast.error("Input new NFT collection address")
+      return;
+    }
     addNFT(newNFT, selCharacter.id).then(response => {
         let new_admin = deepCopy(admin)
         if (!new_admin.nfts)
@@ -430,70 +490,6 @@ export default function AdminScreen() {
                   setNewNFT(e.target.value);
                 }}
               />
-              {/* <Dropdown
-                style={{  // main selected item
-                  width: '140px',
-                  cursor: 'pointer',
-                  // backgroundColor: 'black',
-                  textAlign: 'center',
-                  border: commonStyle.border,
-                  borderRadius: '50px',
-                  height: '45px',
-                  margin: 'auto',
-                }}
-                containerStyle={{ // main selected item
-                  backgroundColor: 'black',
-                  textAlign: 'center',
-                }}
-                placeholderStyle={{ // placeholder text style
-                  color: 'grey',
-                  // backgroundColor: 'black',
-                  textAlign: 'center',
-                  // border: '1px solid white'
-                }}
-                selectedTextStyle={{  // main selected item text style
-                  color: 'white',
-                  // backgroundColor: 'black',
-                  textAlign: 'center',
-                  borderWidth: commonStyle.border,
-                }}
-                itemContainerStyle={{ // list item container style
-                  backgroundColor: 'black',
-                  textAlign: 'center',
-                }}
-                itemTextStyle={{  // list item text style
-                  // backgroundColor: 'black',
-                  color: 'white',
-                  textAlign: 'center',
-                }}
-                activeColor='#222222'
-                mode={isPC ? 'auto' : 'modal'}
-                ref={isPC ? top : undefined}
-                inputSearchStyle={{  // list item text style
-                  backgroundColor: '#FF0000',
-                  color: 'white',
-                  textAlign: 'center',
-                }}
-                iconStyle={{  // main drop icon style
-                  // backgroundColor: '#0000FF',
-                  color: 'white',
-                  textAlign: 'center',
-                  width: '30px',
-                  height: '30px',
-                }}
-                data={characters}
-                maxHeight={300}
-                labelField="name"
-                valueField="symbol"
-                placeholder="Select Character"
-                value={name}
-                renderItem={renderCharacterItem}
-                onChange={character => {
-                  // const new_characters = deepCopy(characters);
-                  // new_characters.nfts[index].model = character.id;
-                  setSelCharacter(character);
-                }}
-              /> */}
               <View style={{
                 ...commonStyle.button,
                 width: '65px',
@@ -536,7 +532,7 @@ export default function AdminScreen() {
               }}
                 type="text" placeholder="Input token rate." value={rate}
                 onChange={(e) => {
-                  setRate(e.target.value);
+                  setRate(e?.target?.value);
                 }}
               />
               <View style={{
