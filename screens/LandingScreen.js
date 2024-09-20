@@ -175,7 +175,7 @@ const LandingScreen = () => {
       if(rateResponse.data.code == "00"){
         if(rateResponse?.data?.data?.rate)
           localStorage.rate = rateResponse?.data?.data?.rate;
-        else toast("Set reward rate!")
+        // else toast("Set reward rate!")
       }else{
         toast("Reward Rate setting failed!")
       }
