@@ -413,50 +413,7 @@ export default function AdminScreen() {
                 fontWeight: '700',
                 // textShadow: '0 0 5px #fff',
                 fontFamily: 'Horizon'
-            }}>Admin Dashboard</Text>
-            <View style={{
-              display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
-              width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',
-            }}>
-              <Text style={{
-                width:'100px',
-                color: 'white',
-                fontSize: '20px',
-                display: 'block',
-                fontFamily: 'Horizon',
-              }}
-              >
-                Owner Wallet
-              </Text>
-              <TextInput style={{
-                width: '100%',
-                maxWidth: '510px',
-                padding: '0.5rem',
-                flex: 1,
-                border: '1px solid gray',
-                borderRadius: '30px',
-                background: 'transparent',
-                fontSize: '16px',
-                textAlign: 'left',
-                lineHeight: '2',
-                color: 'white',
-                fontFamily: 'Horizon'
-              }}
-                type="text" placeholder="Tax Wallet"
-                value={admin.taxWallet}
-                onChange={(e) => {
-                  setNewTaxWallet()
-                }}
-                autoFocus />
-              <View style={{
-                ...commonStyle.button,
-                width: '65px',
-              }}
-                onClick={() => {
-                  setTaxWallet(e.target.value);
-                }}>Set
-              </View>
-            </View>
+            }}>Admin Dashboard</Text>            
             <View style={{
               display: 'flex', flexDirection: isPC ? 'row' : 'column', marginRight: '20px', marginLeft: '10px',
               width: '100%', padding: isPC ? '10px' : '10px', alignItems: 'center', justifyContent: 'center', columnGap: '20px',

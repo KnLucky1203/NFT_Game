@@ -434,7 +434,7 @@ const GameRoomScreen = () => {
 
             </View>}
 
-          <Text style={{
+          {/* <Text style={{
             ...commonStyle.button,
             marginTop: '20px',
             fontFamily: 'Horizon',
@@ -442,7 +442,7 @@ const GameRoomScreen = () => {
             onClick={refundExit}
           >
             Refund and Exit
-          </Text>
+          </Text> */}
 
           <Text style={{
             ...commonStyle.button,

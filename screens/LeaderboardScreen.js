@@ -33,6 +33,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking, Switch, ScrollView } from 'react-native';
 import SwitchToggle from 'react-native-switch-toggle';
 import GameContext from '../context/GameContext';
+import Icon from 'react-native-vector-icons/Ionicons';
 // Personal informations
 import HeaderScreen from "./HeaderScreen";
 
@@ -87,13 +88,13 @@ const LeaderboardScreen = () => {
 
   const [data, setData] = useState([]);
 
-  const getRankStyle = (rank) => {
+  const getRankStyle = (rank, player) => {
     if (rank == 1) {
-      return { color: 'black', background: 'rgba(243, 179, 76, 1)', borderRadius: '50%', border: '2px solid yellow' }
+      return { color: 'black', background: '#F3B34C', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #F6D65D' }
     } else if (rank == 2) {
-      return { color: 'black', background: 'gray', borderRadius: '50%', border: '2px solid white' }
+      return { color: 'black', background: '#BEBEBE', borderRadius: '50%', border: player.id == userInfo.id ? 0 :'2px solid #E6E6E6' }
     } else if (rank == 3) {
-      return { color: 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: '2px solid yellow' }
+      return { color: 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #E9B06D' }
     }
     return { background: 'black', borderRadius: '50%', border: '2px solid white' }
   }
@@ -141,6 +142,7 @@ const LeaderboardScreen = () => {
           height: '100%',
           textAlign: 'center',
           alignItems: 'center',
+          background: 'black',
           justifyContent: 'space-between'
         }}>
           <View style={{
@@ -212,20 +214,30 @@ const LeaderboardScreen = () => {
             {data.map((player, index) => {
               return (<View style={{
                 display: 'flex', flexDirection: 'row',
+                alignItems: 'center',
                 width: '100%', justifyContent: 'space-between',
                 padding: '10px',
                 border: userInfo.id==player.id?"1px solid #EF587B":commonStyle.border,
                 backgroundColor: userInfo.id==player.id ? '#FDC6D3' : ""
               }}>
+                <View style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  columnGap: '10px'
+                }}>
                 <Text style={{
                   color: 'white', fontSize: '20px',
-                  width: '40px',
+                  width: '30px',
+                  height: '30px',
+                  alignContent: 'center',
+                  alignItems: 'center',
                   fontFamily: 'Horizon',
-
-                  borderRadius: '50%',
+                  borderRadius: '50px',
                   backgroundColor: userInfo.id==player.id ?"#EF587B":"",
-                  ...getRankStyle(index + 1)
+                  ...getRankStyle(index + 1, player)
                 }}>{index + 1}</Text>
+                  {userInfo.id == player.id && <Text style={{ color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}}><Icon name="share-social" size={20}/></Text>}
+                </View>
                 <Text style={{ color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
                 <Text style={{ width:"40px", color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
               </View>);

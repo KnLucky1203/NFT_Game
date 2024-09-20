@@ -6,7 +6,7 @@ import { fonts } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from '../global/common';
-import { getUserInfo, setMyNFT } from '../global/global';
+import { getCharacters, getUserInfo, setMyNFT } from '../global/global';
 import toast from 'react-hot-toast';
 
 export default function NFTScreen({ openNFT, setOpenNFT }) {
@@ -14,6 +14,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
+  const [characters, setCharacters] = useState([])
   useEffect(() => {
     getUserInfo(localStorage.token).then(response => {
       if(response.data.code == "00"){
@@ -27,11 +28,18 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
+    getCharacters().then(response => {
+      if(response.data.code == "00"){
+        if(Array.isArray(response?.data?.data))
+          setCharacters(response.data.data)
+      }else {
+        toast.error("No characters!")
+      }
+    })
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-    
   }, []);
   /* ================================ For Mobile Responsive ===============================*/
   // Initial Variables
@@ -91,6 +99,39 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
           margin: 'auto',
           borderRadius: '10%',
           boxShadow: index == user.avatar ? '10px 10px 10px rgba(255,0,0,0.5)' : 'none',
+        }}
+      />
+      <Text style={{ color: 'white', fontSize: isPC ? '18px' : '32px' }}>{item.name}</Text>
+      <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <Image source={require("../assets/character/character1.webp")}
+          style={{
+            width: '100%', height: '100%',
+            margin: 'auto'
+          }}
+        />
+      </View>
+    </View >
+  );
+  const renderCharacter = ({ item, index }) => (
+    <View style={{
+      padding: '10px',
+      width: isPC ? '30%' : '80%',
+      display: 'flex', flexDirection: 'column',
+      cursor: 'pointer',
+      background: 'rgba(0,0,255,0.1)',
+      border: item.name == character ? '1px solid gray' : 'none',
+      borderRadius: '10px'
+    }} onClick={() => {
+      setCharacter(item.name)
+    }}>
+      <img
+        src={require(`../assets/character/${item.name}.png`)}
+        style={{
+          position: 'relative',
+          width: '80%',
+          margin: 'auto',
+          borderRadius: '10%',
+          boxShadow: item.name == character ? '10px 10px 10px rgba(255,0,0,0.5)' : 'none',
         }}
       />
       <Text style={{ color: 'white', fontSize: isPC ? '18px' : '32px' }}>{item.name}</Text>
@@ -204,6 +245,18 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
             margin: 'auto',
             flex: 1, justifyContent: 'center'
           }}>
+            {(characters) ? characters.map((item, index) => {
+                  return renderCharacter({ item, index })
+                }) : 'NFTs not found'}
+          </View>
+          {/* <View style={{
+            padding: '25px',
+            display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+            overflowY: 'scroll',
+            scrollbarWidth: 'none',
+            margin: 'auto',
+            flex: 1, justifyContent: 'center'
+          }}>
             <View style={{
               padding: '10px',
               width: '100%',
@@ -217,6 +270,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
                 borderRadius: '10px',
                 background: 'rgba(0,0,255,0.2)',
               }}>
+                
                 <img
                   src={character ? require(`../assets/character/${character}.png`) : require(`../assets/character/bacon.png`)}
                   style={{
@@ -228,7 +282,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
                 />
               </View>
             </View>
-          </View>
+          </View> */}
         </View>
       </View>
     </View >

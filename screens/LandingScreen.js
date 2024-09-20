@@ -237,7 +237,7 @@ const LandingScreen = () => {
               room_state: 'opened',
               room_my_role: 0,
               players: data.players,
-              amount: 1
+              amount: 0
             }));
 
             console.log("Joined : ", myRoomInfo);
@@ -324,7 +324,7 @@ const LandingScreen = () => {
 
       <View style={{
         position: 'relative',
-        height: 'calc(100vh - 100px)',
+        height: isPC? 'calc(100vh - 100px)' : 'calc(100vh)',
         background: 'black',
         display: 'flex',
         flexDirection: isPC ? 'row' : 'column',
@@ -605,11 +605,14 @@ const LandingScreen = () => {
         </View>
 
         {isMobile &&
+        
           <Image source={cUserName == "" ? require("../assets/avatar/avatar_player1.png") : require("../assets/avatar/avatar_player2.png")}
             style={{
               width: '100%', height: '50%',
+              background: 'black',
             }}
-          />}
+          />
+        }
       </View>
 
     </View >

@@ -32,7 +32,7 @@ import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'react-native';
 import { globalMap } from "../global/globalMap";
-import { sendAndConfirmVersionedTransactions, socket ,sendAndConfirmLegacyTransactions} from '../global/global';
+import { sendAndConfirmVersionedTransactions, socket, sendAndConfirmLegacyTransactions } from '../global/global';
 // Personal informations
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
@@ -47,6 +47,7 @@ import {
   getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction,
   getMint
 } from '@solana/spl-token';
+import toast from 'react-hot-toast';
 // Guide Page component
 const DepositScreen = () => {
   const { user, setUser, } = React.useContext(GameContext);
@@ -56,12 +57,19 @@ const DepositScreen = () => {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
-  const [amount, setAmount] = useState(1);
+  const [amount, setAmount] = useState(10);
   const [serverId, setServerId] = useState('');
+  const [amountApplied, setAmountApplied] = useState(false);
+  const [otherDespositFlag, setOtherDepositFlag] = useState(false);
+  const [depositFlag, setDepositFlag] = useState(false);
   const { walletProvider, connection } = useWeb3ModalProvider();
   const { address, chainId } = useWeb3ModalAccount()
 
   useEffect(() => {
+    // setAmountApplied(false);
+    // setDepositFlag(false);
+    // setOtherDepositFlag(false);
+    console.log("--------------amount--3-3---", myRoomInfo.amount);
 
     Linking.getInitialURL().then(url => {
       if (url) {
@@ -85,8 +93,41 @@ const DepositScreen = () => {
     };
 
     const handleSocketRoom = (data) => {
+      console.log("handleSocketRoom depositscreen:", data);
       if (data.cmd === "RETURN_AMOUNT") {
         setAmount(data.serverAmount);
+      }
+      if (data.cmd === "SET_BET_AMOUNT") {
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          amount: data.amount,
+          // client_ready: true,
+        }));
+        setAmount(data.amount);
+        // setAmountApplied(true);
+        // setMyRoomInfo(prevRoomInfo => ({
+        //   ...prevRoomInfo,
+        //   amount: amount,
+        //   // client_ready: true,
+        // }));
+      }
+      if (data.cmd === "OTHER_DEPOSITED") {
+        // setOtherDepositFlag(true);
+        if (role == "server") {
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            deposit2: true,
+            // client_ready: true,
+          }));
+        }
+        else {
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            deposit1: true,
+            // client_ready: true,
+          }));
+        }
+
       }
     };
 
@@ -96,6 +137,8 @@ const DepositScreen = () => {
       socket.off('ROOM', handleSocketRoom);
       window.removeEventListener('resize', handleResize);
     };
+
+
   }, []);
 
   /* ================================ For Mobile Responsive ===============================*/
@@ -103,19 +146,78 @@ const DepositScreen = () => {
   // Initial Variables
   const navigation = useNavigation();
   const {
-    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo,setLoadingState
+    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo, setLoadingState
   } = React.useContext(GameContext);
 
   const setBetAmount = (value) => {
 
     console.log("serverId============", serverId);
     if (serverId) {
-      window.alert("Server already select the amount of deposit token");
+      toast("Client can't select the amount of token");
       return;
     }
+    if (myRoomInfo.amount!=0) {
+      toast("Deposit token amount already applied");
+      return;
+    }
+    // setMyRoomInfo(prevRoomInfo => ({
+    //   ...prevRoomInfo,
+    //   amount: value,
+    //   // client_ready: true,
+    // }));
     setAmount(value);
+
   }
 
+  const applyAmount = () => {
+    socket.emit('message', JSON.stringify({
+      cmd: 'SET_BET_AMOUNT',
+      amount: amount,
+    }));
+    setMyRoomInfo(prevRoomInfo => ({
+      ...prevRoomInfo,
+      amount: amount,
+      // client_ready: true,
+    }));
+    // setAmountApplied(true);
+  }
+  const playMobber = async () => {
+
+    if (myRoomInfo.room_my_role == 0) {
+      if (myRoomInfo.players[1].player_name != undefined &&
+        myRoomInfo.players[1].player_state == 1
+      ) {
+        // navigation.navigate("DepositScreen");
+        if (myRoomInfo.deposit1 && myRoomInfo.deposit2) {
+          socket.emit('message', JSON.stringify({
+            cmd: 'ACTION_START_GAME', role: role
+          }));
+
+        }
+        else {
+          toast('Both have to deposit to start');
+          return;
+        }
+        // toast("ACTION START GAME!!!");
+        // socket.emit('message', JSON.stringify({
+        //   cmd: 'GO_TO_DEPOSIT', role: role
+        // }));
+      }
+      else {
+        toast("Client not joined")
+        return
+        // window.alert('Client not joined');
+      }
+    } else if (myRoomInfo.room_my_role == 1) {
+      toast("Client has no permission to start game")
+      return;
+      // window.alert('client has no permission to start game');
+    } else {
+      toast("Someone joined in an untracked way!")
+
+      // window.alert("Someone joined in an untracked way!");
+    }
+  }
   const depositToken = async () => {
 
     let response;
@@ -129,10 +231,31 @@ const DepositScreen = () => {
     const tokenAddr = response.data.data.tokenAddress;
 
     if (!walletProvider || !address || !connection) {
-      window.alert('walletProvider or address is undefined');
+      toast('Import wallet');
       return;
     }
-    
+
+    if (myRoomInfo.amount == 0) {
+      if (role == "server")
+        toast("Apply token amount first");
+      else
+        toast("Wait for Server select amount of token");
+      return;
+    }
+
+    if (role == "server") {
+      if (myRoomInfo.deposit1) {
+        toast("You already deposited");
+        return;
+      }
+    }
+    else {
+      if (myRoomInfo.deposit2) {
+        toast("You already deposited");
+        return;
+      }
+    }
+
     setLoadingState(true);
     try {
       const myAddr = address; // The address of the user
@@ -166,31 +289,43 @@ const DepositScreen = () => {
       // console.log("deposit3--------------->", signature);
       // let res = await sendAndConfirmVersionedTransactions(connection, tx);
       // console.log("res = ", res);
-      // socket.emit('message', JSON.stringify({
-      //   cmd: 'TOKEN_DEPOSITED', role: role
-      // }));
+      socket.emit('message', JSON.stringify({
+        cmd: 'TOKEN_DEPOSITED', role: role
+      }));
+      if (role == "server") {
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            deposit1: true,
+          }));
 
-
-      console.log("^^^^^^^^^^^^^^", userInfo);
-      if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
-        socket.emit('message', JSON.stringify({
-          cmd: 'ACTION_JOIN_GAME',
-          name: serverId.toString(),
-          player2: userInfo.username,
-        }));
-      } else {
-        setMyRoomInfo(prevRoomInfo => ({
-          ...prevRoomInfo,
-          amount: amount,
-          client_ready: true,
-        }));
-        socket.emit('message', JSON.stringify({
-          cmd: 'ACTION_CREATE_ROOM',
-          player1: userInfo.username,
-          map: globalMap,
-          amount: amount
-        }));
       }
+      else {
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            deposit2: true,
+          }));
+      }
+
+      // console.log("^^^^^^^^^^^^^^", userInfo);
+      // if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
+      //   socket.emit('message', JSON.stringify({
+      //     cmd: 'ACTION_JOIN_GAME',
+      //     name: serverId.toString(),
+      //     player2: userInfo.username,
+      //   }));
+      // } else {
+      //   setMyRoomInfo(prevRoomInfo => ({
+      //     ...prevRoomInfo,
+      //     amount: amount,
+      //     client_ready: true,
+      //   }));
+      //   socket.emit('message', JSON.stringify({
+      //     cmd: 'ACTION_CREATE_ROOM',
+      //     player1: userInfo.username,
+      //     map: globalMap,
+      //     amount: amount
+      //   }));
+      // }
 
     } catch (error) {
       console.error('Error depositng:', error);
@@ -265,26 +400,6 @@ const DepositScreen = () => {
             columnGap: '10px'
           }}>
             <Text style={{
-              ...amount == 1 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
-              marginTop: '20px',
-              fontFamily: 'Horizon',
-            }}
-              onClick={() => {
-                setBetAmount(1)
-              }
-              }
-            >1</Text>
-            <Text style={{
-              ...amount == 5 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
-              marginTop: '20px',
-              fontFamily: 'Horizon',
-            }}
-              onClick={() => {
-                setBetAmount(5)
-              }
-              }
-            >5</Text>
-            <Text style={{
               ...amount == 10 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
               marginTop: '20px',
               fontFamily: 'Horizon',
@@ -295,6 +410,16 @@ const DepositScreen = () => {
               }
             >10</Text>
             <Text style={{
+              ...amount == 20 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(20)
+              }
+              }
+            >20</Text>
+            <Text style={{
               ...amount == 50 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
               marginTop: '20px',
               fontFamily: 'Horizon',
@@ -304,6 +429,12 @@ const DepositScreen = () => {
               }
               }
             >50</Text>
+            {/* </View>
+          <View style={{
+            display: 'flex', flexDirection: 'row',
+            justifyContent: 'center', alignItems: 'center',
+            columnGap: '10px'
+          }}> */}
             <Text style={{
               ...amount == 100 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
               marginTop: '20px',
@@ -314,18 +445,101 @@ const DepositScreen = () => {
               }
               }
             >100</Text>
-          </View>
+            <Text style={{
+              ...amount == 200 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(200)
+              }
+              }
+            >200</Text>
 
-          <Text style={{
+            <Text style={{
+              ...amount == 500 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(500)
+              }
+              }
+            >500</Text>
+            <Text style={{
+              ...amount == 1000 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={() => {
+                setBetAmount(1000)
+              }
+              }
+            >1000</Text>
+          </View>
+          {role == "server" && myRoomInfo.amount==0 && <Text style={{
             ...commonStyle.button,
             marginTop: '20px',
             fontFamily: 'Horizon',
           }}
-            onClick={depositToken}
+            onClick={applyAmount}
           >
-            Deposit
+            Apply
           </Text>
+          }
 
+          {myRoomInfo.amount!=0 &&
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              columnGap: '10px',
+            }}>
+              <Text style={{
+                textAlign: 'center',
+                fontSize: '20px',
+                fontWeight: '900',
+                color: 'white',
+                fontFamily: 'Horizon'
+              }}>
+                Player1: &nbsp;
+                <Text style={{ color: myRoomInfo.deposit1 ? colors.agreeSafe : colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.deposit1 ? "Yes" : "No"}</Text>
+              </Text>
+              <Text style={{
+                textAlign: 'center',
+                fontSize: '20px',
+                fontWeight: '900',
+                color: 'white',
+                fontFamily: 'Horizon'
+              }}>
+                Other Ready: &nbsp;
+                <Text style={{ color: myRoomInfo.deposit2 ? colors.agreeSafe : colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.deposit2 ? "Yes" : "No"}</Text>
+              </Text>
+            </View>}
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            columnGap: '10px',
+          }}>
+            <Text style={{
+              ...commonStyle.button,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={depositToken}
+            >
+              Deposit
+            </Text>
+            <Text style={{
+              ...commonStyle.button,
+              marginTop: '20px',
+              fontFamily: 'Horizon',
+            }}
+              onClick={playMobber}
+            >
+              Play Mobber!!!
+            </Text></View>
 
           {isMobile &&
             <Image source={require("../assets/avatar/avatar_player4.png")}

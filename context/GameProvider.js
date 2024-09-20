@@ -56,8 +56,10 @@ export default function GameProvider({ children }) {
     room_name : "",
     room_path : "",
     room_my_role : 0, // 0 : server, 1 : client
-    amount: 1,
+    amount: 0,
     client_ready: true,
+    deposited1:false,
+    deposited2:false,
     players : [{
       player_name : "",
       player_id : "",

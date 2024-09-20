@@ -140,11 +140,11 @@ const HeaderScreen = ({ path }) => {
           new_user.tokenAmount = res.data.data.tokenAmount;
           new_user.nfts = res.data.data.nfts;
           new_user.isAdmin = res.data.data.isAdmin;
-          // if(!userInfo.isAdmin) {
-          //   let new_userInfo = deepCopy(userInfo);
-          //   new_userInfo.isAdmin = res.data.data.isAdmin;
-          //   setUserInfo(new_userInfo);
-          // }
+          if(!userInfo.isAdmin) {
+            let new_userInfo = deepCopy(userInfo);
+            new_userInfo.isAdmin = res.data.data.isAdmin;
+            setUserInfo(new_userInfo);
+          }
         }else{
           toast.error("Response Error:", res?.data?.data?.error)
         }
@@ -291,23 +291,26 @@ const HeaderScreen = ({ path }) => {
             </View>
             { userInfo.isAdmin &&
              <View style={{
-              padding: '10px',
+              width: "55px",
+              height: "55px",
               background: 'rgba(039, 88, 123, 1)',
               boxShadow: '0px 3px 10px gray',
               borderRadius: '50px',
               display: 'flex', flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}>
             <Text style={{
               fontFamily: 'Horizon',
               fontSize: '20px',
               cursor: 'pointer',
-              color: path == 'admin' ? colors.accent : 'white',
+              color: 'white',
             }}
               onClick={() => {
                 navigation.navigate("AdminScreen")
               }}
             >
-              <Icon name="settings-outline" size={20}/>
+              <Icon name="settings-outline" size={25}/>
             </Text>
             </View>}
 

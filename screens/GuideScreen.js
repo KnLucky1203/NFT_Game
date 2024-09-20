@@ -129,7 +129,7 @@ const GuideScreen = () => {
                     </View>
                     <View style={{
                         width: '100%',
-
+                        backgroundColor: 'black',
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>

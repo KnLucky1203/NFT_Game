@@ -1,5 +1,5 @@
-import React, { Component, useContext, useState, useEffect } from "react";
-import { Image, Dimensions, Text, Alert, Animated, Easing, StyleSheet, View } from "react-native";
+import React, { Component, useContext, useState, useEffect, useRef } from "react";
+import { Image, Dimensions, Text, Alert, Animated, Easing, StyleSheet, View, InteractionManager } from "react-native";
 
 import GameContext from "../context/GameContext";
 import { fonts } from '../global/commonStyle';
@@ -37,6 +37,16 @@ function GameOver({ ...props }) {
     setSocket,
   } = React.useContext(GameContext);
   useEffect(() => {
+    
+    InteractionManager.runAfterInteractions((_) => {
+      Animated.timing(fadeAnim, {
+        useNativeDriver: true,
+        toValue: 1,
+        duration: 800,
+        delay: 0,
+        easing: Easing.in(Easing.qubic),
+      }).start();
+    });
     console.log("GameRoomScreen on over screen : ", myRoomInfo);
     if (role == "server") {
       setMyRoomInfo(prevRoomInfo => ({
@@ -172,12 +182,17 @@ function GameOver({ ...props }) {
   const restartGame = async () => {
     if (gameMode == 2) {
   //     await depositToken();
-    if (role == "client") {
-      socket.emit('message', JSON.stringify({
-        cmd: 'CLIENT_PLAY_AGAIN',
-      }));
-    }
-    navigation.navigate("GameRoomScreen");
+    // if (role == "client") {
+    //   socket.emit('message', JSON.stringify({
+    //     cmd: 'CLIENT_PLAY_AGAIN',
+    //   }));
+    // }
+    setMyRoomInfo(prevRoomInfo => ({
+      ...prevRoomInfo,
+      deposit1: false,
+      deposit2: false,
+    }));
+    navigation.navigate("DepositScreen");
   }
     props.setGameState('none');
     // setGameMode(0);
@@ -187,6 +202,7 @@ function GameOver({ ...props }) {
     // props.onRestart();
     // props.setGameState(true);
   };
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   return (
     <Animated.View style={{
@@ -198,8 +214,10 @@ function GameOver({ ...props }) {
       rowGap: '20px',
       paddingTop: '10px',
       // paddingBottom: '10px',
+      resizeMode: "contain",
       border: '2px solid gray',
       borderRadius: '20px',
+      opacity: fadeAnim
     }}>
       <Text style={{
               fontSize: isPC ? '96px' : '64px',

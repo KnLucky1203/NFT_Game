@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 export const colors = {
   mainColor: `white`,
   accent: `rgba(239, 88, 123, 1)`,
+  agreeSafe: `#5CE1E6`,
   borderColor: 'rgba(92, 92, 92, 1)'
 }
 
