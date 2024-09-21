@@ -377,11 +377,12 @@ const GameRoomScreen = () => {
           alignItems: 'center',
           justifyContent: isMobile ? 'flex-end' : 'center',
           rowGap: isPC ? '20px' : '10px',
+          paddingTop: isPC? 0 : '30px',
         }}>
 
-          <Text style={{ color: 'white', fontSize: '24px', fontFamily: 'Horizon', }}>Multiplayer Robby</Text>
+          <Text style={{ color: 'white', fontSize: isPC ? '32px': '18px', fontFamily: 'Horizon', }}>Multiplayer Robby</Text>
           <Text style={{
-            fontSize: isPC ? '96px' : '64px',
+            fontSize: isPC ? '72px' : '32px',
             color: '#FDC6D3',
             WebkitTextStroke: '1px #EF587B',
             filter: 'drop-shadow(0px 0px 20px #EF587B)',
