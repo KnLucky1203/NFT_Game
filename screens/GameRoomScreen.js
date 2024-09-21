@@ -388,7 +388,7 @@ const GameRoomScreen = () => {
             fontWeight: '700',
             // textShadow: '0 0 5px #fff',
             fontFamily: 'Horizon'
-          }}>HANG TIGHT...</Text>
+          }}>Waiting for player...</Text>
           <View style={{
             display: 'flex', flexDirection: 'row',
             justifyContent: 'center', alignItems: 'center',
