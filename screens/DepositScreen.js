@@ -156,7 +156,7 @@ const DepositScreen = () => {
       toast("Client can't select the amount of token");
       return;
     }
-    if (myRoomInfo.amount!=0) {
+    if (myRoomInfo.amount != 0) {
       toast("Deposit token amount already applied");
       return;
     }
@@ -293,17 +293,17 @@ const DepositScreen = () => {
         cmd: 'TOKEN_DEPOSITED', role: role
       }));
       if (role == "server") {
-          setMyRoomInfo(prevRoomInfo => ({
-            ...prevRoomInfo,
-            deposit1: true,
-          }));
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          deposit1: true,
+        }));
 
       }
       else {
-          setMyRoomInfo(prevRoomInfo => ({
-            ...prevRoomInfo,
-            deposit2: true,
-          }));
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          deposit2: true,
+        }));
       }
 
       // console.log("^^^^^^^^^^^^^^", userInfo);
@@ -399,36 +399,8 @@ const DepositScreen = () => {
             justifyContent: 'center', alignItems: 'center',
             columnGap: '10px'
           }}>
-            <Text style={{
-              ...amount == 10 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
-              marginTop: '20px',
-              fontFamily: 'Horizon',
-            }}
-              onClick={() => {
-                setBetAmount(10)
-              }
-              }
-            >10</Text>
-            <Text style={{
-              ...amount == 20 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
-              marginTop: '20px',
-              fontFamily: 'Horizon',
-            }}
-              onClick={() => {
-                setBetAmount(20)
-              }
-              }
-            >20</Text>
-            <Text style={{
-              ...amount == 50 ? commonStyle.toggleBtn1 : commonStyle.toggleBtn2,
-              marginTop: '20px',
-              fontFamily: 'Horizon',
-            }}
-              onClick={() => {
-                setBetAmount(50)
-              }
-              }
-            >50</Text>
+
+
             {/* </View>
           <View style={{
             display: 'flex', flexDirection: 'row',
@@ -477,7 +449,7 @@ const DepositScreen = () => {
               }
             >1000</Text>
           </View>
-          {role == "server" && myRoomInfo.amount==0 && <Text style={{
+          {role == "server" && myRoomInfo.amount == 0 && <Text style={{
             ...commonStyle.button,
             marginTop: '20px',
             fontFamily: 'Horizon',
@@ -488,7 +460,7 @@ const DepositScreen = () => {
           </Text>
           }
 
-          {myRoomInfo.amount!=0 &&
+          {myRoomInfo.amount != 0 &&
             <View style={{
               display: 'flex',
               flexDirection: 'row',
@@ -549,8 +521,61 @@ const DepositScreen = () => {
               }}
             />}
         </View>
+        <View style={{
+          position: 'absolute', // Set position to absolute
+          bottom: 0, // Align the container to the bottom of the screen
+          left: 0, // Align it to the left edge
+          right: 0, // Stretch it to the right edge
+          padding: '10px', // Optional padding around the content
+          backgroundColor: 'transparent', // Adjust background if needed
+        }}>
+        <View style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          columnGap: '10px',
+          backgroundColor: 'grey'
+        }}>
+          <Image
+            source={require("../assets/avatar/avatar_player4.png")}
+            style={{
+              width: isPC ? '40px' : '40px',
+              height: isPC ? '40px' : '40px',
+              border: '2px solid rgba(239, 88, 123, 1)',
+              borderRadius: '50%'
+            }}
+          />
+          <TextInput
+            style={{
+              flex: 1, // Takes the remaining space
+              padding: '0.5rem',
+              borderRadius: '30px',
+              background: 'transparent',
+              fontSize: '16px',
+              lineHeight: '2',
+              color: 'white',
+              fontFamily: 'Horizon',
+              border: '1px solid gray', // You can uncomment the border or customize it
+            }}
+            type="text"
+            placeholder="Message to other player..."
+            value={"000"}
+            onChange={(e) => {
+              // setRate(e?.target?.value);
+            }}
+          />
+          <Text
+            style={{
+              ...commonStyle.button2,
+              fontFamily: 'Horizon',
+            }}
+            onClick={playMobber}
+          >
+            Send
+          </Text>
+        </View>
       </View>
-
+      </View>
     </View >
   );
 };

@@ -99,7 +99,7 @@ export default function ScorePad({ gameOver, score,rate, ...props }) {
         <Image source={require("../assets/images/ScoreCoin.png")}
           style={{ width: '30%', height: '50%' }}
         />
-        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '20px', fontFamily: fonts.fantasy }}>x {(score * rate).toFixed(3)}</Text>
+        <Text style={{ color: 'yellow', fontSize: isPC ? '24px' : '20px', fontFamily: fonts.fantasy }}>x {rate!=NaN?(score * rate<10?(score * rate).toFixed(3):(score * rate).toFixed(1)):0}</Text>
       </View>
 }
     </View >

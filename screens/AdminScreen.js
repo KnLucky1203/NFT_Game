@@ -20,6 +20,10 @@ export default function AdminScreen() {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
+  const {
+    setLoadingState,
+  } = React.useContext(GameContext);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
@@ -52,149 +56,174 @@ export default function AdminScreen() {
       // background : 'rgba(255,255,255,0.8)',
       display: 'flex',
       flexDirection: 'row',
+      justifyContent: 'space-between',
       position: 'relative',
       columnGap: '10px',
     }}>
-      <img
-        src={/.*\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(item.image) ? item.image : require(`../assets/nfts/nft-collection.webp`)}
-        style={{
-          position: 'relative',
-          width: '50px',
-          height: '50px',
-          borderRadius: '9px',
-          border: commonStyle.border,
-          marginLeft: '10px',
-        }}
-      />
-      {isPC && <Text 
-                style={{ 
-                  margin: 'auto', 
-                  flex: '1', 
-                  textAlign: 'center', 
-                  color: 'white', 
-                  width: '100%', 
-                  fontSize: '16px' 
-                }}>
-                  {`${item?.address?.substring(0, 4)}...${item?.address?.substring(item?.address?.length-20)}`}
-              </Text>
-      }
-      <img
-        src={ 
-          (item?.character?.name) ? 
-          require(`../assets/character/${item?.character?.name}.png`) : 
-          require(`../assets/character/bacon.png`)
-        }
-        style={{
-          position: 'relative',
-          width: '50px',
-          height: '50px',
-          borderRadius: '9px',
-          border: commonStyle.border,
-          marginLeft: '10px',
-        }}
-      />
-      <Dropdown
-        style={{  // main selected item
-          width: '140px',
-          cursor: 'pointer',
-          // backgroundColor: 'black',
-          textAlign: 'center',
-          border: commonStyle.border,
-          borderRadius: '50px',
-          height: '45px',
-          margin: 'auto',
-        }}
-        containerStyle={{ // main selected item
-          backgroundColor: 'black',
-          textAlign: 'center',
-        }}
-        placeholderStyle={{ // placeholder text style
-          color: 'grey',
-          // backgroundColor: 'black',
-          textAlign: 'center',
-          // border: '1px solid white'
-        }}
-        selectedTextStyle={{  // main selected item text style
-          color: 'white',
-          // backgroundColor: 'black',
-          textAlign: 'center',
-          borderWidth: commonStyle.border,
-        }}
-        itemContainerStyle={{ // list item container style
-          backgroundColor: 'black',
-          textAlign: 'center',
-        }}
-        itemTextStyle={{  // list item text style
-          // backgroundColor: 'black',
-          color: 'white',
-          textAlign: 'center',
-        }}
-        activeColor='#222222'
-        mode={isPC ? 'auto' : 'modal'}
-        ref={isPC ? top : undefined}
-        inputSearchStyle={{  // list item text style
-          backgroundColor: '#FF0000',
-          color: 'white',
-          textAlign: 'center',
-        }}
-        iconStyle={{  // main drop icon style
-          // backgroundColor: '#0000FF',
-          color: 'white',
-          textAlign: 'center',
-          width: '30px',
-          height: '30px',
-        }}
-        data={characters}
-        maxHeight={300}
-        labelField="name"
-        valueField="symbol"
-        placeholder="Select Character"
-        value={name}
-        renderItem={renderCharacterItem}
-        onChange={async(character) => {
-          console.log("chnage charac====> ", character)
-          setSelCharacter(character)
-          updateNFTCharacter(item.id, character.id).then(res => {
-            const new_admin = deepCopy(admin);
-            if(res.data.code === '00') {
-              new_admin.nfts[index].character = {
-                id: res.data.data.character.id, 
-                name: res.data.data.character.name
-              };
-              setAdmin(new_admin);
-              toast.success("Character updated!");
-            }else {
-              toast.error("Character updating failed!")
-            }
-          })
-        }}
-        
-      />
       <View style={{
-        flex: 1,
-        width: '80px',
+        display: 'flex',
+        flexDirection: 'row',
+        columnGap: '20px',
+      }}>
+        <img
+          src={/.*\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(item.image) ? item.image : require(`../assets/nfts/nft-collection.webp`)}
+          style={{
+            position: 'relative',
+            width: '50px',
+            height: '50px',
+            borderRadius: '9px',
+            border: commonStyle.border,
+            marginLeft: '10px',
+          }}
+        />
+        {isPC && <Text 
+                  style={{ 
+                    margin: 'auto', 
+                    flex: '1', 
+                    textAlign: 'left', 
+                    color: 'white', 
+                    fontSize: '16px' 
+                  }}>
+                    {`${item?.address?.substring(0, 4)}...${item?.address?.substring(item?.address?.length-10)}`}
+                </Text>
+        }
+      </View>
+      <View style={{
+        display: 'flex',
+        flexDirection: "row",
+        columnGap: "10px"
+      }}>
+        <img
+          src={ 
+            (item?.character?.name) ? 
+            require(`../assets/character/${item?.character?.name}.png`) : 
+            require(`../assets/character/bacon.png`)
+          }
+          style={{
+            position: 'relative',
+            width: '50px',
+            height: '50px',
+            borderRadius: '9px',
+            border: commonStyle.border,
+            marginLeft: '10px',
+          }}
+        />
+        <Dropdown
+          style={{  // main selected item
+            width: '140px',
+            cursor: 'pointer',
+            // backgroundColor: 'black',
+            textAlign: 'center',
+            border: commonStyle.border,
+            borderRadius: '50px',
+            height: '45px',
+            margin: 'auto',
+          }}
+          containerStyle={{ // main selected item
+            backgroundColor: 'black',
+            textAlign: 'center',
+          }}
+          placeholderStyle={{ // placeholder text style
+            color: 'grey',
+            // backgroundColor: 'black',
+            textAlign: 'center',
+            // border: '1px solid white'
+          }}
+          selectedTextStyle={{  // main selected item text style
+            color: 'white',
+            // backgroundColor: 'black',
+            textAlign: 'center',
+            borderWidth: commonStyle.border,
+          }}
+          itemContainerStyle={{ // list item container style
+            backgroundColor: 'black',
+            textAlign: 'center',
+          }}
+          itemTextStyle={{  // list item text style
+            // backgroundColor: 'black',
+            color: 'white',
+            textAlign: 'center',
+          }}
+          activeColor='#222222'
+          mode={isPC ? 'auto' : 'modal'}
+          ref={isPC ? top : undefined}
+          inputSearchStyle={{  // list item text style
+            backgroundColor: '#FF0000',
+            color: 'white',
+            textAlign: 'center',
+          }}
+          iconStyle={{  // main drop icon style
+            // backgroundColor: '#0000FF',
+            color: 'white',
+            textAlign: 'center',
+            width: '30px',
+            height: '30px',
+          }}
+          data={characters}
+          maxHeight={300}
+          labelField="name"
+          valueField="symbol"
+          placeholder="Select Character"
+          value={name}
+          renderItem={renderCharacterItem}
+          onChange={character => {
+            setSelCharacter(character)
+            const new_admin = deepCopy(admin);
+            new_admin.nfts[index].character = {
+              id: character.id, 
+              name: character.name
+            };
+            setAdmin(new_admin);
+          }}        
+        />
+      </View>
+      <View style={{
+        display: 'flex',
+        flexDirection: 'row',
+        columnGap: '3px',
         justifyContent: "center",
         alignItems: "center",
+        width: '160px',
       }}>
-      <View style={{
-        ...commonStyle.button,
-        margin: 'auto',
-      }}
-        onClick={() => {
-          deleteNFT(item.id).then(res => {
-            if(res.data.code == "00"){
-              const new_admin = deepCopy(admin);
-              new_admin.nfts.splice(index, 1);
-              setAdmin(new_admin);
-              toast.success("Character deleted!")
-            } else {
-              toast.success("Character deleting failed!")
-            }
-          }).catch(err => {
-
-          })     
-        }}>Delete</View>
+        <View 
+          style={{
+            ...commonStyle.button,
+            margin: 'auto',
+            
+          }}
+          onClick={async() => {
+            updateNFTCharacter(item.id, selCharacter.id).then(res => {
+              if(res.data.code === '00') {
+                toast.success("Character updated!");
+              }else {
+                toast.error("Character updating failed!")
+              }
+            })
+        }}>
+          Update
         </View>
+        <View 
+          style={{
+            ...commonStyle.button,
+            margin: 'auto',
+          }}
+          onClick={() => {
+            deleteNFT(item.id).then(res => {
+              if(res.data.code == "00"){
+                const new_admin = deepCopy(admin);
+                new_admin.nfts.splice(index, 1);
+                setAdmin(new_admin);
+                toast.success("Character deleted!")
+              } else {
+                toast.success("Character deleting failed!")
+              }
+            }).catch(err => {
+
+            })     
+        }}>
+          Delete
+        </View>      
+      </View>
     </View >
   );
 
@@ -401,6 +430,7 @@ export default function AdminScreen() {
   }
 
   useEffect(() => {
+    setLoadingState(true)
     if (localStorage.rate == undefined) {
       getRateFromServer();
     }
@@ -417,9 +447,11 @@ export default function AdminScreen() {
         if(response.data.code == "00")          
           setCharacters(response.data.data)
       })
+      localStorage.wallet = walletProvider.publicKey.toBase58()
     } else {
       toast.error("Connect wallet!")
     }
+    setLoadingState(false)
   }, [walletProvider]);
   console.log("characters ====", characters)
 
@@ -530,7 +562,7 @@ export default function AdminScreen() {
             justifyContent: 'space-between'
           }}>
             <Text style={{
-                fontSize: isPC ? '96px' : '64px',
+                fontSize: isPC ? '96px' : '32px',
                 color: '#FDC6D3',
                 WebkitTextStroke: '1px #EF587B',
                 filter: 'drop-shadow(0px 0px 20px #EF587B)',
@@ -542,6 +574,7 @@ export default function AdminScreen() {
               display: 'flex', flexDirection: isPC ? 'row' : 'column', 
               maxWidth: '800px',
               width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',
+              rowGap: isPC ? 0 : '10px',
             }}>
               <Text style={{
                 width:'80px',
@@ -575,7 +608,7 @@ export default function AdminScreen() {
               />
               <View style={{
                 ...commonStyle.button,
-                width: '65px',
+                width: isPC? '65px': '100%',
               }}
                 onClick={() => {
                   addNewNFT()
@@ -586,6 +619,7 @@ export default function AdminScreen() {
             <View style={{
               display: 'flex', flexDirection: isPC ? 'row' : 'column', maxWidth: '800px',
               width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',
+              rowGap: isPC ? 0 : '10px',
             }}>
               <Text style={{
                 width:'80px',
@@ -619,7 +653,7 @@ export default function AdminScreen() {
               />
               <View style={{
                 ...commonStyle.button,
-                width: '65px',
+                width: isPC? '65px': '100%',
               }}
                 onClick={() => {
                   setRateValue()

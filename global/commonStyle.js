@@ -32,23 +32,35 @@ export const commonStyle = {
     cursor: 'pointer',
     fontFamily: 'Horizon'
   },
-  toggleBtn1: {
+  button2: {
     padding: '14px',
-    fontSize: '16px',
+    fontSize: '20px',
     color: 'white',
-    backgroundColor: colors.accent,
+    backgroundColor: colors.agreeSafe,
     boxShadow: redShadow,
     borderRadius: '54px',
     cursor: 'pointer',
     fontFamily: 'Horizon'
   },
-  toggleBtn2: {
+  toggleBtn1: {
+    width: '60px',
     padding: '14px',
     fontSize: '16px',
     color: 'white',
+    backgroundColor: colors.accent,
+    boxShadow: redShadow,
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontFamily: 'Horizon'
+  },
+  toggleBtn2: {
+    width: '60px',
+    padding: '14px',
+    fontSize: '16px',
+    color: 'black',
     backgroundColor: `rgba(188, 188, 188, 188)`,
     boxShadow: redShadow,
-    borderRadius: '54px',
+    borderRadius: '10px',
     cursor: 'pointer',
     fontFamily: 'Horizon'
   },

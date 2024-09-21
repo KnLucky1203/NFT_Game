@@ -51,8 +51,10 @@ const LeaderboardScreen = () => {
   const {
     userInfo,
     setUserInfo,
+    setLoadingState,
   } = React.useContext(GameContext);
   const getScoreInfo = async () => {
+    setLoadingState(true);
     let response = await getScoreList(top10?"top10":"global", 10, 0);
     // console.log("response ============> ", response)
     console.log("recoe = ", response.data.code);
@@ -62,6 +64,7 @@ const LeaderboardScreen = () => {
       setContentHeight(height1)
       // setContentHeight(parseInt(response.data.data.length) * 62)
       setData(response.data.data);
+      setLoadingState(false)
     }
   }
   
