@@ -498,7 +498,8 @@ const LandingScreen = () => {
                     navigation.navigate("GameScreen");
                   }}
                 >
-                  Play Single - P2E
+                  <SimpleIcon name="user" size={20} />
+                  &nbsp;&nbsp;Play Single - P2E
                 </Text>
 
                 <Text style={{
@@ -530,7 +531,8 @@ const LandingScreen = () => {
                       }));
                     }
                   }}>
-                  Play Multi - PVP
+                    <SimpleIcon name="people" size={20} />
+                    &nbsp;&nbsp;Play Multi - PVP
                 </Text>
               </View>
 

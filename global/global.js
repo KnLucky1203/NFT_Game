@@ -151,7 +151,11 @@ export const loginUser = async (username, password) => {
 }
 
 export const getScoreList = async (sortBy, limit, page) => {
-  return await axios.get(SERVER_URL + '/api/v1/user/score/list?sortBy=' + sortBy + '&limit=' + limit + "&page=" + page);
+  return await axios.get(SERVER_URL + '/api/v1/user/score/list?sortBy=' + sortBy + '&limit=' + limit + "&page=" + page, token && {
+    headers: {
+      Authorization: `bearer ${token}`,
+    },
+  });
 }
 
 export const getRate = async (sortBy, limit, page) => {

@@ -56,7 +56,7 @@ const LeaderboardScreen = () => {
   } = React.useContext(GameContext);
   const getScoreInfo = async () => {
     setLoadingState(true);
-    let response = await getScoreList(top10?"top10":"global", 10, 0);
+    let response = await getScoreList(top10?"top10":"global", top10?10:20, 0);
     // console.log("response ============> ", response)
     console.log("recoe = ", response.data.code);
     if (response.data.code == "00") {
@@ -179,14 +179,14 @@ const LeaderboardScreen = () => {
               columnGap: '10px'
             }}>
               <Text style={{
-                color: top10 ? 'gray' : 'white',
+                color: top10 ? 'white' : 'gray',
                 fontFamily: 'Horizon',
                 fontSize: '16px'
               }}>
                 Top 10 only
               </Text>
               <SwitchToggle
-                switchOn={top10}
+                switchOn={!top10}
                 onPress={() => { 
                   // getScoreList(top10?"top10":"global", 10, 0).then(res => {
 
@@ -210,7 +210,7 @@ const LeaderboardScreen = () => {
                 }}
               />
               <Text style={{
-                color: !top10 ? 'gray' : 'white',
+                color: !top10 ? 'white' : 'gray',
                 fontFamily: 'Horizon',
                 fontSize: '16px'
               }}>

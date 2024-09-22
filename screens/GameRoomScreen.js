@@ -47,6 +47,7 @@ import {
   getMint
 } from '@solana/spl-token';
 import { toast } from 'react-hot-toast';
+import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 // Guide Page component
 const GameRoomScreen = () => {
   const { user, setUser, setLoadingState } = React.useContext(GameContext);
@@ -451,7 +452,8 @@ const GameRoomScreen = () => {
             fontFamily: 'Horizon',
           }}
             onClick={playMobber}
-          >
+          ><SimpleIcon name="energy" size={20} />
+                  &nbsp;&nbsp;
             Play Mobber!
           </Text>
 
