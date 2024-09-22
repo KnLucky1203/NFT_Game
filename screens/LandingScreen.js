@@ -50,6 +50,8 @@ import { cacheRate } from '../src/GameSettings';
 import { getUserInfo } from '../global/global';
 import toast from 'react-hot-toast';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
+import {useWeb3ModalProvider } from '@web3modal/solana/react'
+// const { address, chainId } = useWeb3ModalAccount();
 
 // Landing Page component
 const LandingScreen = () => {
@@ -59,6 +61,7 @@ const LandingScreen = () => {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
+  const { walletProvider, connection } = useWeb3ModalProvider();
   const getWalletAddress =  async () => {
     let response = await getDepositAddress();
     // console.log("VVVVVVVVVVVV  ", response.data.data.depositAddress);
@@ -160,7 +163,11 @@ const LandingScreen = () => {
   }
 
   const entering = async () => {
-    console.log("iiiiiiiiiiiiiiii ",localStorage.wallet);
+
+    if (!walletProvider ||  !connection) {
+      toast('Import wallet');
+      return;
+    }
     if (localStorage.wallet == undefined) {
       setStateMsg("Connect Wallet");
       return;
