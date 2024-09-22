@@ -51,7 +51,7 @@ import toast from 'react-hot-toast';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 // Guide Page component
 const DepositScreen = () => {
-  const { user, setUser, } = React.useContext(GameContext);
+  const { user, setUser, otherCharacter, setOtherCharacter} = React.useContext(GameContext);
 
   /* ================================ For Mobile Responsive ===============================*/
   const [path, setPath] = useState("room");
@@ -64,6 +64,7 @@ const DepositScreen = () => {
   const [otherDespositFlag, setOtherDepositFlag] = useState(false);
   const [depositFlag, setDepositFlag] = useState(false);
   const [chatText, setChatText] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
   const { walletProvider, connection } = useWeb3ModalProvider();
   const { address, chainId } = useWeb3ModalAccount();
   const inputRef = useRef(null);
@@ -115,6 +116,7 @@ const DepositScreen = () => {
         // }));
       }
       if (data.cmd === "OTHER_DEPOSITED") {
+        console.log("$$$$$$$$$$$$other= ", data.otherCharacter);
         // setOtherDepositFlag(true);
         if (role == "server") {
           setMyRoomInfo(prevRoomInfo => ({
@@ -122,6 +124,7 @@ const DepositScreen = () => {
             deposit2: true,
             // client_ready: true,
           }));
+          setOtherCharacter(data.otherCharacter)
         }
         else {
           setMyRoomInfo(prevRoomInfo => ({
@@ -129,6 +132,7 @@ const DepositScreen = () => {
             deposit1: true,
             // client_ready: true,
           }));
+          setOtherCharacter(data.otherCharacter)
         }
 
       }
@@ -161,7 +165,7 @@ const DepositScreen = () => {
   // Initial Variables
   const navigation = useNavigation();
   const {
-    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo, setLoadingState
+    socket, gameMode, setGameMode, myRoomInfo, role, setMyRoomInfo, adminWallet, userInfo, setLoadingState, character
   } = React.useContext(GameContext);
 
   const setBetAmount = (value) => {
@@ -202,8 +206,8 @@ const DepositScreen = () => {
   }
 
   const applyAmount = () => {
-    if (myRoomInfo.client_ready!=true) {
-      toast.error(myRoomInfo.players[1].player_name+" is not ready!");
+    if (myRoomInfo.client_ready != true) {
+      toast.error(myRoomInfo.players[1].player_name + " is not ready!");
       return;
     }
     if (amount == 0) {
@@ -333,7 +337,7 @@ const DepositScreen = () => {
       // let res = await sendAndConfirmVersionedTransactions(connection, tx);
       // console.log("res = ", res);
       socket.emit('message', JSON.stringify({
-        cmd: 'TOKEN_DEPOSITED', role: role
+        cmd: 'TOKEN_DEPOSITED', role: role, otherCharacter: character,
       }));
       if (role == "server") {
         setMyRoomInfo(prevRoomInfo => ({
@@ -576,13 +580,17 @@ const DepositScreen = () => {
           width: isPC ? '50%' : '100%',
           backgroundColor: 'transparent', // Adjust background if needed
         }}>
-          <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            columnGap: '10px',
-            backgroundColor: '#383a40'
-          }}>
+          <View
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              columnGap: '10px',
+              backgroundColor: isHovered ? '#505357' : '#383a40', // Change color on hover
+              borderRadius: '10px',
+            }}>
             <Image
               source={require("../assets/avatar/avatar_player4.png")}
               style={{
@@ -633,6 +641,8 @@ const DepositScreen = () => {
               }}
               onClick={sendChatText}
             >
+              <SimpleIcon name="cursor" size={15} />
+              &nbsp;
               Send
             </Text>
           </View>

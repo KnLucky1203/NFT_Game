@@ -115,7 +115,7 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
   const renderCharacter = ({ item, index }) => (
     <View style={{
       padding: '10px',
-      width: isPC ? '30%' : '80%',
+      width: isPC ? '30%' : '40%',
       display: 'flex', flexDirection: 'column',
       cursor: 'pointer',
       background: 'rgba(0,0,255,0.1)',
@@ -128,12 +128,12 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
         src={require(`../assets/character/${item.name}.png`)}
         style={{
           position: 'relative',
-          width: '80%',
+          width: '70px',
           margin: 'auto',
           borderRadius: '10%',
         }}
       />
-      <Text style={{ color: 'white', fontSize: isPC ? '18px' : '32px' }}>{item.name}</Text>
+      <Text style={{ color: 'white', fontSize: '18px'}}>{item.name}</Text>
       <View style={{ display: 'flex', flexDirection: 'row' }}>
         <Image source={require("../assets/character/character1.webp")}
           style={{
@@ -242,6 +242,8 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
             overflowY: 'scroll',
             scrollbarWidth: 'none',
             margin: 'auto',
+            columnGap: '10px',
+            rowGap: '10px',
             flex: 1, justifyContent: 'center'
           }}>
             {(characters) ? characters.map((item, index) => {

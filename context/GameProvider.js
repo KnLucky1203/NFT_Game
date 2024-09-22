@@ -43,6 +43,7 @@ export default function GameProvider({ children }) {
   const [user, setUser] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [character, setCharacter] = useState(defaultState.character);
+  const [otherCharacter, setOtherCharacter] = useState(defaultState.character);
   const [highscore, setHighscore] = useState(defaultState.highscore);
   const [gameMode, setGameMode] = useState(0); // 0 : PVE , 1 : PVP
   const [contextGameMap, setContextGameMap] = useState([]);
@@ -133,6 +134,7 @@ export default function GameProvider({ children }) {
         const { user, character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client, adminWallet } = await rehydrateAsync();
         setUser(user);
         setCharacter(character);
+        setOtherCharacter(otherCharacter);
         setHighscore(highscore);
         setGameMode(gameMode);
         setContextGameMap(contextGameMap);
@@ -157,6 +159,8 @@ export default function GameProvider({ children }) {
         setLoadingState,
         character,
         setCharacter,
+        otherCharacter,
+        setOtherCharacter,
         highscore,
         setHighscore,
         gameMode,

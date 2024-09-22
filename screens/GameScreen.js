@@ -489,7 +489,7 @@ function GameScreen(props) {
   const scheme = useColorScheme();
   const navigation = useNavigation();
 
-  const { gameMode, socket, character, contextGameMap, role, setRole, setMyRoomInfo } = React.useContext(GameContext);
+  const { gameMode, socket, character, contextGameMap, role, setRole, setMyRoomInfo, otherCharacter } = React.useContext(GameContext);
 
   const server_keyMaps = [keyMap_1, keyMap_None];
   const client_keyMaps = [keyMap_None, keyMap_2];
@@ -599,7 +599,7 @@ function GameScreen(props) {
                   gameMode={gameMode}
                   newGlobalMap={contextGameMap}
                   keyMap={client_keyMaps[0]}
-                  character={character}
+                  character={otherCharacter}
                   side="right"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}
@@ -628,7 +628,7 @@ function GameScreen(props) {
                   gameMode={gameMode}
                   newGlobalMap={contextGameMap}
                   keyMap={server_keyMaps[1]}
-                  character={character}
+                  character={otherCharacter}
                   side="right"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}

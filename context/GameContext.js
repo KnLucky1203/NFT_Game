@@ -4,6 +4,7 @@ import { createContext } from 'react';
 export default createContext({
     user: {}, setUser() { },
     character: 'brent', setCharacter() { },
+    otherCharacter: 'brent', setOtherCharacter() { },
     highscore: 0, setHighscore() { },
     gameMode: 1,
     contextGameMap : [],

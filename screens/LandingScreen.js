@@ -458,6 +458,8 @@ const LandingScreen = () => {
                 setOnRegister(false); setStateMsg("");
               }}
             >
+              <SimpleIcon name="arrow-left" size={20} />
+              &nbsp;&nbsp;
               Back
             </Text> 
             <Text style={[commonStyle.button,{width: '150px'}]}
@@ -465,6 +467,8 @@ const LandingScreen = () => {
                 registering();
               }}
             >
+              <SimpleIcon name="user-follow" size={20} />
+              &nbsp;&nbsp;
               Register
             </Text> 
             </View>
