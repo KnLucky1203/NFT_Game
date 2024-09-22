@@ -453,11 +453,10 @@ export default function AdminScreen() {
       })
       localStorage.wallet = walletProvider.publicKey.toBase58()
     } else {
-      toast.error("Connect wallet!")
+      // toast.error("Connect wallet!")
     }
     setLoadingState(false)
-  }, [walletProvider]);
-  console.log("characters ====", characters)
+  }, [walletProvider]);  
 
   const setTaxWallet = (text) => {
     let new_admin = deepCopy(admin)

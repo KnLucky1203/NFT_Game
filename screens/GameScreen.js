@@ -390,7 +390,7 @@ class Game extends Component {
           <ScorePad
             score={this.state.score}
             gameOver={this.state.gameState === State.Game.gameOver}
-            rate={this.rate}
+            rate={this.rate&&!isNaN(this.rate)? this.rate: 0}
           /> : <></>
         }
         {this.state.rightOver && this.side == "right" && (<View

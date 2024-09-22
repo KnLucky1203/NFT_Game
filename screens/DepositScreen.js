@@ -133,7 +133,10 @@ const DepositScreen = () => {
 
       }
       if (data.cmd === "CHAT_TEXT") {
-        toast("other: " + data.text, { duration: 10000, background: "#df0707" })
+        if (role == "server")
+          toast(myRoomInfo.players[1].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
+        else
+          toast(myRoomInfo.players[0].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
       }
     };
 
@@ -176,6 +179,9 @@ const DepositScreen = () => {
   }
 
   const sendChatText = () => {
+    if (chatText == "") {
+      return;
+    }
 
     toast("me: " + chatText, { duration: 12000, background: '#30f304' });
 
@@ -191,7 +197,7 @@ const DepositScreen = () => {
   }
 
   const applyAmount = () => {
-    console.log("aaaaaa=",amount);
+    console.log("aaaaaa=", amount);
     if (amount == 0) {
       toast.error("Select token amount first");
       return;
