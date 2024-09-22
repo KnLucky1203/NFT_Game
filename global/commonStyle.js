@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 export const colors = {
   mainColor: `white`,
@@ -24,6 +24,16 @@ export const commonStyle = {
   // ----- Common Controls -----
   button: {
     padding: '14px',
+    fontSize: '20px',
+    color: 'white',
+    backgroundColor: colors.accent,
+    boxShadow: redShadow,
+    borderRadius: '54px',
+    cursor: 'pointer',
+    fontFamily: 'Horizon'
+  },
+  button3: {
+    padding: Dimensions.get('window').width > 768 ? '14px': '8px',
     fontSize: '20px',
     color: 'white',
     backgroundColor: colors.accent,

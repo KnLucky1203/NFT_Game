@@ -48,6 +48,7 @@ const LeaderboardScreen = () => {
   const [top10, setTop10] = useState(true);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
   // const [userInfo, setUserInfo] = useState({});
+  
   const {
     userInfo,
     setUserInfo,
@@ -265,7 +266,10 @@ const LeaderboardScreen = () => {
                   backgroundColor: userInfo.id==player.id ?"#EF587B":"",
                   ...getRankStyle(index + 1, player)
                 }}>{index + 1}</Text>
-                  {userInfo.id == player.id && <Text style={{ color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}}><Icon name="share-social" size={25}/></Text>}
+                  {userInfo.id == player.id && 
+                  <Text style={{ cursor: 'pointer', color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}} onClick={() => {location.href = `https://twitter.com/intent/tweet?text=${userInfo.username}`}}>
+                    <Icon name="share-social" size={25}/>
+                  </Text>}
                 </View>
                 
                 <Text style={{ color: userInfo.id==player.id ? "#ef587b":  'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>

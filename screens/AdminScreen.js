@@ -11,6 +11,8 @@ import { colors, fonts, commonStyle } from '../global/commonStyle';
 import GameContext from '../context/GameContext';
 import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
+import Icon from 'react-native-vector-icons/Ionicons';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT, setRewardRate } from '../global/global';
 
 // Initial Variables
@@ -59,6 +61,8 @@ export default function AdminScreen() {
       justifyContent: 'space-between',
       position: 'relative',
       columnGap: '10px',
+      alignItems: 'center',
+      alignContent: 'center',
     }}>
       <View style={{
         display: 'flex',
@@ -69,8 +73,8 @@ export default function AdminScreen() {
           src={/.*\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(item.image) ? item.image : require(`../assets/nfts/nft-collection.webp`)}
           style={{
             position: 'relative',
-            width: '50px',
-            height: '50px',
+            width: isPC ? '50px' : '25px',
+            height: isPC ? '50px' : '25px',
             borderRadius: '9px',
             border: commonStyle.border,
             marginLeft: '10px',
@@ -91,6 +95,7 @@ export default function AdminScreen() {
       <View style={{
         display: 'flex',
         flexDirection: "row",
+        alignItems: 'center',
         columnGap: "10px"
       }}>
         <img
@@ -101,8 +106,8 @@ export default function AdminScreen() {
           }
           style={{
             position: 'relative',
-            width: '50px',
-            height: '50px',
+            width: isPC ? '50px' : '25px',
+            height: isPC ? '50px' : '25px',
             borderRadius: '9px',
             border: commonStyle.border,
             marginLeft: '10px',
@@ -110,13 +115,13 @@ export default function AdminScreen() {
         />
         <Dropdown
           style={{  // main selected item
-            width: '140px',
+            width: isPC ? '140px' : '120px',
             cursor: 'pointer',
             // backgroundColor: 'black',
             textAlign: 'center',
             border: commonStyle.border,
             borderRadius: '50px',
-            height: '45px',
+            height: isPC ? '45px': '30px',
             margin: 'auto',
           }}
           containerStyle={{ // main selected item
@@ -163,7 +168,7 @@ export default function AdminScreen() {
           maxHeight={300}
           labelField="name"
           valueField="symbol"
-          placeholder="Select Character"
+          placeholder={isPC ? 'Select Character': 'Change'}
           value={name}
           renderItem={renderCharacterItem}
           onChange={character => {
@@ -183,13 +188,12 @@ export default function AdminScreen() {
         columnGap: '3px',
         justifyContent: "center",
         alignItems: "center",
-        width: '160px',
+        width: isPC ? '160px': '80px',
       }}>
         <View 
           style={{
-            ...commonStyle.button,
+            ...commonStyle.button3,
             margin: 'auto',
-            
           }}
           onClick={async() => {
             updateNFTCharacter(item.id, selCharacter.id).then(res => {
@@ -200,11 +204,11 @@ export default function AdminScreen() {
               }
             })
         }}>
-          Update
+          {isPC ? "Update" : <Icon name="save-outline" size={18} />}
         </View>
         <View 
           style={{
-            ...commonStyle.button,
+            ...commonStyle.button3,
             margin: 'auto',
           }}
           onClick={() => {
@@ -221,7 +225,7 @@ export default function AdminScreen() {
 
             })     
         }}>
-          Delete
+          {isPC ? "Delete" : <AntIcon name="delete" size={18} />}
         </View>      
       </View>
     </View >
@@ -236,7 +240,7 @@ export default function AdminScreen() {
       columnGap: '10px',
     }}>
       <Image source={require(`../assets/character/${item.name}.png`)} style={{
-        width: "30px", height: "40px"
+        width: isPC ? "30px": "20px", height: isPC ? "40px": "25px"
       }} />
       <Text style={{ color: '#fff' }}>{item.name}</Text>
     </View>

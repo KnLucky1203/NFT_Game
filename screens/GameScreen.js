@@ -257,6 +257,10 @@ class Game extends Component {
     );
   };
 
+  renderOtherGameOver = () => {
+    
+  }
+
   
   renderGameOver = () => {
     if (this.state.gameState !== State.Game.gameOver) {

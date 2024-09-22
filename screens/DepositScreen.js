@@ -27,7 +27,7 @@
  */
 
 // Sample Libraries
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Image, Platform, Dimensions, Linking } from 'react-native';
@@ -62,8 +62,10 @@ const DepositScreen = () => {
   const [amountApplied, setAmountApplied] = useState(false);
   const [otherDespositFlag, setOtherDepositFlag] = useState(false);
   const [depositFlag, setDepositFlag] = useState(false);
+  const [chatText, setChatText] = useState("");
   const { walletProvider, connection } = useWeb3ModalProvider();
-  const { address, chainId } = useWeb3ModalAccount()
+  const { address, chainId } = useWeb3ModalAccount();
+  const inputRef = useRef(null);
 
   useEffect(() => {
     // setAmountApplied(false);
@@ -129,6 +131,9 @@ const DepositScreen = () => {
         }
 
       }
+      if (data.cmd === "CHAT_TEXT") {
+        toast("other: " + data.text, { duration: 10000, background: "#df0707" })
+      }
     };
 
     socket.on('ROOM', handleSocketRoom);
@@ -167,6 +172,21 @@ const DepositScreen = () => {
     // }));
     setAmount(value);
 
+  }
+
+  const sendChatText = () => {
+
+    toast("me: " + chatText, { duration: 12000, background: '#30f304' });
+
+    socket.emit('message', JSON.stringify({
+      cmd: 'CHAT_TEXT',
+      text: chatText,
+      role: role
+    }));
+    setChatText("");
+    setTimeout(() => {
+      inputRef.current.focus();
+    }, 0);
   }
 
   const applyAmount = () => {
@@ -524,57 +544,72 @@ const DepositScreen = () => {
         <View style={{
           position: 'absolute', // Set position to absolute
           bottom: 0, // Align the container to the bottom of the screen
-          left: 0, // Align it to the left edge
           right: 0, // Stretch it to the right edge
           padding: '10px', // Optional padding around the content
+          width: isPC ? '50%' : '100%',
           backgroundColor: 'transparent', // Adjust background if needed
         }}>
-        <View style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          columnGap: '10px',
-          backgroundColor: 'grey'
-        }}>
-          <Image
-            source={require("../assets/avatar/avatar_player4.png")}
-            style={{
-              width: isPC ? '40px' : '40px',
-              height: isPC ? '40px' : '40px',
-              border: '2px solid rgba(239, 88, 123, 1)',
-              borderRadius: '50%'
-            }}
-          />
-          <TextInput
-            style={{
-              flex: 1, // Takes the remaining space
-              padding: '0.5rem',
-              borderRadius: '30px',
-              background: 'transparent',
-              fontSize: '16px',
-              lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon',
-              border: '1px solid gray', // You can uncomment the border or customize it
-            }}
-            type="text"
-            placeholder="Message to other player..."
-            value={"000"}
-            onChange={(e) => {
-              // setRate(e?.target?.value);
-            }}
-          />
-          <Text
-            style={{
-              ...commonStyle.button2,
-              fontFamily: 'Horizon',
-            }}
-            onClick={playMobber}
-          >
-            Send
-          </Text>
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            columnGap: '10px',
+            backgroundColor: '#383a40'
+          }}>
+            <Image
+              source={require("../assets/avatar/avatar_player4.png")}
+              style={{
+                width: isPC ? '40px' : '40px',
+                height: isPC ? '40px' : '40px',
+                border: '2px solid rgba(239, 88, 123, 1)',
+                backgroundColor: 'black',
+                borderRadius: '50%',
+                marginLeft: "6px"
+              }}
+            />
+            <TextInput
+              ref={inputRef}
+              style={{
+                flex: 1, // Takes the remaining space
+                padding: '0.5rem',
+                borderRadius: '30px',
+                background: 'transparent',
+                fontSize: '16px',
+                lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+                // border: '1px solid gray', // You can uncomment the border or customize it
+                outline: 'none'
+              }}
+              type="text"
+              placeholder="Message to other player..."
+              value={chatText}
+              onChange={(e) => {
+                setChatText(e?.target?.value);
+              }}
+              onSubmitEditing={(e) => {
+                sendChatText();
+                e.preventDefault(); // Prevent default behavior
+              }}
+            />
+            <Text
+              style={{
+                ...commonStyle.button2,
+                fontFamily: 'Horizon',
+                marginRight: '6px',
+                padding: '5px 10px',
+                paddingLeft: '10px',
+                paddingRight: '10px',
+                paddingTop: '5px',
+                paddingBottom: '5px'
+
+              }}
+              onClick={sendChatText}
+            >
+              Send
+            </Text>
+          </View>
         </View>
-      </View>
       </View>
     </View >
   );

@@ -18,9 +18,9 @@ import {
 } from '@solana/spl-token';
 import Icon from 'react-native-vector-icons/Ionicons';
 function GameOver({ ...props }) {
-  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo,setLoadingState } = React.useContext(GameContext);
+  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo,setLoadingState, userInfo } = React.useContext(GameContext);
   const navigation = useNavigation();
-
+  console.log("Game over ==========", userInfo.username)
   /* ================================ For Mobile Responsive ===============================*/
 
   const [evalWidth, setEvalWidth] = useState(768);
@@ -222,7 +222,10 @@ function GameOver({ ...props }) {
       borderRadius: '20px',
       opacity: fadeAnim
     }}>
-      <View style={{ position: 'absolute', top: 20, right: 20, color: 'white'}}>
+      <View 
+        style={{ position: 'absolute', top: 20, right: 20, color: 'white', cursor: 'pointer'}}
+        onClick={() => {location.href = `https://twitter.com/intent/tweet?text=${userInfo.username}`}}
+      >
         <Icon name="share-social" size={30} style={{color: 'white'}}/>
       </View>
       <Text style={{
