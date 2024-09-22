@@ -165,7 +165,7 @@ const LandingScreen = () => {
   const entering = async () => {
 
     if (!walletProvider ||  !connection) {
-      toast('Import wallet');
+      toast.error('Import wallet');
       return;
     }
     if (localStorage.wallet == undefined) {
