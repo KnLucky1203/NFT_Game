@@ -6,7 +6,7 @@ import { fonts } from '../global/commonStyle';
 import { useNavigation } from "@react-navigation/native";
 import { commonStyle } from "../global/commonStyle";
 import { colors } from "../global/commonStyle";
-import { socket, claimToken} from '../global/global';
+import { socket, claimToken } from '../global/global';
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 
 import { Connection, PublicKey, Transaction, clusterApiUrl, sendAndConfirmTransaction, Keypair } from '@solana/web3.js';
@@ -18,7 +18,7 @@ import {
 } from '@solana/spl-token';
 import Icon from 'react-native-vector-icons/Ionicons';
 function GameOver({ ...props }) {
-  const { gameMode, setGameMode, character, role,myRoomInfo, setMyRoomInfo,setLoadingState, userInfo } = React.useContext(GameContext);
+  const { gameMode, setGameMode, character, role, myRoomInfo, setMyRoomInfo, setLoadingState, userInfo } = React.useContext(GameContext);
   const navigation = useNavigation();
   console.log("Game over ==========", userInfo.username)
   /* ================================ For Mobile Responsive ===============================*/
@@ -30,7 +30,7 @@ function GameOver({ ...props }) {
   const [resultString, setResultString] = useState("");
   const [otherScore, setOtherScore] = useState(0);
   const [rewardable, setrewardable] = useState(false);
-  
+
   const { walletProvider, connection } = useWeb3ModalProvider();
   const { address, chainId } = useWeb3ModalAccount()
   const {
@@ -38,7 +38,7 @@ function GameOver({ ...props }) {
     setSocket,
   } = React.useContext(GameContext);
   useEffect(() => {
-    
+
     InteractionManager.runAfterInteractions((_) => {
       Animated.timing(fadeAnim, {
         useNativeDriver: true,
@@ -68,12 +68,12 @@ function GameOver({ ...props }) {
       if (data.cmd === "MATCH_RESULT") {
         if (role == "server") {
           setOtherScore(data.score2);
-          if (data.score1> data.score2) {
+          if (data.score1 > data.score2) {
             setResultString("You Won");
             setrewardable(true);
           }
           else if (data.score1 < data.score2) {
-            setResultString("You Lost");            
+            setResultString("You Lost");
           }
           else {
             setResultString("Drawed");
@@ -103,7 +103,7 @@ function GameOver({ ...props }) {
       socket.off('ROOM', handleSocketRoom);
     };
 
-    
+
 
   }, []);
 
@@ -124,7 +124,7 @@ function GameOver({ ...props }) {
       window.alert('walletProvider or address is undefined');
       return;
     }
-    
+
     setLoadingState(true);
     try {
       const myAddr = address; // The address of the user
@@ -162,7 +162,7 @@ function GameOver({ ...props }) {
       //   cmd: 'TOKEN_DEPOSITED', role: role
       // }));
 
-      
+
     } catch (error) {
       console.error('Error depositng:', error);
       setLoadingState(false);
@@ -175,28 +175,28 @@ function GameOver({ ...props }) {
   }
   const getReward = async () => {
     setLoadingState(true);
-    console.log("amount = ", myRoomInfo.amount*2);
-    await claimToken(myRoomInfo.amount*2, localStorage.wallet, localStorage.token);
+    console.log("amount = ", myRoomInfo.amount * 2);
+    await claimToken(myRoomInfo.amount * 2, localStorage.wallet, localStorage.token);
     setrewardable(false);
     setLoadingState(false);
   }
   const restartGame = async () => {
     if (gameMode == 2) {
-  //     await depositToken();
-    // if (role == "client") {
-    //   socket.emit('message', JSON.stringify({
-    //     cmd: 'CLIENT_PLAY_AGAIN',
-    //   }));
-    // }
-    setMyRoomInfo(prevRoomInfo => ({
-      ...prevRoomInfo,
-      deposit1: false,
-      deposit2: false,
-      otherOver: false,
-      amount:0
-    }));
-    navigation.navigate("DepositScreen");
-  }
+      //     await depositToken();
+      if (role == "client") {
+        socket.emit('message', JSON.stringify({
+          cmd: 'CLIENT_PLAY_AGAIN',
+        }));
+      }
+      setMyRoomInfo(prevRoomInfo => ({
+        ...prevRoomInfo,
+        deposit1: false,
+        deposit2: false,
+        otherOver: false,
+        amount: 0
+      }));
+      navigation.navigate("DepositScreen");
+    }
     props.setGameState('none');
     // setGameMode(0);
     // navigation.navigate("GameScreen");
@@ -211,7 +211,7 @@ function GameOver({ ...props }) {
     <Animated.View style={{
       background: 'black',
       width: isPC ? '600px' : '350px',
-      height: isPC ? '394px' : '372px',
+      height: isPC ? '394px' : '272px',
       display: 'flex', flexDirection: 'column',
       justifyContent: 'center', alignItems: 'center',
       rowGap: '20px',
@@ -222,102 +222,102 @@ function GameOver({ ...props }) {
       borderRadius: '20px',
       opacity: fadeAnim
     }}>
-      <View 
-        style={{ position: 'absolute', top: 20, right: 20, color: 'white', cursor: 'pointer'}}
-        onClick={() => {location.href = `https://twitter.com/intent/tweet?text=${userInfo.username}`}}
+      <View
+        style={{ position: 'absolute', top: 20, right: 20, color: 'white', cursor: 'pointer' }}
+        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${userInfo.username}` }}
       >
-        <Icon name="share-social" size={30} style={{color: 'white'}}/>
+        <Icon name="share-social" size={30} style={{ color: 'white' }} />
       </View>
       <Text style={{
-              fontSize: isPC ? '96px' : '64px',
-              color: '#FDC6D3',
-              WebkitTextStroke: '1px #EF587B',
-              filter: 'drop-shadow(0px 0px 20px #EF587B)',
-              fontWeight: '700',
-              // textShadow: '0 0 5px #fff',
-              fontFamily: 'Horizon'
+        fontSize: isPC ? '96px' : '64px',
+        color: '#FDC6D3',
+        WebkitTextStroke: '1px #EF587B',
+        filter: 'drop-shadow(0px 0px 20px #EF587B)',
+        fontWeight: '700',
+        // textShadow: '0 0 5px #fff',
+        fontFamily: 'Horizon'
       }}>
-        {!pvpEndFlag||gameMode==0?"GAME OVER":resultString}
+        {!pvpEndFlag || gameMode == 0 ? "GAME OVER" : resultString}
       </Text>
       <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                columnGap: '10px',
-              }}>
-      <Text style={{
-        textAlign: 'center',
-        fontSize: '20px',
-        fontWeight: '900',
-        color: 'white',
-         fontFamily: 'Horizon'
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        columnGap: '5px',
       }}>
-        You scored: &nbsp;
-        <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{props.score}</Text>
+        <Text style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: '900',
+          color: 'white',
+          fontFamily: 'Horizon'
+        }}>
+          You scored: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{props.score}</Text>
 
-      </Text>
-      {pvpEndFlag&&<Text style={{
-        textAlign: 'center',
-        fontSize: '20px',
-        fontWeight: '900',
-        color: 'white',
-         fontFamily: 'Horizon'
-      }}>
-        Other score: &nbsp;
-        <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{otherScore}</Text>
-      </Text>}
+        </Text>
+        {pvpEndFlag && <Text style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: '900',
+          color: 'white',
+          fontFamily: 'Horizon'
+        }}>
+          Other score: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{otherScore}</Text>
+        </Text>}
       </View>
-      {gameMode==2&&resultString=="You Won"&&pvpEndFlag&&
-      <Text style={{
-        textAlign: 'center',
-        fontSize: '20px',
-        fontWeight: '900',
-        color: 'white',
-         fontFamily: 'Horizon'
-      }}>
-        You Reward: &nbsp;
-        <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{myRoomInfo.amount*2}</Text>
-        &nbsp;Cash Tokens
-      </Text>
+      {gameMode == 2 && resultString == "You Won" && pvpEndFlag &&
+        <Text style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: '900',
+          color: 'white',
+          fontFamily: 'Horizon'
+        }}>
+          You Reward: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.amount * 2}</Text>
+          &nbsp;Cash Tokens
+        </Text>
       }
-            <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                columnGap: '10px',
-              }}>
-                {rewardable&&
-      <Text style={{
-        ...commonStyle.button,
-        fontFamily: fonts.fantasy,
-        marginTop: '25px',
-        marginBottom: '10px',
-        fontFamily: 'Horizon',
-      }}
-        onClick={getReward}  
-      >
-        Get Reward
-      </Text>
-      }
-      {pvpEndFlag||gameMode==0?<Text style={{
-        ...commonStyle.button,
-        fontFamily: fonts.fantasy,
-        marginTop: '25px',
-        marginBottom: '10px',
-        fontFamily: 'Horizon',
-      }}
-        onClick={restartGame}  
-      >
-        Play Again          
-      </Text>:<Text style={{
-        textAlign: 'center',
-        fontSize: '30px',
-        fontWeight: '900',
-        color: 'red',
-         fontFamily: 'Horizon'
+      <View style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        columnGap: '10px',
       }}>
-        Wait Other!!!
-      </Text>}
+        {rewardable &&
+          <Text style={{
+            ...commonStyle.button,
+            fontFamily: fonts.fantasy,
+            // marginTop: '25px',
+            marginBottom: '10px',
+            fontFamily: 'Horizon',
+          }}
+            onClick={getReward}
+          >
+            Get Reward
+          </Text>
+        }
+        {pvpEndFlag || gameMode == 0 ? <Text style={{
+          ...commonStyle.button,
+          fontFamily: fonts.fantasy,
+          // marginTop: '25px',
+          marginBottom: '10px',
+          fontFamily: 'Horizon',
+        }}
+          onClick={restartGame}
+        >
+          Play Again
+        </Text> : <Text style={{
+          textAlign: 'center',
+          fontSize: '30px',
+          fontWeight: '900',
+          color: 'red',
+          fontFamily: 'Horizon'
+        }}>
+          Wait Other!!!
+        </Text>}
       </View>
     </Animated.View>
 

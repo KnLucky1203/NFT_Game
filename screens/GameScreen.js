@@ -335,7 +335,7 @@ class Game extends Component {
       return null;
     }
     return (
-      <View >
+      <View style={{ zIndex: 8888 }}>
         <HomeScreen
           onPlay={() => {
             this.updateWithGameState(State.Game.playing);
@@ -361,8 +361,8 @@ class Game extends Component {
         pointerEvents="box-none"
         style={[
           {
-            width: this.side == 'left' ? '100%' : (this.isMobile ? '45%' : '20%'),
-            height: this.side == 'left' ? 'calc(100vh - 100px)' : (this.isMobile ? '15%' : '20%'),
+            width: this.side == 'left' ? '100%' : (this.isMobile ? '30%' : '20%'),
+            height: this.side == 'left' ? 'calc(100vh - 100px)' : (this.isMobile ? '25%' : '20%'),
             marginTop: this.side == 'right' ? '100px' : '0px',
             right: '0px',
 

@@ -365,7 +365,7 @@ const LandingScreen = () => {
         }}>
           <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon' }}>Welcome To</Text>
           <Text style={{
-            fontSize: '96px',
+            fontSize: isPC ? '96px': '72px',
             color: '#FDC6D3',
             WebkitTextStroke: '1px #EF587B',
             filter: 'drop-shadow(0px 0px 20px #EF587B)',
@@ -473,19 +473,19 @@ const LandingScreen = () => {
 
           cUserName != "" ?
             <>
-              <Text style={{ marginTop: '20px', color: 'white', fontSize: '36px', fontFamily: 'Horizon' }}>
+              <Text style={{ marginTop: isPC ? '20px': '5px', color: 'white', fontSize: isPC ? '36px': '32px', fontFamily: 'Horizon' }}>
                 Hey, {cUserName} !
               </Text>
-              <Text style={{ marginTop: '0px', color: 'white', fontSize: '36px', fontFamily: 'Horizon' }}>
+              <Text style={{ marginTop: '0px', color: 'white', fontSize: isPC ? '36px': '32px', fontFamily: 'Horizon' }}>
                 Choose your Game
               </Text>
 
               <View style={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: isPC ? 'row': 'column',
                 alignItems: 'center',
                 columnGap: '10px',
-                marginTop: '45px'
+                marginTop: isPC ? '45px': '20px'
               }}>
                 <Text style={{
                   ...commonStyle.button,
@@ -549,7 +549,7 @@ const LandingScreen = () => {
                 border: '1px solid gray',
                 borderRadius: '30px',
                 background: 'transparent',
-                marginTop: '25px',
+                marginTop: isPC ? '25px': '10px',
                 marginBottom: '10px',
                 textAlign: 'center',
                 // lineHeight: '2',

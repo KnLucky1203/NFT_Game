@@ -138,6 +138,12 @@ const DepositScreen = () => {
         else
           toast(myRoomInfo.players[0].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
       }
+      if (data.cmd == "CLIENT_PLAY_AGAIN_APPROVED") {
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          client_ready: true
+        }));
+      }
     };
 
     socket.on('ROOM', handleSocketRoom);
@@ -179,25 +185,27 @@ const DepositScreen = () => {
   }
 
   const sendChatText = () => {
-    if (chatText == "") {
-      return;
+    if (chatText != "") {
+
+      toast("me: " + chatText, { duration: 12000, background: '#30f304' });
+
+      socket.emit('message', JSON.stringify({
+        cmd: 'CHAT_TEXT',
+        text: chatText,
+        role: role
+      }));
+      setChatText("");
     }
-
-    toast("me: " + chatText, { duration: 12000, background: '#30f304' });
-
-    socket.emit('message', JSON.stringify({
-      cmd: 'CHAT_TEXT',
-      text: chatText,
-      role: role
-    }));
-    setChatText("");
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
   }
 
   const applyAmount = () => {
-    console.log("aaaaaa=", amount);
+    if (myRoomInfo.client_ready!=true) {
+      toast.error(myRoomInfo.players[1].player_name+" is not ready!");
+      return;
+    }
     if (amount == 0) {
       toast.error("Select token amount first");
       return;
@@ -224,7 +232,10 @@ const DepositScreen = () => {
           socket.emit('message', JSON.stringify({
             cmd: 'ACTION_START_GAME', role: role
           }));
-
+          setMyRoomInfo(prevRoomInfo => ({
+            ...prevRoomInfo,
+            client_ready: false
+          }));
         }
         else {
           toast('Both have to deposit to start');

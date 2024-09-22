@@ -46,8 +46,8 @@ export const commonStyle = {
     padding: '14px',
     fontSize: '20px',
     color: 'white',
-    backgroundColor: colors.agreeSafe,
-    boxShadow: redShadow,
+    backgroundColor: 'grey',
+    // boxShadow: redShadow,
     borderRadius: '54px',
     cursor: 'pointer',
     fontFamily: 'Horizon'

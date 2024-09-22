@@ -204,7 +204,7 @@ export default function AdminScreen() {
               }
             })
         }}>
-          {isPC ? "Update" : <Icon name="save-outline" size={18} />}
+          {isPC ? "Update" : <Icon name="save-outline" size={18} style={{color: 'white'}} />}
         </View>
         <View 
           style={{
@@ -225,7 +225,7 @@ export default function AdminScreen() {
 
             })     
         }}>
-          {isPC ? "Delete" : <AntIcon name="delete" size={18} />}
+          {isPC ? "Delete" : <AntIcon name="delete" size={18} style={{color: 'white'}}/>}
         </View>      
       </View>
     </View >
@@ -610,12 +610,18 @@ export default function AdminScreen() {
                 }}
               />
               <View style={{
-                ...commonStyle.button,
-                width: isPC? '65px': '100%',
-              }}
+                  ...commonStyle.button,
+                  width: isPC? '65px': '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  columnGap: '6px',
+                  justifyContent: 'center'
+                }}
                 onClick={() => {
                   addNewNFT()
-                }}>Add
+              }}>
+                <AntIcon name="addfile" size={18} style={{color : 'white' }} />
+                Add
               </View>
             </View>
 
@@ -654,13 +660,20 @@ export default function AdminScreen() {
                   setRate(e?.target?.value);
                 }}
               />
-              <View style={{
-                ...commonStyle.button,
-                width: isPC? '65px': '100%',
-              }}
+              <View 
+                style={{
+                  ...commonStyle.button,
+                  width: isPC? '65px': '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  columnGap: '6px',
+                  justifyContent: 'center'
+                }}
                 onClick={() => {
                   setRateValue()
-                }}>Set
+              }}>
+                <Icon name="save-outline" size={18} style={{color: 'white'}}/>
+                Set
               </View>
             </View>
 

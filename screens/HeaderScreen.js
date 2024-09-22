@@ -378,7 +378,7 @@ const HeaderScreen = ({ path }) => {
               letterSpacing: '3px'
             }}>
 
-            <Text style={{
+            {userInfo.isAdmin && <Text style={{
               fontFamily: 'Horizon',
               fontSize: '32px',
               padding: '10px',
@@ -392,7 +392,7 @@ const HeaderScreen = ({ path }) => {
               }}
             >
               Admin
-            </Text>
+            </Text>}
             <Text style={{
               fontFamily: 'Horizon',
               fontSize: '32px',

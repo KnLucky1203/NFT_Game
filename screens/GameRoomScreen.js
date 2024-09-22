@@ -90,12 +90,7 @@ const GameRoomScreen = () => {
     }
 
     const handleSocketRoom = (data) => {
-      if (data.cmd == "CLIENT_PLAY_AGAIN_APPROVED") {
-        setMyRoomInfo(prevRoomInfo => ({
-          ...prevRoomInfo,
-          client_ready: true
-        }));
-      }
+
 
       if (data.cmd == "ROOM_CLOSED") {
 
@@ -315,6 +310,10 @@ const GameRoomScreen = () => {
         //   window.alert('Client is not ready');
         // }
         // window.alert("ACTION START GAME!!!");
+        setMyRoomInfo(prevRoomInfo => ({
+          ...prevRoomInfo,
+          client_ready: true
+        }));
         socket.emit('message', JSON.stringify({
           cmd: 'GO_TO_DEPOSIT', role: role
         }));
