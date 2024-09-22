@@ -29,7 +29,7 @@
 // Sample Libraries
 import React, { Component, useState, useEffect, useContext } from "react";
 import { GLView } from "expo-gl";
-import { Animated, Dimensions, StyleSheet, Platform, Vibration, View, useColorScheme, } from "react-native";
+import { Text, Animated, Dimensions, StyleSheet, Platform, Vibration, View, useColorScheme, } from "react-native";
 
 // Personal informations MBC-
 import GestureRecognizer, { swipeDirections } from "../components/GestureView";
@@ -52,7 +52,7 @@ import { updateScore, socket } from "../global/global";
 const DEBUG_CAMERA_CONTROLS = false;
 class Game extends Component {
   static contextType = GameContext;
-  
+
 
   constructor(props) {
     super(props);
@@ -65,8 +65,7 @@ class Game extends Component {
     this.isDarkMode = props.isDarkMode;
     this.rate = localStorage.rate;
     this.isMap = props.isMap;
-    
-    
+
   }
   /// Reserve State for UI related updates...
   state = {
@@ -75,11 +74,17 @@ class Game extends Component {
     viewKey: 0,
     gameState: State.Game.none,
     showSettings: false,
+    rightOver: false
     // gameState: State.Game.gameOver
   };
 
   transitionScreensValue = new Animated.Value(1);
-
+  handleSockGame = (data) => {
+    if (data.cmd == "OTHER_PLAYER_OVER") {
+      // console.log("-----------die-------------");
+      this.setState({ rightOver: true });
+    }
+  }
   UNSAFE_componentWillReceiveProps(nextProps, nextState) {
 
     if (nextState.gameState && nextState.gameState !== this.state.gameState) {
@@ -164,6 +169,8 @@ class Game extends Component {
         if (lastState === gameOver) {
           this.transitionToGamePlayingState();
         }
+
+        this.setState({ rightOver: false });
         this.newScore();
 
         break;
@@ -191,6 +198,7 @@ class Game extends Component {
 
   componentWillUnmount() {
     Dimensions.removeEventListener("change", this.onScreenResize);
+    socket.off('ROOM', this.handleSockGame);
   }
 
   UNSAFE_componentWillMount() {
@@ -204,6 +212,7 @@ class Game extends Component {
     };
     this.engine.onGameInit = () => {
       this.setState({ score: 0 });
+      this.setState({ rightOver: false });
     };
     this.engine._isGameStateEnded = () => {
       return this.state.gameState !== State.Game.playing;
@@ -211,10 +220,10 @@ class Game extends Component {
     this.engine.onGameReady = () => this.setState({ ready: true });
     this.engine.onGameEnded = () => {
       console.log("----onGameEnded");
-      
+
       if (this.gameMode == 2) {
         if (this.side == "left") {
-      socket.emit('message', JSON.stringify({
+          socket.emit('message', JSON.stringify({
             cmd: 'REGISTER_SCORE',
             role: role,
             score: this.state.score
@@ -224,8 +233,11 @@ class Game extends Component {
       this.setState({ gameState: State.Game.gameOver });
       // this.props.navigation.navigate('GameOver')
     };
-    this.engine.setupGame(this.gameMode, this.props.character, this.newGlobalMap,this.isMap);
+
+    socket.on('ROOM', this.handleSockGame);
+    this.engine.setupGame(this.gameMode, this.props.character, this.newGlobalMap, this.isMap);
     this.engine.init();
+
   }
 
   newScore = () => {
@@ -250,7 +262,7 @@ class Game extends Component {
         onSwipe={this.onSwipe}
       >
         <GLView
-          style={{ flex: 1, height: "100%", overflow: "hidden" , borderBottomLeftRadius : '50px'}}
+          style={{ flex: 1, height: "100%", overflow: "hidden", borderBottomLeftRadius: '50px' }}
           onContextCreate={this.engine._onGLContextCreate}
         />
       </GestureView>
@@ -258,10 +270,34 @@ class Game extends Component {
   };
 
   renderOtherGameOver = () => {
-    
+
+    // if (this.state.rightOver == false) {
+    //   return null;
+    // }
+    return (
+      <View style={[
+        StyleSheet.absoluteFill,
+        {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'absolute',
+          zIndex: '5000'
+        }]}>
+        <Text style={{
+          fontSize: '64px',
+          color: '#FDC6D3',
+          WebkitTextStroke: '1px #EF587B',
+          filter: 'drop-shadow(0px 0px 20px #EF587B)',
+          fontWeight: '700',
+          // textShadow: '0 0 5px #fff',
+          fontFamily: 'Horizon'
+        }}>Game Over</Text>
+      </View>
+    );
   }
 
-  
+
   renderGameOver = () => {
     if (this.state.gameState !== State.Game.gameOver) {
       return null;
@@ -287,14 +323,14 @@ class Game extends Component {
           setGameState={(state) => {
             this.updateWithGameState(state);
           }}
-          score = {this.state.score}
+          score={this.state.score}
         />
       </View>
     );
   };
 
   renderHomeScreen = () => {
-    
+
     if (this.state.gameState !== State.Game.none) {
       return null;
     }
@@ -330,8 +366,8 @@ class Game extends Component {
             marginTop: this.side == 'right' ? '100px' : '0px',
             right: '0px',
 
-            borderLeft: this.side == 'right'? '2px solid gray' : '0px solid gray',
-            borderBottom: this.side == 'right'? '2px solid gray' : '0px solid gray',
+            borderLeft: this.side == 'right' ? '2px solid gray' : '0px solid gray',
+            borderBottom: this.side == 'right' ? '2px solid gray' : '0px solid gray',
             borderBottomLeftRadius: this.side == 'right' ? '50px' : '0px',
           },
           Platform.select({
@@ -342,9 +378,10 @@ class Game extends Component {
         ]}
       >
         <Animated.View
-          style={{ flex: 1, opacity: this.transitionScreensValue,
-            borderBottomLeftRadius : '50px'
-           }}
+          style={{
+            flex: 1, opacity: this.transitionScreensValue,
+            borderBottomLeftRadius: '50px'
+          }}
         >
           {this.renderGame()}
         </Animated.View>
@@ -353,11 +390,38 @@ class Game extends Component {
           <ScorePad
             score={this.state.score}
             gameOver={this.state.gameState === State.Game.gameOver}
-            rate = {this.rate}
+            rate={this.rate}
           /> : <></>
+        }
+        {this.state.rightOver && this.side == "right" && (<View
+          style={{
+            position: 'absolute',
+            top: 0, right: 0, bottom: 0, left: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 5000,
+            borderBottomLeftRadius: this.side == 'right' ? '50px' : '0px',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 64,
+              color: '#FDC6D3',
+              WebkitTextStroke: '1px #EF587B',
+              filter: 'drop-shadow(0px 0px 20px #EF587B)',
+              fontWeight: '700',
+              fontFamily: 'Horizon',
+              textAlign: 'center', // Ensure text is centered
+            }}
+          >
+            Game Over
+          </Text>
+        </View>)
         }
 
         {this.side == "left" ? this.renderGameOver() : <></>}
+        {/* {this.side == "right" ? this.renderOtherGameOver() : <></>} */}
 
         {this.renderHomeScreen()}
 
@@ -373,7 +437,13 @@ class Game extends Component {
                 alignItems: "center",
               },
             ]}
-          />
+          >
+            {/* {this.state.rightOver && (
+            <Text style={{ fontSize: 88, color: "red", fontWeight: "bold" }}>
+              Game Over
+            </Text>
+          )} */}
+          </View>
         )}
 
       </View>
@@ -419,7 +489,7 @@ function GameScreen(props) {
   const scheme = useColorScheme();
   const navigation = useNavigation();
 
-  const { gameMode, socket, character, contextGameMap, role, setRole , setMyRoomInfo} = React.useContext(GameContext);
+  const { gameMode, socket, character, contextGameMap, role, setRole, setMyRoomInfo } = React.useContext(GameContext);
 
   const server_keyMaps = [keyMap_1, keyMap_None];
   const client_keyMaps = [keyMap_None, keyMap_2];
@@ -441,12 +511,13 @@ function GameScreen(props) {
     return () => {
       window.removeEventListener('resize', handleResize);
       if (gameMode == 2) {
-      socket.emit('message', JSON.stringify({ 
-        cmd: 'REGISTER_SCORE',            
-        role: role,
-        score: -1 }));
+        socket.emit('message', JSON.stringify({
+          cmd: 'REGISTER_SCORE',
+          role: role,
+          score: -1
+        }));
       }
-        socket.off('ROOM', handleSocketEndGame);
+      socket.off('ROOM', handleSocketEndGame);
     };
 
   }, []);
@@ -463,6 +534,7 @@ function GameScreen(props) {
         otherOver: true
       }));
     }
+
   }
 
   socket.on('ROOM', handleSocketEndGame);
@@ -543,7 +615,7 @@ function GameScreen(props) {
                   gameMode={gameMode}
                   newGlobalMap={contextGameMap}
                   keyMap={client_keyMaps[1]}
-                  character={character} 
+                  character={character}
                   side="left"
                   isMobile={isMobile}
                   isDarkMode={scheme === "dark"}

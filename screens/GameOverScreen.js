@@ -254,7 +254,7 @@ function GameOver({ ...props }) {
       }}>
         You scored: &nbsp;
         <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{props.score}</Text>
-        &nbsp;Cash Tokens
+
       </Text>
       {pvpEndFlag&&<Text style={{
         textAlign: 'center',
@@ -277,6 +277,7 @@ function GameOver({ ...props }) {
       }}>
         You Reward: &nbsp;
         <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px"}}>{myRoomInfo.amount*2}</Text>
+        &nbsp;Cash Tokens
       </Text>
       }
             <View style={{

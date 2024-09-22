@@ -57,7 +57,7 @@ const DepositScreen = () => {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
-  const [amount, setAmount] = useState(10);
+  const [amount, setAmount] = useState(100);
   const [serverId, setServerId] = useState('');
   const [amountApplied, setAmountApplied] = useState(false);
   const [otherDespositFlag, setOtherDepositFlag] = useState(false);
@@ -190,6 +190,11 @@ const DepositScreen = () => {
   }
 
   const applyAmount = () => {
+    console.log("aaaaaa=",amount);
+    if (amount == 0) {
+      toast.error("Select token amount first");
+      return;
+    }
     socket.emit('message', JSON.stringify({
       cmd: 'SET_BET_AMOUNT',
       amount: amount,
