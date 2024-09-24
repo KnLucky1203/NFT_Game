@@ -177,7 +177,7 @@ function GameOver({ ...props }) {
     return;
   }
   const getReward = async () => {
-    setLoadingState(true);
+    // setLoadingState(true);
     // console.log("gameeMode = ", gameMode);
     if (gameMode == 0) {
       setpe2Rewardable(false);

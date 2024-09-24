@@ -48,6 +48,7 @@ export default function GameProvider({ children }) {
   const [gameMode, setGameMode] = useState(0); // 0 : PVE , 1 : PVP
   const [contextGameMap, setContextGameMap] = useState([]);
   const [role, setRole] = useState("");
+  const [cUserName, setCUserName] = useState(""); 
   const [keyMap_Server, setKeyMap_Server] = useState(keyMap_None);
   const [keyMap_Client, setKeyMap_Client] = useState(keyMap_None);
   const [socket, setSocket] = useState();
@@ -142,6 +143,7 @@ export default function GameProvider({ children }) {
         setKeyMap_Server(keyMap_Server);
         setKeyMap_Client(keyMap_Client);
         setAdminWallet(adminWallet);
+        setCUserName(cUserName);
       } catch (ignored) { }
     };
 
@@ -178,7 +180,9 @@ export default function GameProvider({ children }) {
         myRoomInfo,
         setMyRoomInfo,
         adminWallet,
-        setAdminWallet
+        setAdminWallet,
+        cUserName,
+        setCUserName
       }}
     >
       {innerLoading == true &&

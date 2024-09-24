@@ -106,6 +106,8 @@ const LandingScreen = () => {
     adminWallet, setAdminWallet,
     userInfo,
     setUserInfo,
+    cUserName,
+    setCUserName
   } = React.useContext(GameContext);
 
   // Initial hook functions
@@ -128,7 +130,7 @@ const LandingScreen = () => {
   const [loadingPercent, setLoadingPercent] = useState(1);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [cUserName, setCUserName] = useState(""); // MBC - Name
+  // const [cUserName, setCUserName] = useState(""); // MBC - Name
   const [onRegister, setOnRegister] = useState(false);
   const [otherName, setOtherName] = useState("waiting...");
 

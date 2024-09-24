@@ -38,8 +38,8 @@ import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3Modal
 import axios from "axios"
 import base58 from 'bs58';
 
-import { getWalletSOLBalance, getWalletInfo, getNFTsWithImage, getNFTOne, getAdminData } from '../global/global';
-import { metadata, chains, solanaConfig, projectId } from '../global/global';
+import { getWalletSOLBalance, getWalletInfo, getNFTsWithImage, getNFTOne, getAdminData, loginWithWallet } from '../global/global';
+import { metadata, chains, solanaConfig, projectId, getUserInfo } from '../global/global';
 import { deepCopy, jsonUpdate } from '../global/common';
 import GameContext from '../context/GameContext';
 import toast from 'react-hot-toast';
@@ -80,13 +80,13 @@ const HeaderScreen = ({ path }) => {
     setOpenMenu(false);
   };
 
-  console.log("Header called ===> ", userInfo )
+  console.log("Header called ===> ", userInfo)
   // Initial Variables
   const navigation = useNavigation();
 
   // Personal variables
   const { user, setUser,
-    setLoadingState, userInfo, setUserInfo,
+    setLoadingState, userInfo, setUserInfo,setCUserName
   } = React.useContext(GameContext);
   // -- Web3 --
   const [isConnected, setIsConnected] = useState(false);
@@ -94,11 +94,36 @@ const HeaderScreen = ({ path }) => {
   const { address, chainId } = useWeb3ModalAccount()
   const { walletProvider, connection } = useWeb3ModalProvider()
 
+  const loginByWallet = async () => {
+    // const signer = walletProvider.getSigner();
+    const address = walletProvider.publicKey.toBase58()
+    const response = await loginWithWallet(address);
+    console.log("loginByWallet =", response.data);
+    if (response.data.code == "00") {
+      setCUserName(response.data.username);
+      // setStateMsg("");
+      localStorage.token = response.data.token;
+      let newInfo = deepCopy(userInfo)
+      getUserInfo(localStorage.token).then(res => {
+        if (res.data.code == "00") {
+          newInfo.character = res.data?.character;
+          newInfo.id = res.data?.id;
+          newInfo.nft = res.data?.nft;
+          newInfo.score = res.data?.score;
+          newInfo.username = res.data?.username;
+          setUserInfo(newInfo)
+        }
+      });
+    }
+  }
+
   useEffect(() => {
     if (walletProvider) {
       handleGetWalletInfo();
       setIsConnected(true)
       if (web3modal) web3modal.close();
+      loginByWallet();
+
     } else {
       setIsConnected(false)
     }
@@ -136,16 +161,16 @@ const HeaderScreen = ({ path }) => {
       // getWalletTokenBalance(connection, new_user.wallet, token).then((balance) => new_user.tokenAmount = balance),
       // getNFTswithImage(conn, new_user.wallet).then((nfts) => new_user.nfts = nfts),
       getWalletInfo(new_user.wallet).then((res) => {
-        if(res.data.code == "00"){
+        if (res.data.code == "00") {
           new_user.tokenAmount = res.data.data.tokenAmount;
           new_user.nfts = res.data.data.nfts;
           new_user.isAdmin = res.data.data.isAdmin;
-          if(!userInfo.isAdmin) {
+          if (!userInfo.isAdmin) {
             let new_userInfo = deepCopy(userInfo);
             new_userInfo.isAdmin = res.data.data.isAdmin;
             setUserInfo(new_userInfo);
           }
-        }else{
+        } else {
           toast.error("Response Error:", res?.data?.data?.error)
         }
       }).catch(err => {
@@ -254,7 +279,7 @@ const HeaderScreen = ({ path }) => {
                 }}
                 onClick={() => {
                   setLoadingState(true);
-                  if(localStorage.token)
+                  if (localStorage.token)
                     navigation.navigate("NFTScreen");
                   else
                     toast("Please log in!")
@@ -289,32 +314,32 @@ const HeaderScreen = ({ path }) => {
                 {address ? address.substring(0, 4) + '...' + address.substring(address.length - 4) : 'Connect Wallet'}
               </Text>
             </View>
-            { userInfo.isAdmin &&
-             <View style={{
-              width: "55px",
-              height: "55px",
-              background: 'rgba(039, 88, 123, 1)',
-              boxShadow: '0px 3px 10px gray',
-              borderRadius: '50px',
-              display: 'flex', flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-            onClick={() => {
-              navigation.navigate("AdminScreen")
-            }}
-            >
-            <Text style={{
-              fontFamily: 'Horizon',
-              fontSize: '20px',
-              cursor: 'pointer',
-              color: 'white',
-            }}
-              
-            >
-              <Icon name="settings-outline" size={25}/>
-            </Text>
-            </View>}
+            {userInfo.isAdmin &&
+              <View style={{
+                width: "55px",
+                height: "55px",
+                background: 'rgba(039, 88, 123, 1)',
+                boxShadow: '0px 3px 10px gray',
+                borderRadius: '50px',
+                display: 'flex', flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+                onClick={() => {
+                  navigation.navigate("AdminScreen")
+                }}
+              >
+                <Text style={{
+                  fontFamily: 'Horizon',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  color: 'white',
+                }}
+
+                >
+                  <Icon name="settings-outline" size={25} />
+                </Text>
+              </View>}
 
           </>
         }
@@ -339,7 +364,7 @@ const HeaderScreen = ({ path }) => {
               zIndex: '5000'
             }}
               onClick={handleOpenMenu} >
-              <Text style={{ color: 'white', fontFamily: 'Horizon', fontSize:'20px'}}>Menu</Text>
+              <Text style={{ color: 'white', fontFamily: 'Horizon', fontSize: '20px' }}>Menu</Text>
             </View>)
         }
       </View>

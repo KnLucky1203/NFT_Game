@@ -150,6 +150,18 @@ export const loginUser = async (username, wallet) => {
   })
 }
 
+export const loginWithWallet = async (wallet) => {
+  return await axios.post(SERVER_URL + '/api/v1/auth/loginWithWallet', {
+    wallet
+  })
+}
+
+export const loginWithAddr = async (wallet) => {
+  return await axios.post(SERVER_URL + '/api/v1/auth/loginWithAddr', {
+    username, wallet
+  })
+}
+
 export const getScoreList = async (sortBy, limit, page) => {
   return await axios.get(SERVER_URL + '/api/v1/user/score/list?sortBy=' + sortBy + '&limit=' + limit + "&page=" + page, token && {
     headers: {

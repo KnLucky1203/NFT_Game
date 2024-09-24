@@ -21,4 +21,6 @@ export default createContext({
     setAdminWallet(){},
     userInfo: {},
     setUserInfo(){},
+    cUserName: '',
+    setCUserName(){}
 });

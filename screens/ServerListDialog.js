@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     width: '60%',
     height: '60%',
     overflowY: scroll,
-    backgroundColor: 'rgba(26,26,26,1)',
+    background: 'rgba(26,26,26,1)',
     border: '2px solid white',
     left: '20%',
     right: '20%',
