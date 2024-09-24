@@ -50,7 +50,8 @@ import { cacheRate } from '../src/GameSettings';
 import { getUserInfo } from '../global/global';
 import toast from 'react-hot-toast';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
-import {useWeb3ModalProvider } from '@web3modal/solana/react'
+import { useWeb3ModalProvider } from '@web3modal/solana/react'
+import { deepCopy } from '../global/common';
 // const { address, chainId } = useWeb3ModalAccount();
 
 // Landing Page component
@@ -62,7 +63,7 @@ const LandingScreen = () => {
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
   const { walletProvider, connection } = useWeb3ModalProvider();
-  const getWalletAddress =  async () => {
+  const getWalletAddress = async () => {
     let response = await getDepositAddress();
     // console.log("VVVVVVVVVVVV  ", response.data.data.depositAddress);
     let add = response.data.data.depositAddress;
@@ -75,7 +76,7 @@ const LandingScreen = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
     };
-    
+
     // getWalletAddress();
     window.addEventListener('resize', handleResize);
     return () => {
@@ -103,6 +104,7 @@ const LandingScreen = () => {
     // Room State
     myRoomInfo, setMyRoomInfo,
     adminWallet, setAdminWallet,
+    userInfo,
     setUserInfo,
   } = React.useContext(GameContext);
 
@@ -147,7 +149,7 @@ const LandingScreen = () => {
       setStateMsg("Input Your Name");
       return;
     }
-    if (regPassword == '' || regConfirm!=regPassword) {
+    if (regPassword == '' || regConfirm != regPassword) {
       setStateMsg("Password is not correct");
       return;
     }
@@ -159,42 +161,49 @@ const LandingScreen = () => {
     else {
       setStateMsg(response.data.message);
     }
-    
+
   }
 
   const entering = async () => {
 
-    if (!walletProvider ||  !connection) {
+    if (!walletProvider || !connection) {
       toast.error('Import wallet');
       return;
     }
     if (localStorage.wallet == undefined) {
-      setStateMsg("Connect Wallet");
+      setStateMsg("Import Wallet");
       return;
     }
-    let response = await loginUser(userName, password);
+    let response = await loginUser(userName, localStorage.wallet);
+
+    console.log("User Login: ", response);
 
     if (response.data.code == "00") {
       setCUserName(userName);
       setStateMsg("");
       localStorage.token = response.data.token;
       let rateResponse = await getRate();
-      if(rateResponse.data.code == "00"){
-        if(rateResponse?.data?.data?.rate)
+      if (rateResponse.data.code == "00") {
+        if (rateResponse?.data?.data?.rate)
           localStorage.rate = rateResponse?.data?.data?.rate;
         // else toast("Set reward rate!")
-      }else{
+      } else {
         toast("Reward Rate setting failed!")
       }
-      
+
       // console.log("$$$$$$$$$$$$ ", localStorage.token, localStorage.rate);
-      
+      let newInfo = deepCopy(userInfo)
       getUserInfo(localStorage.token).then(res => {
-        if(res.data.code == "00"){
-          console.log("Get user Info============", res.data.data)
-          setUserInfo(res.data.data)
+        if (res.data.code == "00") {
+          newInfo.character = res.data.data?.character;
+          newInfo.id = res.data.data?.id;
+          newInfo.nft = res.data.data?.nft;
+          newInfo.score = res.data.data?.score;
+          newInfo.username = res.data.data?.username;
+          setUserInfo(newInfo)
         }
       })
+      console.log("userInfo ====> ", userInfo)
     }
     else {
       setStateMsg(response.data.message)
@@ -337,7 +346,7 @@ const LandingScreen = () => {
 
       <View style={{
         position: 'relative',
-        height: isPC? 'calc(100vh - 100px)' : 'calc(100vh)',
+        height: isPC ? 'calc(100vh - 100px)' : 'calc(100vh)',
         background: 'black',
         display: 'flex',
         flexDirection: isPC ? 'row' : 'column',
@@ -372,7 +381,7 @@ const LandingScreen = () => {
         }}>
           <Text style={{ color: 'white', fontSize: '20px', fontFamily: 'Horizon' }}>Welcome To</Text>
           <Text style={{
-            fontSize: isPC ? '96px': '72px',
+            fontSize: isPC ? '96px' : '72px',
             color: '#FDC6D3',
             WebkitTextStroke: '1px #EF587B',
             filter: 'drop-shadow(0px 0px 20px #EF587B)',
@@ -383,173 +392,7 @@ const LandingScreen = () => {
 
 
           {
-            onRegister?<>
-            <TextInput style={{
-              // padding: '0.5rem',
-              paddingTop: '15px',
-              paddingBottom: "15px",
-              paddingLeft: '36px',
-              paddingRight: '36px',
-              flex: 1,
-              border: '1px solid gray',
-              borderRadius: '30px',
-              background: 'transparent',
-              marginTop: '25px',
-              marginBottom: '10px',
-              textAlign: 'center',
-              // lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon',
-              fontSize: '20px'
-            }}
-              type="text" placeholder="Your Name"
-              value={regName}
-              onChange={(e) => {
-                setRegName(e.target.value);
-              }}
-              autoFocus />
-              <TextInput style={{
-              // padding: '0.5rem',
-              paddingTop: '15px',
-              paddingBottom: "15px",
-              paddingLeft: '36px',
-              paddingRight: '36px',
-              flex: 1,
-              border: '1px solid gray',
-              borderRadius: '30px',
-              background: 'transparent',
-              marginBottom: '10px',
-              textAlign: 'center',
-              // lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon',
-              fontSize: '20px'
-            }}
-              secureTextEntry={true} placeholder="Password"
-              value={regPassword}
-              onChange={(e) => {
-                setRegPassword(e.target.value);
-              }}
-              />
-              <TextInput style={{
-              // padding: '0.5rem',
-              paddingTop: '15px',
-              paddingBottom: "15px",
-              paddingLeft: '36px',
-              paddingRight: '36px',
-              flex: 1,
-              border: '1px solid gray',
-              borderRadius: '30px',
-              background: 'transparent',
-              marginBottom: '10px',
-              textAlign: 'center',
-              // lineHeight: '2',
-              color: 'white',
-              fontFamily: 'Horizon',
-              fontSize: '20px'
-            }}
-              secureTextEntry={true} placeholder="Confirm Password"
-              value={regConfirm}
-              onChange={(e) => {
-                setRegConfirm(e.target.value);
-              }}
-              />
-              <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom:'10px' }}>{stateMsg}</Text>
-              <View style={{
-              display: 'flex', flexDirection: 'row',
-              marginTop: '10px', alignItems: 'center',
-              columnGap: '10px'
-            }}>
-              <Text style={[commonStyle.button,{width: '150px'}]}
-              onClick={() => {
-                setOnRegister(false); setStateMsg("");
-              }}
-            >
-              <SimpleIcon name="arrow-left" size={20} />
-              &nbsp;&nbsp;
-              Back
-            </Text> 
-            <Text style={[commonStyle.button,{width: '150px'}]}
-              onClick={() => {
-                registering();
-              }}
-            >
-              <SimpleIcon name="user-follow" size={20} />
-              &nbsp;&nbsp;
-              Register
-            </Text> 
-            </View>
-            </>:
-          
-
-          cUserName != "" ?
-            <>
-              <Text style={{ marginTop: isPC ? '20px': '5px', color: 'white', fontSize: isPC ? '36px': '32px', fontFamily: 'Horizon' }}>
-                Hey, {cUserName} !
-              </Text>
-              <Text style={{ marginTop: '0px', color: 'white', fontSize: isPC ? '36px': '32px', fontFamily: 'Horizon' }}>
-                Choose your Game
-              </Text>
-
-              <View style={{
-                display: 'flex',
-                flexDirection: isPC ? 'row': 'column',
-                alignItems: 'center',
-                columnGap: '10px',
-                marginTop: isPC ? '45px': '20px'
-              }}>
-                <Text style={{
-                  ...commonStyle.button,
-                  fontWeight: '800',
-                  fontSize: '20px',
-                  fontFamily: 'Horizon'
-                }}
-                  onClick={() => {
-                    setGameMode(0);
-                    navigation.navigate("GameScreen");
-                  }}
-                >
-                  <SimpleIcon name="user" size={20} />
-                  &nbsp;&nbsp;Play Single - P2E
-                </Text>
-
-                <Text style={{
-                  color: 'gray', fontSize: '20px', fontFamily: 'Horizon'
-                }}>
-                  OR
-                </Text>
-
-                <Text style={{
-                  ...commonStyle.button,
-                  fontWeight: '800',
-                  fontSize: '20px',
-                  fontFamily: 'Horizon'
-                }}
-                  onClick={() => {
-                    // navigation.navigate("DepositScreen");
-                    setLoadingState(true);
-                    if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
-                      socket.emit('message', JSON.stringify({
-                        cmd: 'ACTION_JOIN_GAME',
-                        name: serverId.toString(),
-                        player2: userName
-                      }));
-                    } else {
-                      socket.emit('message', JSON.stringify({
-                        cmd: 'ACTION_CREATE_ROOM',
-                        player1: cUserName,
-                        map: globalMap
-                      }));
-                    }
-                  }}>
-                    <SimpleIcon name="people" size={20} />
-                    &nbsp;&nbsp;Play Multi - PVP
-                </Text>
-              </View>
-
-            </>
-            :
-            <>
+            onRegister ? <>
               <TextInput style={{
                 // padding: '0.5rem',
                 paddingTop: '15px',
@@ -560,7 +403,7 @@ const LandingScreen = () => {
                 border: '1px solid gray',
                 borderRadius: '30px',
                 background: 'transparent',
-                marginTop: isPC ? '25px': '10px',
+                marginTop: '25px',
                 marginBottom: '10px',
                 textAlign: 'center',
                 // lineHeight: '2',
@@ -569,12 +412,12 @@ const LandingScreen = () => {
                 fontSize: '20px'
               }}
                 type="text" placeholder="Your Name"
-                value={userName}
+                value={regName}
                 onChange={(e) => {
-                  setUserName(e.target.value);
+                  setRegName(e.target.value);
                 }}
                 autoFocus />
-                <TextInput style={{
+              <TextInput style={{
                 // padding: '0.5rem',
                 paddingTop: '15px',
                 paddingBottom: "15px",
@@ -584,7 +427,7 @@ const LandingScreen = () => {
                 border: '1px solid gray',
                 borderRadius: '30px',
                 background: 'transparent',
-                marginBottom: '20px',
+                marginBottom: '10px',
                 textAlign: 'center',
                 // lineHeight: '2',
                 color: 'white',
@@ -592,29 +435,195 @@ const LandingScreen = () => {
                 fontSize: '20px'
               }}
                 secureTextEntry={true} placeholder="Password"
-                value={password}
+                value={regPassword}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setRegPassword(e.target.value);
                 }}
-                />
-                
-                <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom:'10px' }}>{stateMsg}</Text>
-                <View style={{
-                  display: 'flex', flexDirection: 'row',
-                  alignItems: 'center',
-                  columnGap: '10px'
-                }}>
-                  
-                    
-                    <Text style={[commonStyle.button,{width: '150px'}]}
+              />
+              <TextInput style={{
+                // padding: '0.5rem',
+                paddingTop: '15px',
+                paddingBottom: "15px",
+                paddingLeft: '36px',
+                paddingRight: '36px',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                marginBottom: '10px',
+                textAlign: 'center',
+                // lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+                fontSize: '20px'
+              }}
+                secureTextEntry={true} placeholder="Confirm Password"
+                value={regConfirm}
+                onChange={(e) => {
+                  setRegConfirm(e.target.value);
+                }}
+              />
+              <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom: '10px' }}>{stateMsg}</Text>
+              <View style={{
+                display: 'flex', flexDirection: 'row',
+                marginTop: '10px', alignItems: 'center',
+                columnGap: '10px'
+              }}>
+                <Text style={[commonStyle.button, { width: '150px' }]}
+                  onClick={() => {
+                    setOnRegister(false); setStateMsg("");
+                  }}
+                >
+                  <SimpleIcon name="arrow-left" size={20} />
+                  &nbsp;&nbsp;
+                  Back
+                </Text>
+                <Text style={[commonStyle.button, { width: '150px' }]}
+                  onClick={() => {
+                    registering();
+                  }}
+                >
+                  <SimpleIcon name="user-follow" size={20} />
+                  &nbsp;&nbsp;
+                  Register
+                </Text>
+              </View>
+            </> :
+
+
+              cUserName != "" ?
+                <>
+                  <Text style={{ marginTop: isPC ? '20px' : '5px', color: 'white', fontSize: isPC ? '36px' : '32px', fontFamily: 'Horizon' }}>
+                    Hey, {cUserName} !
+                  </Text>
+                  <Text style={{ marginTop: '0px', color: 'white', fontSize: isPC ? '36px' : '32px', fontFamily: 'Horizon' }}>
+                    Choose your Game
+                  </Text>
+
+                  <View style={{
+                    display: 'flex',
+                    flexDirection: isPC ? 'row' : 'column',
+                    alignItems: 'center',
+                    columnGap: '10px',
+                    marginTop: isPC ? '45px' : '20px'
+                  }}>
+                    <Text style={{
+                      ...commonStyle.button,
+                      fontWeight: '800',
+                      fontSize: '20px',
+                      fontFamily: 'Horizon'
+                    }}
+                      onClick={() => {
+                        setGameMode(0);
+                        navigation.navigate("GameScreen");
+                      }}
+                    >
+                      <SimpleIcon name="user" size={20} />
+                      &nbsp;&nbsp;Play Single - P2E
+                    </Text>
+
+                    <Text style={{
+                      color: 'gray', fontSize: '20px', fontFamily: 'Horizon'
+                    }}>
+                      OR
+                    </Text>
+
+                    <Text style={{
+                      ...commonStyle.button,
+                      fontWeight: '800',
+                      fontSize: '20px',
+                      fontFamily: 'Horizon'
+                    }}
+                      onClick={() => {
+                        // navigation.navigate("DepositScreen");
+                        setLoadingState(true);
+                        if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
+                          socket.emit('message', JSON.stringify({
+                            cmd: 'ACTION_JOIN_GAME',
+                            name: serverId.toString(),
+                            player2: userName
+                          }));
+                        } else {
+                          socket.emit('message', JSON.stringify({
+                            cmd: 'ACTION_CREATE_ROOM',
+                            player1: cUserName,
+                            map: globalMap
+                          }));
+                        }
+                      }}>
+                      <SimpleIcon name="people" size={20} />
+                      &nbsp;&nbsp;Play Multi - PVP
+                    </Text>
+                  </View>
+
+                </>
+                :
+                <>
+                  <TextInput style={{
+                    // padding: '0.5rem',
+                    paddingTop: '15px',
+                    paddingBottom: "15px",
+                    paddingLeft: '36px',
+                    paddingRight: '36px',
+                    flex: 1,
+                    border: '1px solid gray',
+                    borderRadius: '30px',
+                    background: 'transparent',
+                    marginTop: isPC ? '25px' : '10px',
+                    marginBottom: '10px',
+                    textAlign: 'center',
+                    // lineHeight: '2',
+                    color: 'white',
+                    fontFamily: 'Horizon',
+                    fontSize: '20px'
+                  }}
+                    type="text" placeholder="Your Name"
+                    value={userName}
+                    onChange={(e) => {
+                      setUserName(e.target.value);
+                    }}
+                    autoFocus />
+                  {/* <TextInput style={{
+                    // padding: '0.5rem',
+                    paddingTop: '15px',
+                    paddingBottom: "15px",
+                    paddingLeft: '36px',
+                    paddingRight: '36px',
+                    flex: 1,
+                    border: '1px solid gray',
+                    borderRadius: '30px',
+                    background: 'transparent',
+                    marginBottom: '20px',
+                    textAlign: 'center',
+                    // lineHeight: '2',
+                    color: 'white',
+                    fontFamily: 'Horizon',
+                    fontSize: '20px'
+                  }}
+                    secureTextEntry={true} placeholder="Password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                  /> */}
+
+                  <Text style={{ color: 'red', fontSize: '14px', fontFamily: 'Horizon', marginBottom: '10px' }}>{stateMsg}</Text>
+                  <View style={{
+                    display: 'flex', flexDirection: 'row',
+                    alignItems: 'center',
+                    columnGap: '10px'
+                  }}>
+
+
+                    <Text style={[commonStyle.button, { width: '150px' }]}
                       onClick={entering}
                     >
-                      <SimpleIcon name="login" size={20}/>
+                      <SimpleIcon name="login" size={20} />
                       &nbsp;&nbsp;Enter Mobber
                     </Text>
-                  
-                  
-                    
+
+
+                    {/*                     
                     <Text style={[commonStyle.button,{width: '150px'}]}
                       onClick={() => {
                         setOnRegister(true);
@@ -622,17 +631,17 @@ const LandingScreen = () => {
                     >
                       <SimpleIcon name="user-follow" size={20} />
                       &nbsp;&nbsp;Sign Up
-                    </Text>
-                  
-              </View>
-            </>
+                    </Text> */}
+
+                  </View>
+                </>
           }
 
 
         </View>
 
         {isMobile &&
-        
+
           <Image source={cUserName == "" ? require("../assets/avatar/avatar_player1.png") : require("../assets/avatar/avatar_player2.png")}
             style={{
               width: '100%', height: '50%',

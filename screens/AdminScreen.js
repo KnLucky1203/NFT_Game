@@ -13,7 +13,7 @@ import HeaderScreen from "./HeaderScreen";
 import { deepCopy } from "../global/common"
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntIcon from 'react-native-vector-icons/AntDesign';
-import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT, setRewardRate } from '../global/global';
+import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT, setRewardRate, getTwitterMsg, setScoreTwitterMsg, getRate } from '../global/global';
 
 // Initial Variables
 const wallet = localStorage.wallet;
@@ -22,11 +22,14 @@ export default function AdminScreen() {
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
+  const [twitterMag, setTwitterMag] = useState("");
   const {
     setLoadingState,
   } = React.useContext(GameContext);
 
   useEffect(() => {
+    getRateFromServer();
+    getTwitterMsgFromServer();
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
@@ -263,6 +266,17 @@ export default function AdminScreen() {
     }
   } 
 
+  const getTwitterMsgFromServer = async () => {
+    console.log("------twiter msg");
+    let twitterMag = await getTwitterMsg();
+    
+    console.log("------twiter msg end:", twitterMag);
+    if(twitterMag?.data?.code === "00"){
+      localStorage.twitterMag = twitterMag.data.data;
+      setTwitterMag(twitterMag.data.data);
+    }
+  }
+
   const confirmDelete = () => {
     return Alert.alert(
       'Delete NFT',  // Title of the alert
@@ -433,14 +447,32 @@ export default function AdminScreen() {
     
   }
 
+  const onClickTwitterMsg = async () => {
+    if(twitterMag == undefined || twitterMag == "") {
+      toast.error("Input twitterMag value")
+      return
+    }
+    let response = await setScoreTwitterMsg(twitterMag, localStorage.wallet);
+    console.log("onclicktwitermsg===", response);
+    if(response?.data?.code == "00"){
+      toast.success("Twitter Message setted!", { style: {
+        backgroundColor: 'white',
+        color: 'black',
+        boxShadow: '5px 5px 10px 3px rgba(210, 0, 0, 0.7)',
+        borderRadius: '10px',
+        fontWeight: 400
+      }})
+      localStorage.twitterMag= twitterMag;
+    }
+  }
+
   useEffect(() => {
     setLoadingState(true)
-    if (localStorage.rate == undefined) {
-      getRateFromServer();
-    }
-    else {
-      setRate(localStorage.rate);
-    }
+    
+    getRateFromServer();    
+
+    getTwitterMsgFromServer();
+    
   
     if (walletProvider) {
       getAdminData(walletProvider.publicKey.toBase58()).then((response) => {
@@ -676,7 +708,57 @@ export default function AdminScreen() {
                 Set
               </View>
             </View>
-
+            <View style={{
+              display: 'flex', flexDirection: isPC ? 'row' : 'column', maxWidth: '800px',
+              width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',
+              rowGap: isPC ? 0 : '10px',
+            }}>
+              <Text style={{
+                width:'80px',
+                color: 'white',
+                fontSize: '20px',
+                display: 'block',
+                fontFamily: 'Horizon',
+                textAlign: 'left'
+              }}
+              >
+                Twitter Message
+              </Text>
+              <TextInput style={{
+                width: '100%',
+                maxWidth: '620px',
+                padding: '0.5rem',
+                flex: 1,
+                border: '1px solid gray',
+                borderRadius: '30px',
+                background: 'transparent',
+                fontSize: '16px',
+                textAlign: 'left',
+                lineHeight: '2',
+                color: 'white',
+                fontFamily: 'Horizon',
+              }}
+                type="text" placeholder="Input twitter message." value={twitterMag}
+                onChange={(e) => {
+                  setTwitterMag(e?.target?.value);
+                }}
+              />
+              <View 
+                style={{
+                  ...commonStyle.button,
+                  width: isPC? '65px': '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  columnGap: '6px',
+                  justifyContent: 'center'
+                }}
+                onClick={() => {
+                  onClickTwitterMsg()
+              }}>
+                <Icon name="save-outline" size={18} style={{color: 'white'}}/>
+                Set
+              </View>
+            </View>
             {/* <View style={{
               display: 'flex', flexDirection: isPC ? 'row' : 'column', maxWidth: '800px',
               width: '100%', alignItems: 'center', justifyContent: 'space-between', columnGap: '10px',

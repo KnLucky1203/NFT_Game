@@ -302,9 +302,10 @@ class Game extends Component {
     if (this.state.gameState !== State.Game.gameOver) {
       return null;
     }
+    const { loading } = this.context;
     // console.log("22222222222222222222 ", localStorage.token);
-    this.updateTopScore();
-
+    
+    if(!loading) this.updateTopScore();
 
     return (
       <View style={[

@@ -144,9 +144,9 @@ export const registerUser = async (username, password) => {
   })
 }
 
-export const loginUser = async (username, password) => {
+export const loginUser = async (username, wallet) => {
   return await axios.post(SERVER_URL + '/api/v1/auth/login', {
-    username, password
+    username, wallet
   })
 }
 
@@ -160,6 +160,22 @@ export const getScoreList = async (sortBy, limit, page) => {
 
 export const getRate = async (sortBy, limit, page) => {
   return await axios.get(SERVER_URL + '/api/v1/base/reward/rate?mode=PVE');
+}
+
+export const setScoreTwitterMsg = async (msg, wallet) => {
+  return await axios.patch(SERVER_URL + '/api/v1/admin/social/update', 
+    { msg, wallet}, 
+    {
+      headers: {
+        Authorization: `bearer ${token}`,
+      }
+    });
+}
+// ------
+
+export const getTwitterMsg = async () => {
+  console.log("getTwitterMsg-------------------");
+  return await axios.get(SERVER_URL + '/api/v1/base/social/get');
 }
 
 export const getUserInfo = async (token) => {
@@ -183,13 +199,16 @@ export const updateScore = async (score, wallet, token) => {
   });
 }
 
-export const claimToken = async (score, wallet, token) => {
-  return await axios.post(SERVER_URL + '/api/v1/user/token/claim', { score, wallet }, {
+export const claimToken = async (score, wallet, mode, token) => {
+  console.log("claim Token mode =", mode);
+  console.log("score =", score);
+  return await axios.post(SERVER_URL + '/api/v1/user/token/claim', { score, wallet,mode }, {
     headers: {
       Authorization: `bearer ${token}`,
     },
   });
 }
+
 
 export const setMyNFT = async (nft_colletcion) => {
   if(!token) {

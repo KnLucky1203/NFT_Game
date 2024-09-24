@@ -30,6 +30,7 @@ function GameOver({ ...props }) {
   const [resultString, setResultString] = useState("");
   const [otherScore, setOtherScore] = useState(0);
   const [rewardable, setrewardable] = useState(false);
+  const [p2eRewardable, setpe2Rewardable] = useState(true);
 
   const { walletProvider, connection } = useWeb3ModalProvider();
   const { address, chainId } = useWeb3ModalAccount()
@@ -77,6 +78,7 @@ function GameOver({ ...props }) {
           }
           else {
             setResultString("Drawed");
+            setrewardable(true);
           }
         }
         if (role == "client") {
@@ -90,6 +92,7 @@ function GameOver({ ...props }) {
           }
           else {
             setResultString("Drawed");
+            setrewardable(true);
           }
         }
         setPvpEndflag(true);
@@ -175,9 +178,22 @@ function GameOver({ ...props }) {
   }
   const getReward = async () => {
     setLoadingState(true);
-    console.log("amount = ", myRoomInfo.amount * 2);
-    await claimToken(myRoomInfo.amount * 2, localStorage.wallet, localStorage.token);
-    setrewardable(false);
+    // console.log("gameeMode = ", gameMode);
+    if (gameMode == 0) {
+      setpe2Rewardable(false);
+      // console.log("amou111");
+      await claimToken(props.score, localStorage.wallet, 0, localStorage.token);
+
+    }
+    else {
+      // console.log("amou112");
+      if (resultString == "Drawed")
+        await claimToken(myRoomInfo.amount * 2, localStorage.wallet, 2, localStorage.token);
+      else
+        await claimToken(myRoomInfo.amount, localStorage.wallet, 2, localStorage.token);
+
+      setrewardable(false);
+    }
     setLoadingState(false);
   }
   const restartGame = async () => {
@@ -224,7 +240,7 @@ function GameOver({ ...props }) {
     }}>
       <View
         style={{ position: 'absolute', top: 20, right: 20, color: 'white', cursor: 'pointer' }}
-        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${userInfo.username}` }}
+        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}.":".${userInfo.username}` }}
       >
         <Icon name="share-social" size={30} style={{ color: 'white' }} />
       </View>
@@ -280,13 +296,26 @@ function GameOver({ ...props }) {
           &nbsp;Cash Tokens
         </Text>
       }
+      {gameMode == 0&&
+        <Text style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: '900',
+          color: 'white',
+          fontFamily: 'Horizon'
+        }}>
+          You Reward: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{(parseFloat(props.score)*parseFloat(localStorage.rate)).toFixed(2)}</Text>
+          &nbsp;Cash Tokens
+        </Text>
+      }
       <View style={{
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         columnGap: '10px',
       }}>
-        {rewardable &&
+        {(rewardable || p2eRewardable) &&
           <Text style={{
             ...commonStyle.button,
             fontFamily: fonts.fantasy,
@@ -294,7 +323,7 @@ function GameOver({ ...props }) {
             marginBottom: '10px',
             fontFamily: 'Horizon',
           }}
-            onClick={getReward}
+            onClick={() => getReward()}
           >
             Get Reward
           </Text>
