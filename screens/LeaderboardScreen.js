@@ -267,7 +267,8 @@ const LeaderboardScreen = () => {
                   ...getRankStyle(index + 1, player)
                 }}>{index + 1}</Text>
                   {userInfo.id == player.id && 
-                  <Text style={{ cursor: 'pointer', color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}} onClick={() => {location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}.":".${userInfo.username}` }}>
+                  <Text style={{ cursor: 'pointer', color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}} onClick={() => { console.log(`https://twitter.com/intent/tweet?text=${localStorage.twitterMag}:Score=${player.scores}`)}}>
+                     {/* location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}.":".${player.scores}` }}> */}
                     <Icon name="share-social" size={25}/>
                   </Text>}
                 </View>

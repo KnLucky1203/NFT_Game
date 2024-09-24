@@ -240,7 +240,7 @@ function GameOver({ ...props }) {
     }}>
       <View
         style={{ position: 'absolute', top: 20, right: 20, color: 'white', cursor: 'pointer' }}
-        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}.":".${userInfo.username}` }}
+        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}:Score=${props.score}` }}
       >
         <Icon name="share-social" size={30} style={{ color: 'white' }} />
       </View>
