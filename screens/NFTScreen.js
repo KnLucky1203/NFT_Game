@@ -15,11 +15,14 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
   const [characters, setCharacters] = useState([])
+  const [nftId, setNftId] = useState();
   useEffect(() => {
     getUserInfo(localStorage.token).then(response => {
       if(response.data.code == "00"){
         if(response?.data?.data?.character?.name)
           setCharacter(response.data.data.character.name)
+        if(response?.data?.data?.nft)
+          setNftId(response?.data?.data?.nft)
       }else {
         toast.error("Please log in!")
       }
@@ -59,12 +62,12 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
       display: 'flex', flexDirection: 'column',
       cursor: 'pointer',
       background: 'rgba(0,0,255,0.1)',
-      border: index == user.avatar ? '1px solid gray' : 'none',
+      border: item.address == user.nft ? '1px solid gray' : 'none',
       borderRadius: '10px'
     }} onClick={() => {
       const new_user = deepCopy(user);
-      new_user.avatar = index;
-      new_user.collection = new_user.nfts[index].collection
+      new_user.nft = item.address;
+      new_user.collection = item.collection
       setUser(new_user);
       setMyNFT(new_user.collection).then(response => {
         if(response.data.code == "00"){
@@ -113,17 +116,21 @@ export default function NFTScreen({ openNFT, setOpenNFT }) {
     </View >
   );
   const renderCharacter = ({ item, index }) => (
-    <View style={{
-      padding: '10px',
-      width: isPC ? '30%' : '40%',
-      display: 'flex', flexDirection: 'column',
-      cursor: 'pointer',
-      background: 'rgba(0,0,255,0.1)',
-      border: item.name == character ? '1px solid gray' : 'none',
-      borderRadius: '10px'
-    }} onClick={() => {
-      setCharacter(item.name)
-    }}>
+    <View 
+      style={{
+        padding: '10px',
+        width: isPC ? '30%' : '40%',
+        display: 'flex', flexDirection: 'column',
+        // cursor: 'pointer',
+        background: item.name == character ? '#EF587B' : 'rgba(0,0,255,0.1)',
+        border: item.name == character ? '1px solid gray' : 'none',
+        opacity: item.name == character ? '100%' : '40%',
+        borderRadius: '10px'
+      }} 
+      // onClick={() => {
+      //   setCharacter(item.name)
+      // }}
+    >
       <img
         src={require(`../assets/character/${item.name}.png`)}
         style={{

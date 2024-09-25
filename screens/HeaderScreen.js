@@ -104,18 +104,16 @@ const HeaderScreen = ({ path }) => {
       setCUserName(response.data.username);
       // setStateMsg("");
       localStorage.token = response.data.token;
-      // let newInfo = deepCopy(userInfo)
+      let newInfo = deepCopy(userInfo)
       getUserInfo(localStorage.token).then(res => {
         if (res.data.code == "00") {
-          newInfo.character = res.data?.character;
-          newInfo.id = res.data?.id;
-          newInfo.nft = res.data?.nft;
-          newInfo.score = res.data?.score;
           newInfo.username = res.data?.username;
+          newInfo.nft = res.data?.nft;
           setUserInfo(newInfo)
         }
       });
     }
+    console.log("Final user data ===", userInfo)
     setLoadingState(false);
   }
 
@@ -157,7 +155,7 @@ const HeaderScreen = ({ path }) => {
       console.log('walletProvider or address is undefined');
       return;
     }
-    let new_user = deepCopy(user);
+    let new_user = deepCopy(userInfo);
     new_user.wallet = walletProvider.publicKey.toBase58()
     localStorage.wallet = address;
     // console.log("wwwwwwwwwwwwwwwwww ", localStorage.wallet);

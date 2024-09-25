@@ -10,6 +10,7 @@ import { socket, claimToken } from '../global/global';
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
 
 import { Connection, PublicKey, Transaction, clusterApiUrl, sendAndConfirmTransaction, Keypair } from '@solana/web3.js';
+import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { getDepositAddress } from "../global/global";
 import {
   getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, Token,
@@ -18,6 +19,7 @@ import {
 } from '@solana/spl-token';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { FaSpinner } from 'react-icons/fa';
+import toast from "react-hot-toast";
 function GameOver({ ...props }) {
   const { gameMode, setGameMode, character, role, myRoomInfo, setMyRoomInfo, setLoadingState, userInfo } = React.useContext(GameContext);
   const navigation = useNavigation();
@@ -202,6 +204,7 @@ function GameOver({ ...props }) {
       setrewardable(false);
     }
     setRewardLoading(false);
+    toast.success("You got reward");
   }
   const restartGame = async () => {
     if (rewardLoading)
@@ -350,7 +353,7 @@ function GameOver({ ...props }) {
           >
             {rewardLoading ? (
               <div style={spinnerStyle} />
-            ) : null}
+            ) : <SimpleIcon name="present" size={20} style={{marginRight:8}}/>}
             {rewardLoading ? 'Processing...' : 'Get Reward'}
           </Text>
         }
@@ -365,7 +368,7 @@ function GameOver({ ...props }) {
         >
           {rewardLoading ? (
               <div style={spinnerStyle} />
-            ) : null}
+            ) : <SimpleIcon name="reload" size={20} style={{marginRight:8}}/>}
             
           Play Again
         </Text> : <Text style={{

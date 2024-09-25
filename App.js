@@ -26,7 +26,7 @@
  ********************************************************************** The Road to Valhalla! *********************************************************
  */
 // Sample Libraries
-import React, { useEffect, lazy, Suspense , useTransition } from "react";
+import React, { useEffect, lazy } from "react";
 import { ScrollView, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { WebView } from 'react-native-webview';
@@ -37,24 +37,22 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // Personal informations
 import GameProvider from "./context/GameProvider";
-// import GameScreen from "./screens/GameScreen";
+import GameScreen from "./screens/GameScreen";
 import AudioManager from "./src/AudioManager";
 import { useResolvedValue } from "./src/hooks/useResolvedValue";
 import ModelLoader from "./src/ModelLoader";
 import LandingScreen from "./screens/LandingScreen";
 import GuideScreen from "./screens/GuideScreen";
 import LoadingScreen from "./screens/LoadingScreen";
-
-import LoadingScreen2 from "./screens/LoadingScreen2";
-// import LeaderboardScreen from "./screens/LeaderboardScreen";
+import LeaderboardScreen from "./screens/LeaderboardScreen";
 import GameRoomScreen from "./screens/GameRoomScreen";
 import AdminScreen from "./screens/AdminScreen";
 import NFTScreen from "./screens/NFTScreen";
 import DepositScreen from "./screens/DepositScreen";
 import Screen from "./screens/HomeScreen";
 
-const GameScreen = lazy(() =>(import('./screens/GameScreen')));
-const LeaderboardScreen = lazy(() => (import('./screens/LeaderboardScreen')));
+// const GameScreen = lazy(() =>(import('./screens/GameScreen')));
+// const LeaderboardScreen = lazy(() => (import('./screens/LeaderboardScreen')));
 // const GameRoomScreen = lazy(() => (import('./screens/GameRoomScreen')));
 // const AdminScreen = lazy(() => (import('./screens/AdminScreen')));
 // const NFTScreen = lazy(() => (import('./screens/NFTScreen')));
@@ -88,18 +86,9 @@ export default function App() {
 
               <Stack.Screen name="GuideScreen" component={GuideScreen}
                 options={{ headerShown: false }} />
-{/* 
+
               <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen}
-                options={{ headerShown: false }} /> */}
-
-              <Stack.Screen name="LeaderboardScreen" options={{ headerShown: false }}>
-                {() => (
-                  <Suspense fallback={<LoadingScreen2 />}>
-                    <LeaderboardScreen />
-                  </Suspense>
-                )}
-              </Stack.Screen>
-
+                options={{ headerShown: false }} />
 
               <Stack.Screen name="NFTScreen" component={NFTScreen}
                 options={{ headerShown: false }} />
@@ -111,24 +100,14 @@ export default function App() {
               <Stack.Screen name="HomeScreen" component={Screen}
                 options={{ headerShown: false }} />
 
-              {/* // Single play on the local machine */}
-              {/* <Stack.Screen name="GameScreen" component={() => {
+              <Stack.Screen name="GameScreen" component={() => {
                 return <GameScreen gameMode={0} />;
-              }} options={{ headerShown: false }} /> */}
-              <Stack.Screen name="GameScreen" options={{ headerShown: false }}>
-                {() => (
-                  <Suspense fallback={<LoadingScreen2 />}>
-                    <GameScreen gameMode={0}/>
-                  </Suspense>
-                )}
-              </Stack.Screen>
+              }} options={{ headerShown: false }} />
 
-              {/* // Two players on the local machine */}
               <Stack.Screen name="GameScreen_1" component={() => {
                 return <GameScreen gameMode={1} />;
               }} options={{ headerShown: false }} />
 
-              {/* // Two players via network */}
               <Stack.Screen name="GameScreen_2" component={() => {
                 return <GameScreen gameMode={2} />;
               }} options={{ headerShown: false }} />

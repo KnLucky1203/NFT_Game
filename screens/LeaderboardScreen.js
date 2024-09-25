@@ -52,7 +52,7 @@ const LeaderboardScreen = () => {
   const {
     userInfo,
     setUserInfo,
-    setLoadingState,
+    setLoadingState,cUserName
   } = React.useContext(GameContext);
   const getScoreInfo = async () => {
     setLoadingState(true);
@@ -100,12 +100,19 @@ const LeaderboardScreen = () => {
   const windowHeight = isPC ? Dimensions.get('window').height - 400 : Dimensions.get("window").height - 285;
   
   const getRankStyle = (rank, player) => {
+    // if (rank == 1) {
+    //   return { color: player.name == cUserName ? 'white' : 'black', background: '#F3B34C', borderRadius: '50%', border: player.name == cUserName ? 0: '2px solid #F6D65D' }
+    // } else if (rank == 2) {
+    //   return { color: player.name == cUserName ? 'white' : 'black', background: '#BEBEBE', borderRadius: '50%', border: player.name == cUserName ? 0 :'2px solid #E6E6E6' }
+    // } else if (rank == 3) {
+    //   return { color: player.name == cUserName ? 'white' : 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: player.name == cUserName ? 0: '2px solid #E9B06D' }
+    // }
     if (rank == 1) {
-      return { color: player.id == userInfo.id ? 'white' : 'black', background: '#F3B34C', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #F6D65D' }
+      return { color: 'black', background: '#F3B34C', borderRadius: '50%', border:'2px solid #F6D65D' }
     } else if (rank == 2) {
-      return { color: player.id == userInfo.id ? 'white' : 'black', background: '#BEBEBE', borderRadius: '50%', border: player.id == userInfo.id ? 0 :'2px solid #E6E6E6' }
+      return { color: 'black', background: '#BEBEBE', borderRadius: '50%', border: '2px solid #E6E6E6' }
     } else if (rank == 3) {
-      return { color: player.id == userInfo.id ? 'white' : 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: player.id == userInfo.id ? 0: '2px solid #E9B06D' }
+      return { color: 'black', background: 'rgba(200, 139, 76, 1)', borderRadius: '50%', border: '2px solid #E9B06D' }
     }
     return { background: 'black', borderRadius: '50%', border: '2px solid white' }
   }
@@ -245,8 +252,8 @@ const LeaderboardScreen = () => {
                 alignItems: 'center',
                 width: '100%', justifyContent: 'space-between',
                 padding: '10px',
-                border: userInfo.id==player.id?"1px solid #EF587B":commonStyle.border,
-                backgroundColor: userInfo.id==player.id ? '#FDC6D3' : ""
+                border: cUserName==player.name?"1px solid #EF587B":commonStyle.border,
+                backgroundColor: cUserName==player.name? '#FDC6D3' : ""
               }, isHovered == index && {backgroundColor: 'rgba(255, 255, 255, 0.1)' }]} onMouseEnter={() => {setIsHovered(index)}} onMouseLeave={() => setIsHovered(null)}>
                 <View style={{
                   display: 'flex',
@@ -263,19 +270,19 @@ const LeaderboardScreen = () => {
                   alignItems: 'center',
                   fontFamily: 'Horizon',
                   borderRadius: '50px',
-                  backgroundColor: userInfo.id==player.id ?"#EF587B":"",
+                  backgroundColor: cUserName==player.name ?"#EF587B":"",
                   ...getRankStyle(index + 1, player)
                 }}>{index + 1}</Text>
-                  {userInfo.id == player.id && 
+                  {cUserName==player.name && 
                   <Text style={{ cursor: 'pointer', color: "#ef587b", fontSize: '20px', fontFamily: 'Horizon',}} onClick={() => { console.log(`https://twitter.com/intent/tweet?text=${localStorage.twitterMag}:Score=${player.scores}`)}}>
                      {/* location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}.":".${player.scores}` }}> */}
                     <Icon name="share-social" size={25}/>
                   </Text>}
                 </View>
                 
-                <Text style={{ color: userInfo.id==player.id ? "#ef587b":  'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
+                <Text style={{ color: cUserName==player.name ? "#ef587b":  'white', fontSize: '20px', fontFamily: 'Horizon',}}>{player.name}</Text>
                 <View style={{ width: '80px', display: 'flex', justifyContent: 'end', flexDirection: 'row'}}>
-                  <Text style={{ width:"40px", color: userInfo.id==player.id ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
+                  <Text style={{ width:"40px", color: cUserName==player.name ? "#ef587b": 'white', fontSize: '20px', fontFamily: 'Horizon',textAlign: 'right'}}>{player.scores}</Text>
                 </View>
               </View>);
             })}

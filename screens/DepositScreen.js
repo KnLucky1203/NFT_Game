@@ -365,7 +365,7 @@ const DepositScreen = () => {
       const signature = await walletProvider.sendTransaction(tx, connection);//Here token send
 
       // console.log("deposit2--------------->", signature);
-      // await connection.confirmTransaction(signature, 'processed');
+      // let res = await connection.confirmTransaction(signature, 'confirmed');
 
       // console.log("deposit3--------------->", signature);
       // let res = await sendAndConfirmVersionedTransactions(connection, tx);

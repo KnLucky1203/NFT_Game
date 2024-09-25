@@ -187,14 +187,14 @@ export default function AdminScreen() {
         display: 'flex',
         flexDirection: 'row',
         columnGap: '3px',
-        justifyContent: "center",
+        justifyContent: "flex-end",
         alignItems: "center",
         width: isPC ? '160px': '80px',
       }}>
         <View 
           style={{
             ...commonStyle.button3,
-            margin: 'auto',
+            // margin: 'auto',
           }}
           onClick={async() => {
             updateNFTCharacter(item.id, selCharacter.id, localStorage.wallet).then(res => {
@@ -205,12 +205,12 @@ export default function AdminScreen() {
               }
             })
         }}>
-          {isPC ? "Update" : <Icon name="save-outline" size={18} style={{color: 'white'}} />}
+           <Icon name="save-outline" size={18} style={{color: 'white'}} />
         </View>
         <View 
           style={{
             ...commonStyle.button3,
-            margin: 'auto',
+            // margin: 'auto',
           }}
           onClick={() => {
             deleteNFT(item.id, localStorage.wallet).then(res => {
@@ -226,7 +226,7 @@ export default function AdminScreen() {
 
             })     
         }}>
-          {isPC ? "Delete" : <AntIcon name="delete" size={18} style={{color: 'white'}}/>}
+          <AntIcon name="delete" size={18} style={{color: 'white'}}/>
         </View>      
       </View>
     </View >
@@ -393,9 +393,8 @@ export default function AdminScreen() {
 
   useEffect(() => {
     if(userInfo?.isAdmin == false) navigation.navigate("LandingScreen");
-    console.log("user info =====", userInfo.isAdmin)
     // if(localStorage.wallet == "" || localStorage.wallet == undefined) toast("Connect wallet!")
-  }, [address])
+  }, [userInfo])
 
   useEffect(() => {
     
