@@ -16,20 +16,20 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import { getAdminData, getCharacters, updateScore, updateNFTCharacter, addNFT, deleteNFT, setRewardRate, getTwitterMsg, setScoreTwitterMsg, getRate } from '../global/global';
 
 // Initial Variables
-const wallet = localStorage.wallet;
 export default function AdminScreen() {
   /* ================================ For Mobile Responsive ===============================*/
   const [evalWidth, setEvalWidth] = useState(768);
   const [isMobile, setIsMobile] = useState(Dimensions.get('window').width < evalWidth);
   const [isPC, setIsPC] = useState(Dimensions.get('window').width >= evalWidth);
-  const [twitterMag, setTwitterMag] = useState("");
+  const [xText, setXText] = useState("");
+  const { address, chainId } = useWeb3ModalAccount()
   const {
-    setLoadingState,
+    setLoadingState, userInfo
   } = React.useContext(GameContext);
 
   useEffect(() => {
-    getRateFromServer();
-    getTwitterMsgFromServer();
+    // getRateFromServer();
+    // getTwitterMsgFromServer();
     const handleResize = () => {
       setIsMobile(window.innerWidth < evalWidth);
       setIsPC(window.innerWidth >= evalWidth);
@@ -46,8 +46,6 @@ export default function AdminScreen() {
 
   // Personal Variables
   const { walletProvider, connection } = useWeb3ModalProvider()
-
-  if(wallet == "" || wallet == undefined) toast("Connect wallet!")
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
   const [contentHeight, setContentHeight] = useState(620);
     // Assume the total scrollable content height
@@ -199,7 +197,7 @@ export default function AdminScreen() {
             margin: 'auto',
           }}
           onClick={async() => {
-            updateNFTCharacter(item.id, selCharacter.id).then(res => {
+            updateNFTCharacter(item.id, selCharacter.id, localStorage.wallet).then(res => {
               if(res.data.code === '00') {
                 toast.success("Character updated!");
               }else {
@@ -215,7 +213,7 @@ export default function AdminScreen() {
             margin: 'auto',
           }}
           onClick={() => {
-            deleteNFT(item.id).then(res => {
+            deleteNFT(item.id, localStorage.wallet).then(res => {
               if(res.data.code == "00"){
                 const new_admin = deepCopy(admin);
                 new_admin.nfts.splice(index, 1);
@@ -258,57 +256,6 @@ export default function AdminScreen() {
   const [characters, setCharacters] = useState([])
   const [selCharacter, setSelCharacter] = useState({})
   
-  const getRateFromServer = async () => {
-    let rateResponse = await getRate();
-    if(rateResponse?.data?.code === "00"){
-      localStorage.rate = rateResponse.data.data.rate;
-      setRate(localStorage.rate);
-    }
-  } 
-
-  const getTwitterMsgFromServer = async () => {
-    console.log("------twiter msg");
-    let twitterMag = await getTwitterMsg();
-    
-    console.log("------twiter msg end:", twitterMag);
-    if(twitterMag?.data?.code === "00"){
-      localStorage.twitterMag = twitterMag.data.data;
-      setTwitterMag(twitterMag.data.data);
-    }
-  }
-
-  const confirmDelete = () => {
-    return Alert.alert(
-      'Delete NFT',  // Title of the alert
-      'Are you sure you want to delete this item?', // Message of the alert
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'), // Cancel action
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          onPress: () => {
-            deleteNFT(item.id).then(res => {
-              if(res.data.code == "00"){
-                const new_admin = deepCopy(admin);
-                new_admin.nfts.splice(index, 1);
-                setAdmin(new_admin);
-                toast.success("Character deleted!")
-              } else {
-                toast.success("Character deleting failed!")
-              }
-            }).catch(err => {
-
-            })     
-          },
-          style: 'destructive', // 'destructive' is available on iOS to indicate a destructive action
-        },
-      ],
-      { cancelable: false } // Prevent closing the dialog by tapping outside of it
-    );
-  }
   const depositToken = async () => {
 
     let response;
@@ -396,28 +343,6 @@ export default function AdminScreen() {
             deposit2: true,
           }));
       }
-
-      // console.log("^^^^^^^^^^^^^^", userInfo);
-      // if (serverId) {     // JOIN TO THE OTHER SERVER SPECIFIED IN THE SERVER ID
-      //   socket.emit('message', JSON.stringify({
-      //     cmd: 'ACTION_JOIN_GAME',
-      //     name: serverId.toString(),
-      //     player2: userInfo.username,
-      //   }));
-      // } else {
-      //   setMyRoomInfo(prevRoomInfo => ({
-      //     ...prevRoomInfo,
-      //     amount: amount,
-      //     client_ready: true,
-      //   }));
-      //   socket.emit('message', JSON.stringify({
-      //     cmd: 'ACTION_CREATE_ROOM',
-      //     player1: userInfo.username,
-      //     map: globalMap,
-      //     amount: amount
-      //   }));
-      // }
-
     } catch (error) {
       console.error('Error depositng:', error);
       setLoadingState(false);
@@ -433,7 +358,7 @@ export default function AdminScreen() {
       toast.error("Input rate value")
       return
     }
-    let response = await setRewardRate(rate);
+    let response = await setRewardRate(rate, localStorage.wallet);
     if(response?.data?.code == "00"){
       toast.success("Rate setted!", { style: {
         backgroundColor: 'white',
@@ -448,11 +373,11 @@ export default function AdminScreen() {
   }
 
   const onClickTwitterMsg = async () => {
-    if(twitterMag == undefined || twitterMag == "") {
-      toast.error("Input twitterMag value")
+    if(xText == undefined || xText == "") {
+      toast.error("Input xText value")
       return
     }
-    let response = await setScoreTwitterMsg(twitterMag, localStorage.wallet);
+    let response = await setScoreTwitterMsg(xText, localStorage.wallet);
     console.log("onclicktwitermsg===", response);
     if(response?.data?.code == "00"){
       toast.success("Twitter Message setted!", { style: {
@@ -462,49 +387,37 @@ export default function AdminScreen() {
         borderRadius: '10px',
         fontWeight: 400
       }})
-      localStorage.twitterMag= twitterMag;
+      localStorage.xText= xText;
     }
   }
 
   useEffect(() => {
+    if(userInfo?.isAdmin == false) navigation.navigate("LandingScreen");
+    console.log("user info =====", userInfo.isAdmin)
+    // if(localStorage.wallet == "" || localStorage.wallet == undefined) toast("Connect wallet!")
+  }, [address])
+
+  useEffect(() => {
+    
     setLoadingState(true)
     
-    getRateFromServer();    
-
-    getTwitterMsgFromServer();
+    getAdminData(localStorage.wallet).then((response) => {
+      if(response.data.code == "00"){
+        setAdmin(response.data.data);
+        setRate(response.data.data?.rate || 0 )
+        setXText(response.data.data?.xText || "" )
+      }
+    })
+    getCharacters().then((response) => {
+      if(response.data.code == "00")          
+        setCharacters(response.data.data)
+      setLoadingState(false)
+    }).catch(error => {
+      setLoadingState(false)
+    })
     
-  
-    if (walletProvider) {
-      getAdminData(walletProvider.publicKey.toBase58()).then((response) => {
-        if(response.data.code == "00")
-          setAdmin(response.data.data);
-      })
-      getCharacters().then((response) => {
-        if(response.data.code == "00")          
-          setCharacters(response.data.data)
-      })
-      localStorage.wallet = walletProvider.publicKey.toBase58()
-    } else {
-      // toast.error("Connect wallet!")
-    }
-    setLoadingState(false)
-  }, [walletProvider]);  
+  }, []);  
 
-  const setTaxWallet = (text) => {
-    let new_admin = deepCopy(admin)
-    new_admin.taxWallet = text;
-    setAdmin(new_admin);
-  }
-  const setRewardToken = (text) => {
-    let new_admin = deepCopy(admin)
-    new_admin.token = text;
-    setAdmin(new_admin);
-  }
-  const setPerUnit = (text) => {
-    let new_admin = deepCopy(admin)
-    new_admin.tokenPerUnit = Number(text);
-    setAdmin(new_admin);
-  }
   const [newTaxWallet, setNewTaxWallet] = useState('');
   const [newNFT, setNewNFT] = useState('');
   const [rate, setRate] = useState(0);
@@ -522,7 +435,7 @@ export default function AdminScreen() {
       toast.error("Input new NFT collection address")
       return;
     }
-    addNFT(newNFT, selCharacter.id).then(response => {
+    addNFT(newNFT, selCharacter.id, localStorage.wallet).then(response => {
         let new_admin = deepCopy(admin)
         if (!new_admin.nfts)
           new_admin.nfts = [];
@@ -738,9 +651,9 @@ export default function AdminScreen() {
                 color: 'white',
                 fontFamily: 'Horizon',
               }}
-                type="text" placeholder="Input twitter message." value={twitterMag}
+                type="text" placeholder="Input twitter message." value={xText}
                 onChange={(e) => {
-                  setTwitterMag(e?.target?.value);
+                  setXText(e?.target?.value);
                 }}
               />
               <View 

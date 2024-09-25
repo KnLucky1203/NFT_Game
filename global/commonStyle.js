@@ -20,6 +20,17 @@ export function mainShadow(color) {
   return `0px 0px 20px ${color}`
 }
 
+export const spinnerStyle = {
+  border: '2px solid rgba(0, 0, 0, 0.1)', // Light gray border
+  borderTop: '2px solid #3498db', // Blue border on top
+  borderRadius: '50%',
+  width: '16px', // Match font size
+  height: '16px', // Match font size
+  animation: 'spin 1s linear infinite',
+  marginRight: '8px', // Space between spinner and text
+  display: 'inline-block',
+};
+
 export const commonStyle = {
   // ----- Common Controls -----
   button: {

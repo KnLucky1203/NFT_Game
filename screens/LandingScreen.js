@@ -518,6 +518,7 @@ const LandingScreen = () => {
                       onClick={() => {
                         setGameMode(0);
                         navigation.navigate("GameScreen");
+     
                       }}
                     >
                       <SimpleIcon name="user" size={20} />
@@ -543,7 +544,7 @@ const LandingScreen = () => {
                           socket.emit('message', JSON.stringify({
                             cmd: 'ACTION_JOIN_GAME',
                             name: serverId.toString(),
-                            player2: userName
+                            player2: cUserName
                           }));
                         } else {
                           socket.emit('message', JSON.stringify({

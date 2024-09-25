@@ -2,7 +2,7 @@ import React, { Component, useContext, useState, useEffect, useRef } from "react
 import { Image, Dimensions, Text, Alert, Animated, Easing, StyleSheet, View, InteractionManager } from "react-native";
 
 import GameContext from "../context/GameContext";
-import { fonts } from '../global/commonStyle';
+import { fonts, spinnerStyle } from '../global/commonStyle';
 import { useNavigation } from "@react-navigation/native";
 import { commonStyle } from "../global/commonStyle";
 import { colors } from "../global/commonStyle";
@@ -17,6 +17,7 @@ import {
   getMint
 } from '@solana/spl-token';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { FaSpinner } from 'react-icons/fa';
 function GameOver({ ...props }) {
   const { gameMode, setGameMode, character, role, myRoomInfo, setMyRoomInfo, setLoadingState, userInfo } = React.useContext(GameContext);
   const navigation = useNavigation();
@@ -31,6 +32,7 @@ function GameOver({ ...props }) {
   const [otherScore, setOtherScore] = useState(0);
   const [rewardable, setrewardable] = useState(false);
   const [p2eRewardable, setpe2Rewardable] = useState(true);
+  const [rewardLoading, setRewardLoading] = useState(false);
 
   const { walletProvider, connection } = useWeb3ModalProvider();
   const { address, chainId } = useWeb3ModalAccount()
@@ -179,10 +181,15 @@ function GameOver({ ...props }) {
   const getReward = async () => {
     // setLoadingState(true);
     // console.log("gameeMode = ", gameMode);
+    if (rewardLoading) {
+      return;
+    }
+    setRewardLoading(true);
     if (gameMode == 0) {
-      setpe2Rewardable(false);
+      
       // console.log("amou111");
       await claimToken(props.score, localStorage.wallet, 0, localStorage.token);
+      setpe2Rewardable(false);
 
     }
     else {
@@ -194,9 +201,11 @@ function GameOver({ ...props }) {
 
       setrewardable(false);
     }
-    setLoadingState(false);
+    setRewardLoading(false);
   }
   const restartGame = async () => {
+    if (rewardLoading)
+      return;
     if (gameMode == 2) {
       //     await depositToken();
       if (role == "client") {
@@ -240,7 +249,7 @@ function GameOver({ ...props }) {
     }}>
       <View
         style={{ position: 'absolute', top: 20, right: 20, color: 'white', cursor: 'pointer' }}
-        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}:Score=${props.score}` }}
+        onClick={() => { location.href = `https://twitter.com/intent/tweet?text=${localStorage.twitterMag}.":".${userInfo.username}` }}
       >
         <Icon name="share-social" size={30} style={{ color: 'white' }} />
       </View>
@@ -268,7 +277,7 @@ function GameOver({ ...props }) {
           color: 'white',
           fontFamily: 'Horizon'
         }}>
-          You scored: &nbsp;
+          Your score: &nbsp;
           <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{props.score}</Text>
 
         </Text>
@@ -291,12 +300,12 @@ function GameOver({ ...props }) {
           color: 'white',
           fontFamily: 'Horizon'
         }}>
-          You Reward: &nbsp;
-          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.amount * 2}</Text>
+          Your Reward: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.amount * 2*0.75}</Text>
           &nbsp;Cash Tokens
         </Text>
       }
-      {gameMode == 0&&
+      {gameMode == 2 && resultString == "Drawed" && pvpEndFlag &&
         <Text style={{
           textAlign: 'center',
           fontSize: '20px',
@@ -304,8 +313,22 @@ function GameOver({ ...props }) {
           color: 'white',
           fontFamily: 'Horizon'
         }}>
-          You Reward: &nbsp;
-          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{(parseFloat(props.score)*parseFloat(localStorage.rate)).toFixed(2)}</Text>
+          Your Reward: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{myRoomInfo.amount *0.75}</Text>
+          &nbsp;Cash Tokens
+        </Text>
+      }
+      {gameMode == 0 &&
+        <Text style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: '900',
+          color: 'white',
+          fontFamily: 'Horizon'
+        }}>
+          Your Reward: &nbsp;
+          <Text style={{ color: colors.accent, fontFamily: 'Horizon', fontSize: "32px" }}>{(parseFloat(props.score) * parseFloat(localStorage.rate)) < 10 ?
+            (parseFloat(props.score) * parseFloat(localStorage.rate)).toFixed(3) : (parseFloat(props.score) * parseFloat(localStorage.rate)).toFixed(2)}</Text>
           &nbsp;Cash Tokens
         </Text>
       }
@@ -315,7 +338,7 @@ function GameOver({ ...props }) {
         alignItems: 'center',
         columnGap: '10px',
       }}>
-        {(rewardable || p2eRewardable) &&
+        {(rewardable || (p2eRewardable && gameMode == "0")) &&
           <Text style={{
             ...commonStyle.button,
             fontFamily: fonts.fantasy,
@@ -325,7 +348,10 @@ function GameOver({ ...props }) {
           }}
             onClick={() => getReward()}
           >
-            Get Reward
+            {rewardLoading ? (
+              <div style={spinnerStyle} />
+            ) : null}
+            {rewardLoading ? 'Processing...' : 'Get Reward'}
           </Text>
         }
         {pvpEndFlag || gameMode == 0 ? <Text style={{
@@ -337,6 +363,10 @@ function GameOver({ ...props }) {
         }}
           onClick={restartGame}
         >
+          {rewardLoading ? (
+              <div style={spinnerStyle} />
+            ) : null}
+            
           Play Again
         </Text> : <Text style={{
           textAlign: 'center',

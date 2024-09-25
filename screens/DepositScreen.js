@@ -51,7 +51,7 @@ import toast from 'react-hot-toast';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 // Guide Page component
 const DepositScreen = () => {
-  const { user, setUser, otherCharacter, setOtherCharacter} = React.useContext(GameContext);
+  const { user, setUser, otherCharacter, setOtherCharacter } = React.useContext(GameContext);
 
   /* ================================ For Mobile Responsive ===============================*/
   const [path, setPath] = useState("room");
@@ -138,9 +138,31 @@ const DepositScreen = () => {
       }
       if (data.cmd === "CHAT_TEXT") {
         if (role == "server")
-          toast(myRoomInfo.players[1].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
+          // toast(myRoomInfo.players[1].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
+          toast(myRoomInfo.players[1].player_name + ": " + data.text,
+            {
+              style: {
+                duration: 12000,
+                borderRadius: '10px',
+                fontSize: '18px',
+                background: '#555',
+                color: '#fff',
+              },
+            }
+          );
         else
-          toast(myRoomInfo.players[0].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
+          toast(myRoomInfo.players[0].player_name + ": " + data.text,
+            {
+              style: {
+                duration: 12000,
+                borderRadius: '10px',
+                fontSize: '18px',
+                background: '#555',
+                color: '#fff',
+              },
+            }
+          );
+        // toast(myRoomInfo.players[0].player_name + ": " + data.text, { duration: 10000, background: "#df0707" })
       }
       if (data.cmd == "CLIENT_PLAY_AGAIN_APPROVED") {
         setMyRoomInfo(prevRoomInfo => ({
@@ -190,8 +212,20 @@ const DepositScreen = () => {
 
   const sendChatText = () => {
     if (chatText != "") {
-
-      toast("me: " + chatText, { duration: 12000, background: '#30f304' });
+      toast("me:" + chatText,
+        {
+          style: {
+            duration: 12000,
+            borderRadius: '10px',
+            background: '#333',
+            
+            fontSize: '18px',
+            color: '#fff',
+            fontSize: '18px'
+          },
+        }
+      );
+      // toast("me:"+ chatText, { duration: 12000});
 
       socket.emit('message', JSON.stringify({
         cmd: 'CHAT_TEXT',
@@ -376,6 +410,7 @@ const DepositScreen = () => {
 
     } catch (error) {
       console.error('Error depositng:', error);
+      toast.error('Error depositng:', error);
       setLoadingState(false);
       return;
     }

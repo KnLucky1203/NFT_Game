@@ -35,7 +35,6 @@ export const solanaConfig = defaultSolanaConfig({
     showWallets: true //set to true by default
   }
 });
-const wallet = localStorage.getItem("wallet");
 // --- Web3 API ---
 export const getNFTswithImage = async (wallet) => {
   return await axios(SERVER_URL + '/api/nft_images/' + wallet)
@@ -46,7 +45,7 @@ export const getCharacters = async () => {
 }
 
 // -------------Admins Router Begin----------------------
-export const addNFT = async (address, character) => {
+export const addNFT = async (address, character, wallet) => {
   return await axios.post(SERVER_URL + '/api/v1/admin/nft/create', 
     {
       nftMintAddress: address,
@@ -60,7 +59,7 @@ export const addNFT = async (address, character) => {
   })
 }
 
-export const updateNFTCharacter = async (id, character) => {
+export const updateNFTCharacter = async (id, character, wallet) => {
   return await axios.post(SERVER_URL + '/api/v1/admin/nft/update', 
     {
       nftId: id,
@@ -74,9 +73,9 @@ export const updateNFTCharacter = async (id, character) => {
     })
 }
 
-export const deleteNFT = async (id) => {
+export const deleteNFT = async (id, wallet) => {
   return await axios.post(SERVER_URL + '/api/v1/admin/nft/delete',
-    { wallet: wallet,
+    { wallet,
       nftId: id, 
     },
     {
@@ -96,7 +95,7 @@ export const getAdminData = async (wallet) => {
   })
 }
 
-export const setRewardRate = async (rate) => {
+export const setRewardRate = async (rate, wallet) => {
   return await axios.patch(SERVER_URL + '/api/v1/admin/reward/rate', 
     { rate, wallet }, 
     {

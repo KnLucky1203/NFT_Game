@@ -35,6 +35,7 @@ import { fonts, colors, commonStyle } from '../global/commonStyle';
 //  import logo from './logo.svg';
 import '../App.css';
 import { createWeb3Modal, defaultSolanaConfig, useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/solana/react'
+import { useWallet } from "@solana/wallet-adapter-react"
 import axios from "axios"
 import base58 from 'bs58';
 
@@ -80,13 +81,13 @@ const HeaderScreen = ({ path }) => {
     setOpenMenu(false);
   };
 
-  console.log("Header called ===> ", userInfo)
+  // console.log("Header called ===> ", userInfo)
   // Initial Variables
   const navigation = useNavigation();
 
   // Personal variables
   const { user, setUser,
-    setLoadingState, userInfo, setUserInfo,setCUserName
+    setLoadingState, userInfo, setUserInfo, setCUserName, cUserName
   } = React.useContext(GameContext);
   // -- Web3 --
   const [isConnected, setIsConnected] = useState(false);
@@ -96,14 +97,14 @@ const HeaderScreen = ({ path }) => {
 
   const loginByWallet = async () => {
     // const signer = walletProvider.getSigner();
-    const address = walletProvider.publicKey.toBase58()
-    const response = await loginWithWallet(address);
+    const walletPubKey = walletProvider.publicKey.toBase58()
+    const response = await loginWithWallet(walletPubKey);
     console.log("loginByWallet =", response.data);
     if (response.data.code == "00") {
       setCUserName(response.data.username);
       // setStateMsg("");
       localStorage.token = response.data.token;
-      let newInfo = deepCopy(userInfo)
+      // let newInfo = deepCopy(userInfo)
       getUserInfo(localStorage.token).then(res => {
         if (res.data.code == "00") {
           newInfo.character = res.data?.character;
@@ -115,19 +116,23 @@ const HeaderScreen = ({ path }) => {
         }
       });
     }
+    setLoadingState(false);
   }
 
   useEffect(() => {
-    if (walletProvider) {
-      handleGetWalletInfo();
+    if (walletProvider ) {
       setIsConnected(true)
       if (web3modal) web3modal.close();
-      loginByWallet();
-
+      if(localStorage.wallet == "" || address != localStorage.wallet){
+        setLoadingState(true)
+        handleGetWalletInfo();
+        loginByWallet();
+      }
+      
     } else {
       setIsConnected(false)
     }
-  }, [walletProvider]);
+  }, [walletProvider, address]);
 
   const onConnectBtnClick = () => {
     if (isConnected) {
@@ -149,12 +154,12 @@ const HeaderScreen = ({ path }) => {
   }
   const handleGetWalletInfo = async () => {
     if (!walletProvider || !address || !connection) {
-      printConsole('walletProvider or address is undefined');
+      console.log('walletProvider or address is undefined');
       return;
     }
     let new_user = deepCopy(user);
     new_user.wallet = walletProvider.publicKey.toBase58()
-    localStorage.wallet = new_user.wallet;
+    localStorage.wallet = address;
     // console.log("wwwwwwwwwwwwwwwwww ", localStorage.wallet);
     await Promise.all([
       getWalletSOLBalance(connection, new_user.wallet).then((balance) => new_user.solAmount = balance / 1e9),
@@ -162,14 +167,15 @@ const HeaderScreen = ({ path }) => {
       // getNFTswithImage(conn, new_user.wallet).then((nfts) => new_user.nfts = nfts),
       getWalletInfo(new_user.wallet).then((res) => {
         if (res.data.code == "00") {
-          new_user.tokenAmount = res.data.data.tokenAmount;
-          new_user.nfts = res.data.data.nfts;
-          new_user.isAdmin = res.data.data.isAdmin;
-          if (!userInfo.isAdmin) {
-            let new_userInfo = deepCopy(userInfo);
-            new_userInfo.isAdmin = res.data.data.isAdmin;
-            setUserInfo(new_userInfo);
-          }
+          new_user.tokenAmount = res.data.data?.tokenAmount;
+          new_user.nfts = res.data.data?.nfts;
+          new_user.isAdmin = res.data.data?.isAdmin;
+          setUserInfo(new_user)
+          // if (!userInfo.isAdmin) {
+          //   let new_userInfo = deepCopy(userInfo);
+          //   new_userInfo.isAdmin = res.data.data.isAdmin;
+          //   setUserInfo(new_userInfo);
+          // }
         } else {
           toast.error("Response Error:", res?.data?.data?.error)
         }

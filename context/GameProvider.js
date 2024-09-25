@@ -52,7 +52,8 @@ export default function GameProvider({ children }) {
   const [keyMap_Server, setKeyMap_Server] = useState(keyMap_None);
   const [keyMap_Client, setKeyMap_Client] = useState(keyMap_None);
   const [socket, setSocket] = useState();
-  const [adminWallet, setAdminWallet] = useState("");
+  const [wallet, setWallet] = useState("");
+  const [rate, setRate] = useState(0);
   const [myRoomInfo, setMyRoomInfo] = useState({
     room_state : "closed", // or 'opened'
     room_name : "",
@@ -132,7 +133,7 @@ export default function GameProvider({ children }) {
   React.useEffect(() => {
     const parseModulesAsync = async () => {
       try {
-        const { user, character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client, adminWallet } = await rehydrateAsync();
+        const { user, character, highscore, gameMode, contextGameMap, role, keyMap_Server, keyMap_Client, wallet } = await rehydrateAsync();
         setUser(user);
         setCharacter(character);
         setOtherCharacter(otherCharacter);
@@ -142,7 +143,7 @@ export default function GameProvider({ children }) {
         setRole(role);
         setKeyMap_Server(keyMap_Server);
         setKeyMap_Client(keyMap_Client);
-        setAdminWallet(adminWallet);
+        setWallet(wallet);
         setCUserName(cUserName);
       } catch (ignored) { }
     };
@@ -179,8 +180,10 @@ export default function GameProvider({ children }) {
         setSocket,
         myRoomInfo,
         setMyRoomInfo,
-        adminWallet,
-        setAdminWallet,
+        wallet,
+        setWallet,
+        rate,
+        setRate,
         cUserName,
         setCUserName
       }}
